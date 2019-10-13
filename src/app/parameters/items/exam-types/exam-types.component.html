@@ -1,0 +1,240 @@
+<div class="container-fluid">
+  <div class="row p-3">
+    <div class="col-sm-11 bg-light border rounded-lg">
+      <h2  class="font-weight-light">Tipos de exame</h2>
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+          <thead>
+            <tr>
+              <th class="col-xs-2">Tipo de exame</th>
+              <th>Abreviatura</th>
+              <th>Valor</th>
+              <th>Valor para não associado</th>
+              <th>IVA</th>
+              <th>Designação na fatura</th>
+              <th>Com percurso</th>
+              <th>Número de examinadores</th>
+              <th>Número de alunos</th>
+              <th>Duração</th>
+              <th>Idade minima</th>
+              <th>Exige licença</th>
+              <th>Pede par</th>
+              <th>Exame final</th>
+              <th>Categoria</th>
+              <th>Código</th>
+              <th>Permite auto-estrado</th>
+              <th>Taxa de emissao da carta</th>
+              <th>Percurso condicionado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of ids; let i = index" (click)="setClickedRow(item)"
+              [class.active]="item == selectedRow" style="cursor:pointer">
+              <td>{{ item.Exam_type_name }}</td>
+              <td>{{ item.Short }}</td>
+              <td>{{ item.Price }} €</td>
+              <td>{{ item.Price_no_associated }} €</td>
+              <td>{{ item.Tax }}</td>
+              <td>{{ item.Description }}</td>
+              <td>{{ item.Has_route  === 1 ? 'Sim' : 'Não' }}</td>
+              <td>{{ item.Num_examiners }}</td>
+              <td>{{ item.Num_students }}</td>
+              <td>{{ item.Duration }}</td>
+              <td>{{ item.Minimun_age}}</td>
+              <td>{{ item.Has_license === 1 ? 'Sim' : 'Não' }}</td>
+              <td>{{ item.Has_Pair === 1 ? 'Sim' : 'Não' }}</td>
+              <td>{{ item.Final_exam === 1 ? 'Sim' : 'Não' }}</td>
+              <td>{{ item.Category }}</td>
+              <td>{{ item.Code }}</td>
+              <td>{{ item.High_way === 1 ? 'Sim' : 'Não' }}</td>
+              <td>{{ item.Tax_emit_drive_license  }}</td>
+              <td>{{ item.Condicioned_route === 1 ? 'Sim' : 'Não'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-sm-1" *ngIf="subject.includes('PATCH_Parameters')">
+      <div>
+        <button type="button" class="btn btn-secondary btn-block mb-3" (click)="open(content)">Novo</button>
+        <button type="button" class="btn btn-secondary btn-block mb-3" [disabled]="!selectedRow"
+          (click)="editID(content)">Editar</button>
+        <button type="button" class="btn btn-secondary btn-block" [disabled]="!selectedRow"
+          (click)="deleteID(selectedRow.idT_ID_type)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Novo tipo de identificação</h4>
+    <button type="button" class="close" aria-label="Close" (click)="resetModal(); modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editForm">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Value">Tipo de exame</label>
+            <input type="number" class="form-control" formControlName="Exam_type_name">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="Value">Abreviatura</label>
+            <input type="number" class="form-control" formControlName="Short">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="Value">Valor</label>
+              <input type="number" class="form-control" formControlName="Price">
+            </div>
+          </div>
+  
+          <div class="col">
+            <div class="form-group">
+              <label for="Value">Valor para não associado</label>
+              <input type="number" class="form-control" formControlName="Price_no_associated">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Value">IVA</label>
+                <input type="number" class="form-control" formControlName="Tax">
+              </div>
+            </div>
+    
+            <div class="col">
+              <div class="form-group">
+                <label for="Value">Designação na fatura</label>
+                <input type="number" class="form-control" formControlName="Description">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label for="Value">Com percurso</label>
+                  <input type="number" class="form-control" formControlName="Has_route">
+                </div>
+              </div>
+      
+              <div class="col">
+                <div class="form-group">
+                  <label for="Value">Número de examinadores</label>
+                  <input type="number" class="form-control" formControlName="Num_examiners">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="Value">Número de alunos</label>
+                    <input type="number" class="form-control" formControlName="Num_students">
+                  </div>
+                </div>
+        
+                <div class="col">
+                  <div class="form-group">
+                    <label for="Value">Duração</label>
+                    <input type="number" class="form-control" formControlName="Duration">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="Value">Idade minima</label>
+                      <input type="number" class="form-control" formControlName="Minimun_age">
+                    </div>
+                  </div>
+          
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="Value">Exige licença</label>
+                      <input type="number" class="form-control" formControlName="Has_license">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="Value">Pede par</label>
+                        <input type="number" class="form-control" formControlName="Has_pair">
+                      </div>
+                    </div>
+            
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="Value">Exame final</label>
+                        <input type="number" class="form-control" formControlName="Final_exam">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="Value">Categoria</label>
+                          <input type="number" class="form-control" formControlName="Category">
+                        </div>
+                      </div>
+              
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="Value">Código</label>
+                          <input type="number" class="form-control" formControlName="Code">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="Value">Permite auto-estrado</label>
+                            <input type="number" class="form-control" formControlName="High_way">
+                          </div>
+                        </div>
+                
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="Value">Taxa de emissao da carta</label>
+                            <input type="number" class="form-control" formControlName="Tax_emit_drive_license">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label for="Value">Percurso condicionado</label>
+                              <input type="number" class="form-control" formControlName="Condicioned_route">
+                            </div>
+                          </div>
+                        </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="resetModal(); modal.close('Save click')">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="onSubmit(); modal.close('Save click')">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>

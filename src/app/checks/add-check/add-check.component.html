@@ -1,0 +1,89 @@
+
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+  <h2 class="font-weight-light text-light ml-auto">NOVA ENTRADA</h2>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.close('Close click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="addChequeForm" (ngSubmit)="onSubmit()">
+    <legend class="h3 font-weight-light">Escola</legend>
+    <hr>
+    <div class="row">
+<!-- <div class="col-4">
+        <div class="form-group">
+          <label for="Permit">Alvará*</label>
+          <input type="number" class="form-control" formControlName="Permit">
+        </div>
+      </div> -->
+
+      <div class="col-6">
+        <div class="form-group">
+          <label for="School">Escola*</label>
+          <select class="form-control" formControlName="School_idSchool">
+            <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <legend class="h3 font-weight-light">Pagamento</legend>
+    <hr>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Num">Número*</label>
+          <input type="number" class="form-control" formControlName="Transaction_num">
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="form-group">
+          <label for="Reception_date">Data de recepção*</label>
+          <input type="date" class="form-control" formControlName="Transaction_date">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+              <label for="Bank">Tipo de pagamento*</label>
+              <select class="form-control" id="exampleFormControlSelect1" formControlName="Payment_method_idPayment_method" #bank>
+                  <option *ngFor="let item of paymentTypes" value={{item.idPayment_method}}>{{item.Name}}</option>
+                </select>
+            </div>
+          </div>
+
+      <div class="col">
+        <div class="form-group">
+          <label for="Value">Valor*</label>
+          <input type="number" class="form-control" formControlName="Transaction_value">       
+        </div>     
+      </div>
+    </div>
+
+      <div class="row" *ngIf="bank.value == 9">
+          <div class="col-md-6">
+              <div class="form-group">
+                <label for="Bank">Banco*</label>
+                <select class="form-control" id="exampleFormControlSelect1" formControlName="Banks_idBanks">
+                    <option *ngFor="let item of banks" value={{item.idBanks}}>{{item.Bank_name}}</option>
+                  </select>
+              </div>
+            </div>  
+        </div>
+
+ 
+    
+    <small id="helpText" class="form-text text-muted">
+      Os campos marcados com * são obrigatórios.
+    </small>
+   
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-lg mr-auto"
+        (click)="activeModal.close('Close click')">Fechar</button>
+      <button class="btn btn-outline-success btn-lg">Criar entrada</button>
+    </div>
+  </form>
+</div>

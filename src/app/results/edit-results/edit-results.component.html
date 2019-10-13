@@ -1,0 +1,57 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+    <h2 class="font-weight-light text-light ml-auto">Editar pauta</h2>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form class="form" [formGroup]="editPauta">
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="Pauta_num">Número de pauta</label>
+                    <input type="text" class="form-control" formControlName="Pauta_num">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="ID_num">Data de pauta</label>
+                    <input type="date" class="form-control" formControlName="Pauta_date">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="Student_num">Hora de inicio</label>
+                    <input type="text" class="form-control" placeholder="Número" formControlName="Begin_time"
+                        #Student_num>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="Student_name">Hora final</label>
+                    <input type="text" class="form-control" formControlName="End_time">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="ID_expire">Razão</label>
+                    <input type="text" class="form-control" formControlName="F_reason">
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-lg mr-auto"
+                (click)="activeModal.close('Close click')">Fechar</button>
+            <button type="submit" class="btn btn-outline-success btn-lg" (click)="getDirtyValues(editPauta)">Guardar</button>
+        </div>
+    </form>
+</div>

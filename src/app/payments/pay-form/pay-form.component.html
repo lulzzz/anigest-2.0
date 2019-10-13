@@ -1,0 +1,199 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+  <h2 class="font-weight-light text-light ml-auto">NOVO PAGAMENTO</h2>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.close('Close click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="payment">
+    <legend class="h3 font-weight-light">Escola</legend>
+    <hr>
+    <div class="row">
+
+   <!--    <div class="col-4">
+        <div class="form-group">
+          <label for="Permit">Alvará*</label>
+          <input type="number" class="form-control">
+        </div>
+      </div> -->
+
+      <div class="col-8">
+        <div class="form-group">
+          <label for="School">Escola*</label>
+          <select class="form-control" formControlName="School">
+            <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <legend class="h3 font-weight-light">Entradas</legend>
+    <hr>
+    <div class="row pb-3">
+      <div class="col-3">
+        <button type="button" class="btn btn-outline-dark btn-block mb-2"(click)="onNav()">Novo</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="arry.length === 0">Eliminar</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="arry.length === 0">Editar</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" (click)="chequeAssociate()">Associar</button>
+        <button type="button" class="btn btn-outline-dark btn-block" [disabled]="arry.length === 0">Remover</button>
+      </div>
+      <div class="col-9">
+        <table class="table table-striped table-borderless table-sm" *ngIf="arry.length">
+          <thead class="thead-light">
+            <tr>
+              <th>Numero</th>
+              <th>Banco</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of arry">
+              <td>{{ item.Transaction_num }}</td>
+              <td>{{ item.Name}}</td>
+              <td>{{ item.Transaction_value }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <legend class="h3 font-weight-light">Exames</legend>
+    <hr>
+    <div class="row pb-3">
+      <div class="col-3">
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" (click)='onNav2()'>Novo</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="exams.length === 0">Eliminar</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="exams.length === 0">Editar</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" (click)="examsAssociate()">Associar</button>
+        <button type="button" class="btn btn-outline-dark btn-block" [disabled]="exams.length === 0">Remover</button>
+      </div>
+      <div class="col-9">
+        <table class="table table-striped table-borderless table-sm" *ngIf="exams.length">
+          <thead class="thead-light">
+            <tr>
+              <th>Candidado</th>
+              <th>Exame</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of exams">
+              <td>{{ item.Student_name}}</td>
+              <td>{{ item.Exam_type_name }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline-info btn-lg mr-auto">Existencias</button>
+      <button type="button" class="btn btn-secondary btn-lg" (click)="activeModal.close('Close click')">Fechar</button>
+      <button type="submit" class="btn btn-outline-success btn-lg" (click)="activeModal.close('Close click');onSubmit()">Criar pagamento</button>
+    </div>
+  </form>
+</div>
+
+<ng-template #notificationModal let-notificationModal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title font-weight-light text-light">Associar entradas</h4>
+    <button type="button" class="close" aria-label="Close" (click)="resetCheques(); notificationModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="form">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Número</th>
+                <th scope="col">Meio do pagamento</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr formArrayName="orders" *ngFor="let order of form.controls.orders.controls; let i = index">
+                <td><input type="checkbox" [formControlName]="i"> {{ helporders[i].Transaction_num }} </td>
+                <td>{{ helporders[i].Name }}</td>
+                <td>{{ helporders[i].Transaction_value }} €</td>
+              </tr>
+            </tbody>
+          </table>
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger mr-auto" focus="true"
+          (click)="resetCheques(); notificationModal.dismiss('Cancel click')">Fechar</button>
+        <button class="btn btn-outline-success" focus="true"
+          (click)="notificationModal.dismiss('Ok click'); submitChecks()">Ok</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #paymentsModal let-paymentsModal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title font-weight-light text-light">Associar exames</h4>
+    <button type="button" class="close" aria-label="Close" (click)="resetExams(); paymentsModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="exames">
+      <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Nº</th>
+              <th scope="col">Candidato</th>
+              <th scope="col">Exame</th>
+              <th scope="col">Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr formArrayName="orders2" *ngFor="let order of exames.controls.orders2.controls; let i = index">
+              <td><input type="checkbox" [formControlName]="i">{{ yorders[i].Student_num }}</td>
+              <td>{{ yorders[i].Student_name }}</td>
+              <td>{{ yorders[i].Exam_type_name }}</td>
+              <td>{{ yorders[i].Timeslot_date | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger mr-auto" focus="true"
+          (click)="resetExams(); paymentsModal.dismiss('Cancel click')">Fechar</button>
+        <button class="btn btn-outline-success" focus="true"
+          (click)="paymentsModal.dismiss('Ok click'); submitExams()">Ok</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- 
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Associar cheques</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form">
+          <legend>Associar cheques</legend>
+          <div class="row">
+            <div class="col-3">
+            <label formArrayName="orders" *ngFor="let order of form.controls.orders.controls; let i = index" >
+              <input type="checkbox" [formControlName]="i">
+              {{orders[i].name}}
+            </label>
+            </div>
+          </div>
+         
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-lg mr-auto" data-dismiss="modal">Fechar</button>
+          <button type="submit" class="btn btn-outline-success btn-lg" (click)="submit()" data-dismiss="modal">OK</button>
+        </div>
+        </form>
+    </div>
+  </div>
+</div>
+</div> -->

@@ -1,0 +1,9 @@
+.btn {
+    margin-right: 7px;
+}
+
+.nav > .nav-item > .btn {
+    margin:0px 3px 0px;
+    padding:5px;
+   
+}

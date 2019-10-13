@@ -1,0 +1,27 @@
+<div class="container">
+<div class="row pt-5">
+  <div class="col-md-5 mx-auto">
+    <div class="card rounded">
+      <h4 class="card-header font-weight-light text-light" style="background-color: rgb(52, 58, 64)">LOGIN</h4>
+      <div class="card-body">
+        <form class="form" [formGroup]="loginForm">
+          <div class="form-group">
+            <label for="user">Nome de operador</label>
+            <input type="text" class="form-control" formControlName="user">
+          </div>
+          <div class="form-group">
+            <label for="password">Palavra-passe</label>
+            <input type="password" formControlName="password" class="form-control">
+          </div>
+        </form>
+
+        <div class="alert alert-danger text-center" *ngIf="errorMsg" role="alert">{{ errorMsg }}</div>
+
+      </div>
+      <div class="card-footer">
+        <button (click)="loginUser()" type="button" class="btn btn-outline-success btn-lg btn-block">Login</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

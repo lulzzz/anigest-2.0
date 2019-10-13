@@ -1,0 +1,71 @@
+<div class="container-fluid">
+  <div class="row p-3">
+    <div class="col-sm-10 bg-light border rounded-lg">
+        <h2  class="font-weight-light">Direcção de Serviços de Viação e Transportes Terrestres</h2>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Número</th>
+              <th scope="col">Direção de Serviços de Viação</th>
+              <th scope="col">Abreviatura</th>
+              <th scope="col">DSVs autorizadas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of dsv; let i = index" (click)="setClickedRow(item)"
+              [class.active]="item == selectedRow" style="cursor:pointer">
+              <td>{{item.Delegation_num}}</td>
+              <td>{{item.Delegation_name}}</td>
+              <td>{{item.Delegation_short}}</td>
+              <td>{{item.ki}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-sm-2" *ngIf="subject.includes('PATCH_Parameters')">
+      <div>
+        <button type="button" class="btn btn-secondary btn-block mb-3" (click)="open(content)">Novo</button>
+        <button type="button" class="btn btn-secondary btn-block mb-3" [disabled]="!selectedRow" (click)="editDSV(content)">Editar</button>
+        <button type="button" class="btn btn-secondary btn-block" [disabled]="!selectedRow"
+          (click)="deleteDSV(selectedRow.idDelegation)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 *ngIf="!editState" class="modal-title" id="modal-basic-title">Novo DSV</h4>
+    <h4 *ngIf="editState" class="modal-title" id="modal-basic-title">Editar DSV</h4>
+    <button type="button" class="close" aria-label="Close" (click)="resetModal(); modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="dsvForm">
+      <div class="form-group">
+        <label for="id">Número</label>
+        <input type="text" class="form-control" formControlName="Delegation_num">
+      </div>
+      <div class="form-group">
+        <label for="id">Direção de Serviços de Viação</label>
+        <input type="text" class="form-control" formControlName="Delegation_name">
+      </div>
+      <div class="form-group">
+        <label for="id">Abreviatura</label>
+        <input type="text" class="form-control" formControlName="Delegation_short">
+      </div>
+  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="resetModal(); modal.close('Save click')">Fechar</button>
+          <button *ngIf="!editState" type="button" class="btn btn-outline-success" (click)="onSubmit(); resetModal(); modal.close('Save click')">Criar</button>
+          <button *ngIf="editState" type="button" class="btn btn-outline-success" (click)="saveChanges(dsvForm); resetModal(); modal.close('Save click')">Guardar</button>
+      </div>
+
+    </form>
+  </div>
+
+</ng-template>

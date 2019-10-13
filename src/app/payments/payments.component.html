@@ -1,0 +1,578 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Tesouraria</li>
+    <form class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGet()">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
+        #param1>
+        <option value="userId">Com fatura</option>
+        <option value="Student_license">Sem fatura</option>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa
+        avançada</button>
+    </form>
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="addPayments()"><i class="fas fa-plus"></i>
+        Novo</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" disabled><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button *ngIf="subject.includes('POST_Tax')" type="button" class="btn btn-light" data-toggle="modal" (click)="openTaxas(taxas)"><i
+          class="fas fa-money-check"></i>
+        Taxas</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" data-toggle="modal" data-target="#invoiceModal"><i
+          class="fas fa-file-invoice-dollar"></i>
+        Faturar</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openModal(listagens)" disabled><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="results.length">
+      <div class="row">
+        <div class="col">
+          <h3 class="font-weight-light">Resultados da pesquisa </h3>
+        </div>
+        <div class="col">
+          <h5 class="float-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span>
+            resultados foram encontrados</h5>
+        </div>
+      </div>
+      <table class="table table-hover table-sm bg-light">
+        <thead>
+          <tr>
+            <th scope="col">Data</th>
+            <th scope="col">Alvará</th>
+            <th scope="col">Escola</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let result of results | slice: pageSize | slice: 0:itemsPerPage"
+            (click)="openCard(result.idPayment); onShow()">
+            <td>{{ result.Payment_date | date:'short' }}</td>
+            <td>{{ result.Permit }}</td>
+            <td>{{ result.school_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="results.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"
+        (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false"
+        [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+    <div class="col-md" *ngIf="show">
+      <div class="card pb-3">
+        <div class="card-header" style="background-color: rgb(52, 58, 64)">
+          <div class="row">
+            <div class="col-7">
+              <h4 class="text-light font-weight-light">Pagamento</h4>
+            </div>
+            <div class="col-5">
+              <button type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <button type="button" class="btn btn-outline-light float-right ml-2" (click)="singleInvoice()">Faturar</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title font-weight-light">Informaçoes</h5>
+
+          <table class="table" *ngFor="let item of generalInfo">
+            <tr>
+              <th scope="col">Data</th>
+              <td>{{ item.Payment_date | date:'short'}}</td>
+
+            </tr>
+            <!--             <tr>
+              <th scope="col">Valor</th>
+              <td>{{ hello }} €</td>
+            </tr> -->
+          </table>
+
+          <legend>Entradas</legend>
+          <table class="table">
+
+            <tr>
+              <th scope="col">Numero</th>
+              <th scope="col">Meio do pagamento</th>
+              <th scope="col">Valor</th>
+            </tr>
+            <tr *ngFor="let item of transactionInfo">
+              <td>{{ item.Transaction_num}}</td>
+              <td>{{ item.Name }}</td>
+              <td>{{ item.Transaction_value }}</td>
+            </tr>
+          </table>
+          <legend>Exames</legend>
+          <table class="table">
+            <tr>
+              <th scope="col">Candidato</th>
+              <th scope="col">Tipo do exame</th>
+              <th scope="col">Valor</th>
+            </tr>
+            <tr *ngFor="let item of examInfo">
+              <td>{{ item.Student_name}}</td>
+              <td>{{ item.Exam_type_name }}</td>
+              <td>{{ item.Exam_price}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="pagamentos-tab" data-toggle="tab" href="#pagamentos" role="tab"
+          aria-controls="pagamentos" aria-selected="true" style="color:black">Pagamentos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="entradas-tab" data-toggle="tab" href="#entradas" role="tab" aria-controls="entradas"
+          aria-selected="false" style="color:black">Entradas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="faturas-tab" data-toggle="tab" href="#faturas" role="tab" aria-controls="faturas"
+          aria-selected="false" style="color:black">Faturas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="taxas-tab" data-toggle="tab" href="#taxas" role="tab" aria-controls="taxas"
+          aria-selected="false" style="color:black">Taxas</a>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+
+      <div class="tab-pane fade show active" id="pagamentos" role="tabpanel" aria-labelledby="pagamentos-tab">
+        <form>
+          <br>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="dropdown">Pesquisa...</label>
+                <select class="form-control" #criteria>
+                  <option value="all">Todos os critérios</option>
+                  <option value="numero">Com/sem fatura</option>
+                  <option value="alvara">Por data e alvará</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Transaction_num">Data</label>
+                <input type="number" class="form-control">
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="Permit">Fatura/Recibo</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Payment_method">Alvará</label>
+                <input type="number" class="form-control">
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="school_name">Escola</label>
+                <input type="date" class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark"
+              (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+            <button type="button" class="btn btn-outline-success"
+              (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="faturas" role="tabpanel" aria-labelledby="faturas-tab">
+
+        <form>
+          <br>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="dropdown">Pesquisa...</label>
+                <select class="form-control" #criteria>
+                  <option value="all">Todos os critérios</option>
+                  <option value="numero">Todas as faturas/recibos</option>
+                  <option value="alvara">Por alvará ou escola</option>
+                  <option value="alvara">Extractos por data e alvará</option>
+                  <option value="alvara">SAF-T</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Transaction_num">Número</label>
+                <input type="number" class="form-control" #Transaction_num>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="Bank">Data</label>
+                <input type="text" class="form-control" #Bank>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Permit">Alvará</label>
+                <input type="text" class="form-control" #Permit>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="School_name">Escola</label>
+                <input type="text" class="form-control" #School_name>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Payment_method">Total</label>
+                <input type="number" class="form-control" #Payment_method>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="school_name">Meio do pagamento</label>
+                <input type="date" class="form-control" #school_name>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="payment_date">Serie</label>
+                <input type="date" class="form-control" #payment_date>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="value">Nº contribuinte</label>
+                <input type="text" class="form-control" #value>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="custom-control custom-checkbox form-group">
+            <input type="checkbox" class="custom-control-input form-control" id="hasPayment">
+            <label class="custom-control-label" for="hasPayment">Enviar fatura-recibo por email</label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark"
+              (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+            <button type="button" class="btn btn-outline-success"
+              (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="entradas" role="tabpanel" aria-labelledby="entradas-tab">
+
+        <form [formGroup]="asEntradas">
+          <br>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="dropdown">Pesquisa...</label>
+                <select class="form-control" #criteria>
+                  <option value="all">Todos os critérios</option>
+                  <option value="numero">Com/sem fatura</option>
+                  <option value="alvara">Pagamentos por data e alvará</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Transaction_num">Número de entrada</label>
+                <input type="number" class="form-control" formControlName="Transaction_num" #Transaction_num>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="Bank">Banco</label>
+                <input type="text" class="form-control" formControlName="Banks_idBanks" #Bank>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Payment_method">Meio do pagamento</label>
+                <input type="number" class="form-control" formControlName="Payment_method_idPayment_method"
+                  #Payment_method>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="school_name">Data de recepção</label>
+                <input type="date" class="form-control" formControlName="Transaction_date" #school_name>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="payment_date">Data de pagamento</label>
+                <input type="date" class="form-control" formControlName="Payment_date" #payment_date>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="value">Valor</label>
+                <input type="text" class="form-control" formControlName="Total_value" #value>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="check_status">Status</label>
+                <input type="text" class="form-control" formControlName="T_Status_check_idT_Status_check" #check_status>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="deposit_date">Data do depósito</label>
+                <input type="date" class="form-control" formControlName="Check_date" #deposit_date>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Permit">Alvará</label>
+                <input type="text" class="form-control" formControlName="Permit" #Permit>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="School_name">Escola</label>
+                <input type="text" class="form-control" formControlName="School_name" #School_name>
+              </div>
+            </div>
+          </div>
+
+          <div class="custom-control custom-checkbox form-group">
+            <input type="checkbox" class="custom-control-input form-control" id="hasPayment">
+            <label class="custom-control-label" for="hasPayment">Tem Pagamento</label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark"
+              (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+            <button type="button" class="btn btn-outline-success"
+              (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="taxas" role="tabpanel" aria-labelledby="taxas-tab">
+
+        <form>
+          <br>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Transaction_num">Número</label>
+                <input type="number" class="form-control">
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="Bank">Data</label>
+                <input type="data" class="form-control">
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="Permit">Alvará</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="School_name">Cabecalho</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark"
+              (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+            <button type="button" class="btn btn-outline-success"
+              (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #listagens let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Listagens</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Lista de pautas anuladas</option>
+              <option value="numero">Pauta anulada</option>
+              <option value="numero">Pautas cum atribucao manual de examinadores</option>
+              <option value="numero">Pautas por examinador</option>
+              <option value="numero">Listagem discriminada de pautas</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #taxas let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Nova taxa</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="taxasForm">
+      <p>Alunos sem resultado ou que aprovaram no exame pratico. Marque os que pagaram a taxa:</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Seleção</th>
+            <th scope="col">Número</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Categoria</th>
+            <th scope="col">Alvará</th>
+            <th scope="col">Meio do pagamento</th>
+            <th scope="col">Fatura em nome da escola</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr formArrayName="taxasF" *ngFor="let tax of taxasForm.controls.taxasF.controls; let i = index">
+            <td><input type="checkbox" [formControlName]="i"></td>
+            <td>{{ yorders[i].Student_num }} </td>
+            <td>{{ yorders[i].Student_name}} </td>
+            <td>{{ yorders[i].Category }} </td>
+            <td>{{ yorders[i].Permit }} </td>
+            <td> Payment method </td>
+            <td><input type="checkbox" [formControlName]="i"></td>
+
+
+          </tr>
+        </tbody>
+      </table>
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger mr-auto" focus="true"
+          (click)="resetCheques(); notificationModal.dismiss('Cancel click')">Fechar</button>
+        <button class="btn btn-outline-success" focus="true"
+          (click)="notificationModal.dismiss('Ok click'); submitChecks()">Ok</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+<div class="modal fade" id="invoiceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Facturação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja faturar automaticamente?</p>
+        <p>Se responder não, irá faturar manualmente. </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-primary" (click)="invoice()" data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>

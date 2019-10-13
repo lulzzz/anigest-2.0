@@ -1,0 +1,380 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Candidatos</li>
+
+    <form *ngIf="subject.includes('GET_Student')" class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGetStudent(param1.value, param2.value)">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
+        #param1>
+        <option value="Student_num">Numero</option>
+        <option value="Student_name">Nome</option>
+        <option value="ID_num">Número do BI</option>
+        <option value="Tax_num">Número contribuinte</option>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa avançada
+      </button>
+    </form>
+
+    <li class="nav-item">
+    <!--   <button type="button" *ngIf="subject.includes('POST_Student')" class="btn btn-light" (click)="showAdd()"><i
+          class="fas fa-user-plus"></i>
+        Novo</button> -->
+
+        <button type="button" class="btn btn-light" (click)="showAdd()"><i
+          class="fas fa-user-plus"></i>
+        Novo</button>
+    </li>
+
+    <!--   <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li> -->
+
+    <!--  <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="far fa-sticky-note"></i>
+        Notas</button>
+    </li> -->
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openModal(listagens)" disabled><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="students.length">
+      <div class="row">
+        <div class="col">
+          <h3 class="font-weight-light">Resultados da pesquisa </h3>
+        </div>
+        <div class="col">
+          <h5 class="float-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span>
+            resultados foram encontrados</h5>
+        </div>
+      </div>
+      <table class="table table-hover table-sm bg-light">
+        <thead>
+          <tr>
+            <th scope="col">Número</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Alvará</th>
+            <th scope="col">Escola</th>
+          </tr>
+        </thead>
+        <tbody style="cursor:pointer">
+          <tr *ngFor="let student of students | slice: pageSize | slice: 0:itemsPerPage"
+            (click)="openCard(student.idStudent); onShow()">
+            <td>{{ student.Student_num }}</td>
+            <td>{{ student.Student_name }}</td>
+            <td>{{ student.Permit }}</td>
+            <td>{{ student.School_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="students.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"
+        (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false"
+        [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+
+    <div class="col-md" *ngIf="show && selectedStudent" id="current-pane">
+      <div class="card" id="results">
+        <div class="card-header" style="background-color: rgb(52, 58, 64)">
+          <div class="row">
+            <div class="col-7">
+              <h4 class="text-light font-weight-light"> {{ selectedStudent[0].Student_name }}</h4>
+            </div>
+            <div class="col-5">
+              <button type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <button type="button" class="btn btn-outline-light float-right ml-2" (click)="savePDF()">Imprimir</button>
+              <button type="button" class="btn btn-outline-light float-right"
+                (click)="onNotes(selectedStudent.idStudent)">Notas</button>
+            </div>
+          </div>
+        </div>
+        <!--         <h4 class="card-header text-light font-weight-light wrap-text" style="background-color: rgb(52, 58, 64)">
+          {{ selectedStudent[0].Student_name }} <button type="button" class="close float-right" (click)="onHide()"
+            aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="btn btn-outline-light float-right ml-2" (click)="savePDF()">Imprimir</button>
+          <button type="button" class="btn btn-outline-light float-right"
+            (click)="onNotes(selectedStudent.idStudent)">Notas</button></h4> -->
+        <div class="card-body">
+          <p *ngFor="let subItem of selectedStudent['Notes']"> {{subItem.Note}} </p>
+          <h5 class="card-title font-weight-light">Informações</h5>
+          <table class="table">
+            <tr>
+              <th scope="row">Número:</th>
+              <td>{{ selectedStudent[0].Student_num }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Nome:</th>
+              <td>{{ selectedStudent[0].Student_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Número do BI:</th>
+              <td>{{ selectedStudent[0].ID_num }} - {{ selectedStudent[0].ID_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Validade do BI:</th>
+              <td>{{ selectedStudent[0].ID_expire_date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Data de Nascimento:</th>
+              <td>{{ selectedStudent[0].Birth_date  | date: 'dd/MM/yyyy' }} {{ age }} anos</td>
+            </tr>
+            <tr>
+              <th scope="row">Escola:</th>
+              <td>{{ selectedStudent[0].permit }} - {{ selectedStudent[0].School_name}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Licença:</th>
+              <td>{{ selectedStudent[0].Student_license }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Validade da Licença:</th>
+              <td>{{ selectedStudent[0].Expiration_date  | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Número contribuinte:</th>
+              <td>{{ selectedStudent[0].Tax_num}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Número da Carta:</th>
+              <td>{{ selectedStudent[0].Drive_license_num}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Observações:</th>
+              <td>{{ selectedStudent[0].Obs}}</td>
+            </tr>
+          </table>
+
+          <div class="p-1 mb-2 bg-dark text-white">Exam type</div>
+          <table class="table">
+            <tr>
+              <td scope="row">Status/Hora</td>
+              <td scope="row">Operador</td>
+              <td scope="row">Status</td>
+              <td scope="row">Marcação</td>
+              <td scope="row">Resultado</td>
+              <td scope="row">Obs</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-footer">
+<!--           <button type="button" *ngIf="subject.includes('DELETE_Student')" class="btn btn-danger" data-toggle="modal"
+            data-target="#exampleModal">Eliminar</button>
+          <button type="button" *ngIf="subject.includes('PATCH_Student')" class="btn btn-success text-white float-right"
+            (click)="onNav()">Editar</button> -->
+
+            <button *ngIf="subject.includes('PATCH_Student')" type="button" class="btn btn-danger" data-toggle="modal"
+            data-target="#exampleModal">Eliminar</button>
+          <button  *ngIf="subject.includes('PATCH_Student')" type="button" class="btn btn-success text-white float-right"
+            (click)="onNav()">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="advancedSearch">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Todos os critérios</option>
+              <option value="numero">Por numero ou nome completo</option>
+              <option value="alvara">Por alvara ou escola</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4" *ngIf="criteria.value == 'numero' || criteria.value == 'all'">
+          <div class="form-group">
+            <label for="number">Número</label>
+            <input type="text" class="form-control" formControlName="Student_num" #number>
+          </div>
+        </div>
+        <div class="col-sm-8">
+          <div class="form-group">
+            <label for="name">Nome completo</label>
+            <input type="text" class="form-control" formControlName="Student_name" #name>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="id_type">Documento de Identificação</label>
+            <select class="form-control" formControlName="T_ID_type_idT_ID_type">
+              <option *ngFor="let idType of idTypes" [ngValue]='idType.idT_ID_type'>{{idType.ID_name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="birth_date">Data de Nascimento</label>
+            <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control" formControlName="Birth_date"
+              #birth_date>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="id">Número do BI</label>
+            <input type="text" class="form-control" formControlName="ID_num" #id>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="id_expiration">Validade do BI</label>
+            <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control"
+              formControlName="ID_expire_date" #id_expiration>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'alvara' || criteria.value == 'all'">
+          <div class="form-group">
+            <label for="school">Escola</label>
+            <select class="form-control" formControlName="School_idSchool" #school>
+              <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'alvara'">
+          <div class="form-group">
+            <label for="category">Alvará</label>
+            <input type="number" class="form-control" formControlName="Permit">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'numero' || criteria.value == 'all'">
+          <div class="form-group">
+            <label for="fiscal_number">Número contribuinte</label>
+            <input type="text" class="form-control" formControlName="Tax_num" #fiscal_number>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="category">Categoria</label>
+            <select class="form-control" formControlName="Type_category_idType_category">
+              <option *ngFor="let category of categories" value={{category.idType_category}}>{{category.Category}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="license">Número da Licença</label>
+            <input type="text" class="form-control" formControlName="Student_license" #license>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="license_expiration">Validade da Licença</label>
+            <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control"
+              formControlName="Expiration_date" #license_expiration>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="existing_license_num">Número da Carta</label>
+            <input type="text" class="form-control" formControlName="Drive_license_num" #existing_license>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #listagens let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Listagens</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="numero">Alunos com exame pratico por realizar</option>
+              <option value="alvara">Notas de alunos</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header btn-danger">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="far fa-trash-alt"></i> Eliminar candidato</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Tem a certeza que deseja eliminar o candidato selecionado?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary float-left" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger" aria-label="Close"
+          (click)="deleteStudent(selectedStudent[0].idStudent); onHide()" data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>

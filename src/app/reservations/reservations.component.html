@@ -1,0 +1,253 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Reservas</li>
+    <form *ngIf="subject.includes('GET_Reservation')" class="form-inline mr-auto" [formGroup]="searchForm"
+      (ngSubmit)="onGetReservation(param1.value, param2.value)">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
+        #param1>
+        <option value="name">Nome do candidato</option>
+        <option value="id_num">Número do BI</option>
+        <option value="permit">Alvará</option>
+        <option value="getAllReservations">Todas</option>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa avançada
+      </button>
+    </form>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="getHorario()"><i
+          class="fas fa-calendar-alt"></i>
+        Horario</button>
+    </li>
+
+    <li class="nav-item">
+        <button type="button" class="btn btn-light" (click)="pendingRes()"><i class="fas fa-clipboard-list"></i>
+         Pendentes</button>
+      </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" disabled><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+
+ <router-outlet></router-outlet> 
+
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="exams.length">
+      <div class="row">
+        <div class="col">
+          <h3 class="font-weight-light">Resultados da pesquisa </h3>
+        </div>
+        <div class="col">
+          <h5 class="float-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span>
+            resultados foram encontrados</h5>
+        </div>
+      </div>
+      <table class="table table-hover table-sm bg-white">
+        <thead>
+          <tr>
+            <th scope="col">Número</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Tipo de exame</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let exam of exams | slice: pageSize | slice: 0:itemsPerPage" (click)="openCard(exam.idReservation); onShow()">
+            <td>{{ exam.idReservation }}</td>
+            <td>{{ exam.Student_name }}</td>
+            <td>{{ exam.Exam_type_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="exams.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"
+        (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false"
+        [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+    <div class="col-md" *ngIf="show">
+      <div class="card">
+        <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Reserva<button
+            type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <button type="button" class="btn btn-success float-right"
+            (click)="validateRes(selectedReservation[0].idReservation)">Validar <i class="fas fa-check"></i></button></h4>
+        <div class="card-body">
+          <h5 class="card-title font-weight-light">Informaçoes</h5>
+          <table class="table">
+             <tr>
+              <th scope="row">Candidato:</th>
+              <td>{{ selectedReservation[0].Student_name }}</td> 
+            </tr> 
+            <tr>
+              <th scope="row">Número do BI:</th>
+              <td>{{ selectedReservation[0].ID_num }} {{ selectedReservation[0].ID_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Validade do BI:</th>
+              <td>{{ selectedReservation[0].ID_expire_date | date: 'dd/MM/yyyy' }} </td>
+            </tr>
+            <tr>
+              <th scope="row">Data de nascimento:</th>
+              <td>{{ selectedReservation[0].Birth_date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Escola:</th>
+              <td>{{ selectedReservation[0].School_Permit }} - {{ selectedReservation[0].School_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Número da licença:</th>
+              <td>{{ selectedReservation[0].Student_license}} </td>
+            </tr>
+            <tr>
+              <th scope="row">Validade da licença:</th>
+              <td>{{ selectedReservation[0].Student_license_Expiration_date | date: 'dd/MM/yyyy'}} </td>
+            </tr>
+            <tr>
+              <th scope="row">Número contribuinte:</th>
+              <td>{{ selectedReservation[0].Tax_num }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Tipo de exame:</th>
+              <td>{{ selectedReservation[0].Exam_type_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Duração:</th>
+              <td>{{ selectedReservation[0].Duration }}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-footer">
+          <button *ngIf="subject.includes('PATCH_Reservation')" type="button" class="btn btn-danger" data-toggle="modal"
+            data-target="#deletionModal">Cancelar</button>
+          <button *ngIf="subject.includes('PATCH_Reservation')" type="button" class="btn btn-success text-white float-right" (click)="onEdit()">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="advancedSearch">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="name">Nome completo</label>
+            <input type="text" class="form-control" formControlName="Student_name" #name>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="id">Número do BI</label>
+            <input type="text" class="form-control" formControlName="ID_num" #id>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="fiscal_number">Número contribuinte</label>
+            <input type="text" class="form-control" formControlName="Tax_num" #fiscal_number>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="category">Categoria</label>
+            <select class="form-control" formControlName="Type_category_idType_category">
+              <option *ngFor="let category of categories" value={{category.idType_category}}>{{category.Category}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="school">Escola</label>
+            <select class="form-control" formControlName="School_idSchool" #school>
+              <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="category">Alvará</label>
+            <input type="number" class="form-control" formControlName="Permit">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Timeslot_date">Data</label>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="date" class="form-control mr-1" formControlName="Timeslot_date1">
+              </div>
+              <div class="col-6">
+                <input type="date" class="form-control" formControlName="Timeslot_date2">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="category">Status</label>
+            <select class="form-control" formControlName="T_exam_status_idexam_status" #school>
+              <option *ngFor="let item of status" value={{item.idexam_status}}>{{item.Status}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Aviso</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja cancelar a reserva selecionada?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger float-right"
+          (click)="cancelReservation(selectedReservation.idReservation)" data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>

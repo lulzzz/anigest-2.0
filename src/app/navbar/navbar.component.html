@@ -1,0 +1,170 @@
+<nav class="navbar navbar-expand-xl navbar-light bg-dark" style="padding: 0 0 0 1em">
+  <a class="navbar-brand" href="/"><img src="/assets/logo_sm.png" class="rounded float-right" alt="ANIECA"></a> 
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item dropdown" *ngIf="subject.includes('ALL_Booked')">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false"><i class="fas fa-grip-vertical fa-2x" style="vertical-align: middle;"></i>
+          <br> Outras
+        </a>
+        <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" >
+      <li class="dropdown-submenu">
+        <a class="dropdown-item" tabindex="-1">Ficheiro</a>
+        <ul class="dropdown-menu  dropdown-menu-left bg-dark">
+          <a class="dropdown-item" routerLink="/schools">Escolas</a>
+          <a class="dropdown-item" routerLink="/student">Candidatos</a>
+          <a class="dropdown-item" routerLink="/operators">Operadores</a>
+        </ul>
+      </li>
+
+      <li class="dropdown-submenu">
+        <a class="dropdown-item" tabindex="-1" href="#">Ferramentas</a>
+        <ul class="dropdown-menu bg-dark">
+          <a class="dropdown-item" href="#">Enviar marcações</a>
+          <a class="dropdown-item" href="#">Enviar resultados</a>
+          <a class="dropdown-item" href="#">Enviar emissão de cartas</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Enviar marcações por email</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Processar pagamentos por Multibanco</a>
+          <a class="dropdown-item" href="#">Consultar relatorios de pagamentos por Multibanco</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Criar o ficheiro anual de resultados teoricos</a>
+          <a class="dropdown-item" href="#">Criar o ficheiro mensal das provas practicas</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#exampleModal">Criar o ficheiro SAF-T</a>
+          <a class="dropdown-item" (click)="openIMT()">Validar o ficheiro SAF-T</a>
+          <a class="dropdown-item" (click)="openIMT()">Enviar o ficheiro SAF-T para o eFatura</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Corrigir categorias das licencas de aprendizagem</a>
+        </ul>
+      </li>
+
+      <li class="dropdown-submenu">
+        <a class="dropdown-item" tabindex="-1" href="#">Listagens</a>
+        <ul class="dropdown-menu bg-dark">
+          <a class="dropdown-item" href="#">Marcações</a>
+          <a class="dropdown-item" href="#">Pautas</a>
+          <a class="dropdown-item" href="#">Examinadores</a>
+          <a class="dropdown-item" href="#">Cheques</a>
+          <a class="dropdown-item" href="#">Pagamentos</a>
+          <a class="dropdown-item" href="#">Faturas</a>
+          <a class="dropdown-item" href="#">Taxas</a>
+          <a class="dropdown-item" href="#">Escolas</a>
+          <a class="dropdown-item" href="#">Alunos</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Folha de caixa</a>
+          <a class="dropdown-item" href="#">Relatorio de alteracoes</a>
+        </ul>
+      </li>
+
+      <li class="dropdown-submenu">
+        <a class="dropdown-item" tabindex="-1" href="#">Estatisticas</a>
+        <ul class="dropdown-menu bg-dark">
+          <a class="dropdown-item" href="#">Exames efectuados</a>
+          <a class="dropdown-item" href="#">Resultados por escola</a>
+          <a class="dropdown-item" href="#">Resultados por examinador</a>
+          <a class="dropdown-item" href="#">Resultados de examinadores por escola e tipo de exame</a>
+          <a class="dropdown-item" href="#">Resultados de examindadores por tipo de exame e escola</a>
+          <a class="dropdown-item" href="#">Resumo de exames por tipo</a>
+          <li class="dropdown-submenu">
+            <a class="dropdown-item" tabindex="-1" href="#">Aprovacoes a primeira tentativa</a>
+            <ul class="dropdown-menu bg-dark">
+              <a class="dropdown-item" href="#">Global</a>
+              <a class="dropdown-item" href="#">Por direcao</a>
+              <a class="dropdown-item" href="#">Por escola</a>
+            </ul>
+          </li>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Analise ABC de clientes por escola</a>
+          <a class="dropdown-item" href="#">Analise ABC de clientes por no de contribuente</a>
+          <a class="dropdown-item" href="#">Relatorio de proveitos com acumulado</a>
+          <a class="dropdown-item" href="#">Relatorio de proveitos</a>
+        </ul>
+      </li>
+
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" routerLink="/parameters">Parâmetros</a>
+      <a class="dropdown-item" routerLink="/configurations">Configurações centros de exame</a>
+      <a class="dropdown-item" href="#">Ajuda</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" style="cursor:pointer" (click)="auth.logoutUser()">Sair</a>
+  </div>
+  </li>
+
+  <li class="nav-item">
+      <a class="nav-link" routerLink="/reservations" role="button" aria-expanded="false" aria-controls="collapseExample"><i
+          class="fas fa-tasks fa-2x"></i>
+        <br>Reservas</a>
+  </li>
+
+  <li class="nav-item" *ngIf="subject.includes('ALL_Booked')">
+    <a class="nav-link" routerLink="/bookings" role="button" aria-expanded="false" aria-controls="collapseExample"><i
+        class="far fa-calendar-check fa-2x"></i>
+      <br>Marcações</a>
+  </li>
+  <li class="nav-item" *ngIf="subject.includes('ALL_Exam')">
+    <a class="nav-link" routerLink="/exams" role="button" aria-expanded="false" aria-controls="collapseExample"><i
+        class="far fa-id-card fa-2x"></i>
+      <br>Exames</a>
+  </li>
+
+  <li class="nav-item" *ngIf="subject.includes('ALL_Pauta')">
+    <a class="nav-link" routerLink="/results" role="button"><i class="far fa-clipboard fa-2x"></i>
+      <br>Pautas</a>
+  </li>
+  <li class="nav-item" *ngIf="subject.includes('ALL_Examiner')">
+    <a class="nav-link" routerLink="/examiners" role="button"><i class="fas fa-users fa-2x"></i>
+      <br>Examinadores</a>
+  </li>
+  <li class="nav-item" *ngIf="subject.includes('ALL_School')">
+    <a class="nav-link" routerLink="/payments" role="button"><i class="fas fa-hand-holding-usd fa-2x"></i>
+      <br>Tesouraria</a>
+  </li>
+
+  <li class="nav-item" *ngIf="subject.includes('ALL_School')">
+    <a class="nav-link"  routerLink="/SICC"><i class="fas fa-mail-bulk fa-2x"></i>
+      <br>Ficheiros</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" style="cursor:pointer" (click)="auth.logoutUser()"><i class="fas fa-sign-out-alt fa-2x"></i>
+      <br>Sair</a>
+  </li>
+
+  </ul>
+  </div>
+</nav>
+<div class="danger"></div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Criar o ficheiro SAF-T</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="saft">
+              <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <input  type="number" class="form-control" formControlName="month" placeholder="Mês" #month>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <input type="number" class="form-control" formControlName="year"  placeholder="Ano" #year>
+                  </div>
+                </div>
+          </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          <button type="submit" class="btn btn-primary" (click)="submitSAFT(year.value, month.value)" data-dismiss="modal">Submeter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>

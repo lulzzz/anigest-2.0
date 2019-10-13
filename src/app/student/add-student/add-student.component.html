@@ -1,0 +1,133 @@
+<div class="modal-header bg-secondary">
+  <h2 class="font-weight-light text-light ml-auto">NOVO CANDIDATO</h2>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="angForm"
+    (ngSubmit)="addStudent(number.value, name.value, id_type.value, birth_date.value, id.value, id_expiration.value, school.value, category.value, license.value, license_expiration.value, fiscal_number.value, existing_license.value, observations.value)">
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <label for="number">Número*</label>
+          <input type="number" class="form-control" formControlName="number" #number [ngClass]="{'is-invalid': angForm.get('number').touched && angForm.get('number').invalid}">
+          <div class="invalid-feedback">
+            <div>Number is required</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-8">
+        <div class="form-group">
+          <label for="name">Nome*</label>
+          <input type="text" class="form-control" formControlName="name" #name>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="id_type">Documento de Identificação*</label>
+          <select class="form-control" formControlName="id_type" #id_type>
+            <option *ngFor="let idType of idTypes" value={{idType.idT_ID_type}}>{{idType.ID_name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="birth_date">Data de Nascimento*</label>
+          <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control" formControlName="birth_date"
+            #birth_date>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="id">Número do BI*</label>
+          <input type="text" class="form-control" formControlName="id" #id>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="id_expiration">Validade do BI*</label>
+          <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control" formControlName="id_expiration"
+            #id_expiration>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="school">Escola*</label>
+          <select class="form-control" formControlName="school" #school>
+            <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="category">Categoria*</label>
+          <select class="form-control" formControlName="category" #category>
+            <option *ngFor="let category of categories" value={{category.idType_category}}>{{category.Category}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="license">Número da Licença*</label>
+          <input type="text" class="form-control" formControlName="license" #license>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="license_expiration">Validade da Licença*</label>
+          <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control"
+            formControlName="license_expiration" #license_expiration>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="fiscal_number">Número contribuinte</label>
+          <input type="text" class="form-control" formControlName="fiscal_number" #fiscal_number>
+          <div
+            *ngIf="angForm.controls['fiscal_number'].invalid && (angForm.controls['fiscal_number'].dirty || angForm.controls['fiscal_number'].touched)"
+            class="alert alert-danger">
+            <div *ngIf="angForm.controls['fiscal_number'].errors.required">
+              Insira o número contribuinte
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="existing_license_num">Número da Carta</label>
+          <input type="text" class="form-control" formControlName="existing_license" #existing_license>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="observations">Observações</label>
+      <textarea class="form-control" rows="3" formControlName="observations" #observations></textarea>
+      <small id="helpText" class="form-text text-muted">
+        Os campos marcados com * são obrigatórios.
+      </small>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-lg mr-auto"
+        (click)="activeModal.close('Close click')">Fechar</button>
+      <button class="btn btn-outline-success btn-lg">Criar candidato</button>
+    </div>
+  </form>
+</div>

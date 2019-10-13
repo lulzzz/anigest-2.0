@@ -1,0 +1,41 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+    <h3 class="font-weight-light text-light ml-auto">Criar operador</h3>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="registerForm">
+        <div class="form-group">
+            <label for="user">Nome de operador</label>
+            <input formControlName="user" type="text" class="form-control" >
+        </div>
+        <div class="form-group">
+            <label for="password">Palavra-passe</label>
+            <input formControlName="password" type="password" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input formControlName="Email" type="email" class="form-control">
+      </div>
+      <div class="form-group">
+          <label for="school">Centro do exame</label>
+          <select class="form-control" formControlName="Exam_center_idExam_center" #school>
+            <option *ngFor="let center of centers" [ngValue]="center.idExam_center">{{center.Exam_center_name}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+            <label for="role">Tipo de operador</label>
+            <select class="form-control" (ngModelChange)="setNewUser($event)" [ngModel]="roles" name="roles" formControlName="role" >
+              <option *ngFor="let role of roles" [ngValue] ="role">{{role.Role_name}} </option>
+            </select>
+        </div>
+        <div>
+          <p *ngIf="selectedRole">{{ selectedRole.Obs}}</p>
+        </div>
+        <div>
+          <button type="button" class="btn btn-secondary mr-auto" (click)="activeModal.close('Close click')">Fechar</button>
+          <button type="button" class="btn btn-outline-success float-right" (click)="registerUser()" >Registrar</button>
+        </div>
+    </form>
+  </div>

@@ -1,0 +1,157 @@
+<div class="modal-header bg-secondary">
+   <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='edit'">EDITAR ESCOLA</h2>
+    <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='new'">NOVA ESCOLA</h2> 
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="addSchool">
+    <legend class="h3 font-weight-light">Escola</legend>
+    <hr>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Permit">Alvará*</label>
+          <input type="text" class="form-control" formControlName="Permit">
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Associate_num">Nº Associado</label>
+          <input type="text" class="form-control" formControlName="Associate_num">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="School_name">Escola*</label>
+          <input type="text" class="form-control" formControlName="School_name">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Tax_num">Nº Contribuinte*</label>
+          <input type="text" class="form-control" formControlName="Tax_num">
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Address">Morada*</label>
+          <input type="text" class="form-control" formControlName="Address">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+              <label for="Zip_code">Codigo postal*</label>
+              <input type="text" class="form-control" (focusout)="doThis()" formControlName="Zip_code">
+            </div>
+          </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Location">Localidade</label>
+          <input type="text" readonly class="form-control-plaintext" formControlName="Location">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Telephone1">Telefones</label>
+          <input type="text" class="form-control" formControlName="Telephone1">
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Email1">Email</label>
+          <input type="email" class="form-control" formControlName="Email1">
+        </div>
+      </div>
+    </div>
+
+    <legend class="h3 font-weight-light">Facturação</legend>
+    <hr>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Invoice_name">Nome</label>
+          <input type="text" class="form-control" formControlName="Invoice_name">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Invoice_address">Morada</label>
+          <input type="text" class="form-control" formControlName="Invoice_address">
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Invoice_zip_code">Codigo postal</label>
+          <input type="text" class="form-control" (focusout)="doThis2()" formControlName="Invoice_zip_code">
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Invoice_location">Localidade</label>
+          <input type="text"  readonly class="form-control-plaintext" formControlName="Invoice_location">
+        </div>
+      </div>   
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Invoice_tax_number">Nº Contribuinte</label>
+          <input type="text" class="form-control" formControlName="Invoice_tax_number">
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Invoice_email">Email</label>
+          <input type="email" class="form-control" formControlName="Invoice_email">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="Invoice">Direção de Serviços de Viação</label>
+          <select class="form-control" formControlName="Delegation_idDelegation">
+              <option *ngFor="let item of dsv" value={{item.idDelegation}}>{{item.Delegation_name}}</option>
+            </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-control custom-checkbox form-group">
+      <input type="checkbox" class="custom-control-input form-control" formControlName="Send_Invoice_email" id="Send_Invoice_email">
+        <label class="custom-control-label" for="Send_Invoice_email">Eviar Fatura-Recibo por email</label>
+    </div>
+
+    <div class="form-group">
+      <label for="Obs">Observações</label>
+      <textarea class="form-control" rows="3" formControlName="Obs" #Obs></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-lg mr-auto"
+        (click)="activeModal.close('Close click')">Fechar</button>
+      <button class="btn btn-outline-success btn-lg"  *ngIf="action==='edit'" (click)="onEdit(addSchool); activeModal.close('Save click')">Editar escola</button>
+      <button class="btn btn-outline-success btn-lg" *ngIf="action==='new'" (click)="onSubmit()">Criar escola</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,358 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Examinadores</li>
+
+    <div *ngIf="subject.includes('GET_Examiner')" class="btn-toolbar mr-auto" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group btn-group-sm" role="group" aria-label="First group">
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Pesquisar
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item pointer" (click)="onGet()">Todos os examinadores</a>
+            <a class="dropdown-item" (click)="onGetActive()">Examinadores ativos</a>
+          </div>
+        </div>
+      </div>
+      <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Second group">
+        <button class="btn btn-outline-secondary" type="button" (click)="openModal(content)">
+          Pesquisa avançada
+        </button>
+      </div>
+    </div>
+
+
+    <li class="nav-item">
+      <button *ngIf="subject.includes('POST_Examiner')" type="button" class="btn btn-light" (click)="addExaminers('new')"><i class="fas fa-plus"></i>
+        Novo</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="printData()"><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" (click)="openModal(listagens)" class="btn btn-light" disabled><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="examiners.length">
+      <div class="row">
+        <div class="col">
+          <h3 class="font-weight-light">Resultados da pesquisa </h3>
+        </div>
+        <div class="col">
+          <h5 class="float-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span>
+            resultados foram encontrados</h5>
+        </div>
+      </div>
+      <table class="table table-hover table-sm bg-light">
+        <thead>
+          <tr>
+            <th scope="col">Examinador</th>
+            <th scope="col">Número de licença</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let examiner of examiners | slice: pageSize | slice: 0:itemsPerPage"
+            (click)="openCard(examiner); onShow()">
+            <td>{{ examiner.Examiner_name }}</td>
+            <td>{{ examiner.License_num}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="examiners.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"
+        (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false"
+        [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+    <div class="col-md" *ngIf="show">
+      <div class="card">
+        <div class="card-header" style="background-color: rgb(52, 58, 64)">
+          <div class="row">
+            <div class="col-7">
+              <h4 class="text-light font-weight-light"> {{ selectedExaminer.Examiner_name }}</h4>
+            </div>
+            <div class="col-5">
+              <button type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <button type="button" class="btn btn-outline-light float-right ml-2" (click)="savePDF()">Imprimir</button>
+              <button type="button" class="btn btn-outline-light float-right" data-toggle="modal"
+                data-target="#changeStatus">Status</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <h5 class="card-title font-weight-light">Informaçoes</h5>
+          <table class="table">
+            <tr>
+              <th scope="row">Número:</th>
+              <td>{{ selectedExaminer.Num}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Nome:</th>
+              <td>{{ selectedExaminer.Examiner_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Licença:</th>
+              <td>{{ selectedExaminer.License_num }}</td>
+            </tr>
+
+            <tr>
+              <th scope="row">Validade:</th>
+              <td>{{ selectedExaminer.License_expiration | date: 'dd/MM/yyyy' }} </td>
+            </tr>
+
+            <tr>
+              <th scope="row">Ativo:</th>
+              <td>{{ selectedExaminer.Active  === 1 ? 'Sim' : 'Não' }} </td>
+            </tr>
+
+            <tr>
+              <th scope="row">Observações:</th>
+              <td>{{ selectedExaminer.Obs}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn btn-success text-white float-right"
+            (click)="editExaminer('edit')" *ngIf="subject.includes('PATCH_Examiner')">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="advancedSearch">
+
+      <div class="form-group">
+        <label for="Num">Número</label>
+        <input type="text" class="form-control" formControlName="Num">
+      </div>
+      <div class="form-group">
+        <label for="Examiner_name">Nome</label>
+        <div class="row">
+          <div class="col">
+            <input type="text" class="form-control" formControlName="Examiner_name">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="License_num">Número da licença</label>
+        <div class="row">
+          <div class="col">
+            <input type="text" class="form-control" formControlName="License_num">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="License_expiration">Validade da licença</label>
+        <div class="row">
+          <div class="col">
+            <input type="date" class="form-control" formControlName="License_expiration">
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-control custom-checkbox form-group">
+        <input type="checkbox" class="custom-control-input form-control" formControlName="Active" id="Active">
+        <label class="custom-control-label" for="Active">Activo</label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #listagens let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Listagens</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetListagem()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="listagensS">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Selecione uma opção</label>
+            <select class="form-control" #criteria>
+              <option value="case1">Carga horária</option>
+              <option value="case2">Horas extraordinárias</option>
+              <option value="case3">Ocupação</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'case1' || criteria.value == 'case2'">
+          <div class="form-group">
+            <label for="Fax1">Examinador</label>
+            <select class="form-control" formControlName="idExaminer" #id_type>
+              <option *ngFor="let examiner of examinersList" value={{examiner.idExaminer}}>{{ examiner.Examiner_name}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Timeslot_date">Data</label>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="date" class="form-control mr-1" formControlName="Timeslot_date1" #Pauta_num>
+              </div>
+              <div class="col-6">
+                <input type="date" class="form-control" formControlName="Timeslot_date2" #Pauta_num>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'case1' || criteria.value == 'case2'">
+          <div class="form-group">
+            <label for="Fax1">Tipo de exame</label>
+            <select class="form-control" formControlName="Exam_type_idExam_type">
+              <option *ngFor="let examType of examTypes" [ngValue]="examType.idExam_type">{{ examType.Category}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'case1'">
+          <div class="form-group">
+            <label for="Timeslot_date">Hora inicial e hora final</label>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="date" class="form-control mr-1" formControlName="Begin_hour">
+              </div>
+              <div class="col-6">
+                <input type="date" class="form-control" formControlName="End_hour">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="resetListagem(); modal.close('Save click')">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(listagensS); modal.close('Save click');">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+<div class="modal fade" id="changeStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Mudar status do examindor</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="changeStatusForm" *ngIf="status">
+          <div class="form-group">
+            <label for="Obs">Por favor, justifique por que você deseja desativar o examinador atual:</label>
+            <textarea class="form-control" id="Obs" formControlName="Obs" rows="3"></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Fechar</button>
+            <button type="submit" class="btn btn-outline-success" data-dismiss="modal"
+              (click)="submitChanges()">Ok</button>
+          </div>
+        </form>
+        <div *ngIf="!status">
+          <p>Tem certeza de que deseja alterar o status do examinador?</p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Não</button>
+            <button type="button" class="btn btn-outline-success" (click)="submitChanges2()"
+              data-dismiss="modal">Sim</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Aviso</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja excluir o examinador selecionado?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger float-right" (click)="deleteExaminer(selectedExaminer.idExaminer)"
+          data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="display:none" id="comp">
+  <h1>Listagem de examinadores</h1>
+  <h3>ANIECA - Centro nº 4 - Barreiro</h3>
+
+  <table class="table table-hover table-sm bg-light">
+    <thead>
+      <tr>
+        <th scope="col">Número</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Número de licença</th>
+        <th scope="col">Validade</th>
+        <th scope="col">Activo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let examiner of examiners">
+        <td>{{ examiner.Num}}</td>
+        <td>{{ examiner.Examiner_name }}</td>
+        <td>{{ examiner.License_num}}</td>
+        <td>{{ examiner.License_expiration | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ examiner.Active  === 1 ? 'Sim' : 'Não' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

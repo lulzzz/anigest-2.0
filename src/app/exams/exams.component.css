@@ -1,0 +1,22 @@
+.btn {
+    margin-right: 7px;
+}
+
+.card-header-i {
+    background-image: url('/assets/t7.png');
+}
+
+.nav > .nav-item > .btn {
+    margin:0px 3px 0px;
+    padding:5px;
+   
+}
+
+ngb-pagination ::ng-deep ul > li.active > a {
+    background-color: rgb(39, 39, 39) !important;
+    border-color:rgb(39, 39, 39) !important;
+  }
+  
+  ngb-pagination ::ng-deep ul > li > a {
+    color:black;
+  }

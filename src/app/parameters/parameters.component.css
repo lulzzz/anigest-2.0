@@ -1,0 +1,9 @@
+.nav > .nav-item > .btn {
+    margin:0px 3px 0px;
+    padding:5px;
+   
+}
+.table tr.active td {
+    background-color:#abb9c5 !important;
+    color: white;
+  }

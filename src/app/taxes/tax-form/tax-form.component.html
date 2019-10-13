@@ -1,0 +1,30 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+  <h2 class="font-weight-light text-light ml-auto">Novo comprovativo de pagamento</h2>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.close('Close click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p>Candidados sem resultado ou que aprovaram no exame prático. Marque os que pagaram a taxa:</p>
+  <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">Número</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Alvara</th>
+          <th scope="col">Em nome da escola</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+   
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-lg mr-auto"
+        (click)="activeModal.close('Close click')">Fechar</button>
+      <button class="btn btn-outline-success btn-lg">Ok</button>
+    </div>
+  
+</div>

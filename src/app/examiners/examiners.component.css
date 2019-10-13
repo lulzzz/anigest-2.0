@@ -1,0 +1,25 @@
+.btn {
+    margin-right: 7px;
+}
+
+.nav > .nav-item > .btn {
+    margin:0px 3px 0px;
+    padding:5px;
+   
+}
+
+.btn-toolbar > .btn-group > .dropdown > .dropdown-menu > .dropdown-item {
+    cursor: pointer;
+}
+
+table, tr, td {
+    cursor: pointer;
+}
+ngb-pagination ::ng-deep ul > li.active > a {
+    background-color: rgb(39, 39, 39) !important;
+    border-color:rgb(39, 39, 39) !important;
+}
+
+ngb-pagination ::ng-deep ul > li > a {
+    color:black;
+}

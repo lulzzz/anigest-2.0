@@ -1,0 +1,355 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Escolas</li>
+    <form *ngIf="school.includes('GET_School')" class="form-inline mr-auto" [formGroup]="schoolSearchForm" (ngSubmit)="onGetSchools(param1.value, param2.value)">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" #param1>
+        <option value="Permit">Alvará</option>
+        <option value="Associate_num">Nº Associado</option>
+        <option value="School_name">Escola</option>
+        <option value="getAllSchools">Todas as escolas</option>
+        <button>Hello</button>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit" [disabled]="!schoolSearchForm.valid">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa avançada </button>
+    </form>
+    <li class="nav-item">
+      <button type="button" *ngIf="school.includes('POST_School')" class="btn btn-light"
+        (click)="addSchoolForm('new')"><i class="fas fa-plus"></i>
+        Novo</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" disabled><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openModal(listagens)" disabled><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="searchedSchools.length">
+      <div class="row">
+        <div class="col">  
+        <h3 class="font-weight-light">Resultados da pesquisa </h3>
+      </div> 
+      <div class="col">
+        <h5 class="text-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span> resultados foram encontrados</h5>
+      </div>
+      </div> 
+      <table class="table table-hover bg-light table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Alvará</th>
+            <th scope="col">Nº Associado</th>
+            <th scope="col">Escola</th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody style="cursor:pointer">
+          <tr *ngFor="let searchedSchool of searchedSchools | slice: pageSize | slice: 0:itemsPerPage" (click)="openCard(searchedSchool.idSchool); onShow()">
+            <td>{{ searchedSchool.Permit }}</td>
+            <td>{{ searchedSchool.Associate_num }}</td>
+            <td>{{ searchedSchool.School_name }}</td>
+            <td>{{ searchedSchool.Email1 }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="searchedSchools.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"  (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+    <div class="col-md" *ngIf="show && selectedSchool">
+      <div class="card" id="results">
+        <div class="card-header" style="background-color: rgb(52, 58, 64)">
+          <div class="row">
+            <div class="col-7">
+              <h4 class="text-light font-weight-light"> {{ selectedSchool[0].School_name }}</h4>
+            </div>
+            <div class="col-5">
+              <button type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <button type="button" class="btn btn-outline-light float-right ml-2" (click)="savePDF()">Imprimir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title font-weight-light">Informações</h5>
+          <table class="table">
+            <tr>
+              <th scope="row">Alvará:</th>
+              <td>{{ selectedSchool[0].Permit }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Nº Associado:</th>
+              <td>{{ selectedSchool[0].Associate_num }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Escola:</th>
+              <td>{{ selectedSchool[0].School_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Morada:</th>
+              <td>{{ selectedSchool[0].Address }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Localidade:</th>
+              <td>{{ selectedSchool[0].Zip_code}} {{ selectedSchool[0].Location }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Telefones:</th>
+              <td>{{ selectedSchool[0].Telephone1 }} {{ selectedSchool[0].Telephone2 }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Email:</th>
+              <td>{{ selectedSchool[0].Email1 }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Nº contribuinte:</th>
+              <td>{{ selectedSchool[0].Tax_num}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Enviar Fatura-Recibo por email:</th>
+              <td>{{ selectedSchool[0].Send_Invoice_email === 1 ? 'Sim' : 'Não'  }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Fatura em nome de:</th>
+              <td>{{ selectedSchool[0].Invoice_name}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Morada:</th>
+              <td>{{ selectedSchool[0].Invoice_address}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Localidade:</th>
+              <td>{{ selectedSchool[0].Invoice_zip_code}} {{ selectedSchool[0].Invoice_location }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Email para envio de Faturas-Recibo:</th>
+              <td>{{ selectedSchool[0].Invoice_email}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Nº contribuinte:</th>
+              <td>{{ selectedSchool[0].Invoice_tax_number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Observações:</th>
+              <td>{{ selectedSchool[0].Obs}}</td>
+            </tr>
+
+          </table>
+
+        </div>
+        <div class="card-footer">
+          <button type="button" *ngIf="school.includes('PATCH_School')" class="btn btn-danger" data-toggle="modal"
+            data-target="#deletionModal">Eliminar</button>
+          <button type="button" *ngIf="school.includes('PATCH_School')" class="btn btn-success text-white float-right"
+            (click)="onEditSchool('edit')">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="advancedSearch">
+
+        <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="dropdown">Pesquisa...</label>
+                <select class="form-control" #criteria>
+                  <option value="all">Todos os critérios</option>
+                  <option value="case_1">Por alvará, nº associado ou escola</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'case_1' || criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Permit">Alvará</label>
+            <input type="text" class="form-control" formControlName="Permit">
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'case_1' || criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Associate_num">Nº Associado</label>
+            <input type="text" class="form-control" formControlName="Associate_num">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'case_1' || criteria.value == 'all'">
+          <div class="form-group">
+            <label for="School_name">Escola</label>
+            <input type="text" class="form-control" formControlName="School_name">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Tax_num">Nº Contribuinte</label>
+            <input type="text" class="form-control" formControlName="Tax_num">
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Address">Morada</label>
+            <input type="text" class="form-control" formControlName="Address">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Zip_code">Codigo postal</label>
+            <input type="text" class="form-control" formControlName="Zip_code">
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Location">Localidade</label>
+            <input type="text" class="form-control" formControlName="Location">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Telephone1">Telefones</label>
+            <input type="text" class="form-control" formControlName="Telephone1">
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Email1">Email</label>
+            <input type="email" class="form-control" formControlName="Email1">
+          </div>
+        </div>
+      </div>
+
+      <legend class="h3 font-weight-light" *ngIf="criteria.value == 'all'">Facturação</legend>
+      <hr>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Invoice_name">Nome</label>
+            <input type="text" class="form-control" formControlName="Invoice_name">
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Invoice">Direção de Serviços de Viação</label>
+            <select class="form-control" formControlName="Delegation_idDelegation">
+              <option *ngFor="let item of dsv" value={{item.idDelegation}}>{{item.Delegation_name}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6" *ngIf="criteria.value == 'all'">
+          <div class="form-group">
+            <label for="Invoice_email">Email</label>
+            <input type="email" class="form-control" formControlName="Invoice_email">
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-control custom-checkbox form-group" *ngIf="criteria.value == 'all'">
+        <input type="checkbox" class="custom-control-input form-control" formControlName="Send_Invoice_email"
+          id="Send_Invoice_email">
+        <label class="custom-control-label" for="Send_Invoice_email">Eviar Fatura-Recibo por email</label>
+      </div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #listagens let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Listagens</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="numero">Etiquetas</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Aviso</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja excluir a escola selecionada?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger float-right" (click)="deleteSchool(selectedSchool[0].idSchool)"
+          data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class='container'>
+  <dual-list [source]="source" [(destination)]="confirmed"></dual-list>
+</div>
+ -->

@@ -1,0 +1,538 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Marcações</li>
+    <form class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGetBookings(param1.value, param2.value)"
+      *ngIf="subject.includes('GET_Booked')">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
+        #param1>
+        <option value="Permit">Alvará</option>
+        <option value="Permit">Pesquisar aluno por BI</option>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa avançada
+      </button>
+    </form>
+    <li class="nav-item" *ngIf="subject.includes('POST_Booked')">
+      <button type="button" class="btn btn-light" (click)="addBooking()"><i class="fas fa-plus"></i>
+        Novo</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="far fa-list-alt"></i>
+        Status</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="fas fa-calendar-alt"></i>
+        Horario</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openModal(sicc)"><i class="fas fa-paper-plane"></i>
+        Enviar</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openModal(listagens)" disabled><i
+          class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="exams.length">
+      <div class="row">
+        <div class="col">
+          <h3 class="font-weight-light">Resultados da pesquisa </h3>
+        </div>
+        <div class="col">
+          <h5 class="float-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span>
+            resultados foram encontrados</h5>
+        </div>
+      </div>
+      <table class="table table-hover table-sm bg-white">
+        <thead>
+          <tr>
+            <th scope="col">Número</th>
+            <th scope="col">Nome</th>
+          </tr>
+        </thead>
+        <tbody style="cursor:pointer">
+          <tr *ngFor="let exam of exams | slice: pageSize | slice: 0:itemsPerPage"
+            (click)="openCard(exam.idBooked); onShow()">
+            <td>{{ exam.idBooked }}</td>
+            <td>{{ exam.Student_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="exams.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"
+        (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false"
+        [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+    <div class="col-md" *ngIf="show">
+      <div class="card" id="results">
+        <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Marcação <button
+            type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <button type="button" class="btn btn-outline-light float-right ml-2" data-toggle="modal"
+            data-target="#viewModal">Imprimir</button>
+        </h4>
+        <div class="card-body" *ngFor="let selectedBooking of selectedBookings">
+          <h5 class="card-title font-weight-light">Informaçoes</h5>
+          <table class="table">
+            <tr>
+              <th scope="row">Data do exame:</th>
+              <td>{{ selectedBooking.Timeslot_date }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Tipo do exame:</th>
+              <td>{{ selectedBooking.Exam_type_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Data de recepção:</th>
+              <td>{{ selectedBooking.Booked_date | date: 'dd/MM/yyyy' }} </td>
+            </tr>
+            <tr>
+              <th scope="row">Escola:</th>
+              <td>{{ selectedBooking.Permit }} {{ selectedBooking.School_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Candidato:</th>
+              <td>{{ selectedBooking.Student_num }} {{ selectedBooking.Student_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Bilhete de Identidade:</th>
+              <td>{{ selectedBooking.ID_num}} {{ selectedBooking.ID_expire_date | date: 'dd/MM/yyyy'}}
+                {{ selectedBooking.ID_name}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Número contribuinte:</th>
+              <td>{{ selectedBooking.Tax_num }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Data de nascimento:</th>
+              <td>{{ selectedBooking.Birth_date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Licença:</th>
+              <td>{{ selectedBooking.Student_license}} {{ selectedBooking.Expiration_date | date: 'dd/MM/yyyy'}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Status:</th>
+              <td>{{ selectedBooking.Status}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletionModal"
+            *ngIf="subject.includes('PATCH_Booked')">Cancelar</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="advancedSearch">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Todos os critérios</option>
+              <option value="case1">Disponíveis por tipo e alvará</option>
+              <option value="case2">Por data de recepção e alvará</option>
+              <option value="case3">Marcados por alvará e data de exame</option>
+              <option value="case4">Códigos marcados</option>
+              <option value="case5">Códigos marcados no SEM</option>
+              <option value="case6">Lista de marcações por escola</option>
+              <option value="case7">Exames por status do SICC</option>
+              <option value="case8">Pesquisa por nome</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case4' || criteria.value == 'case6'">
+          <div class="form-group">
+            <label for="Fax1">Tipo de exame</label>
+            <select class="form-control" formControlName="Exam_type_idExam_type">
+              <option *ngFor="let examType of examTypes" [ngValue]="examType.idExam_type">{{ examType.Category}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case2'">
+          <div class="form-group">
+            <label for="Pauta_num">Data de recepção</label>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="date" class="form-control mr-1" formControlName="Booked_date1">
+              </div>
+              <div class="col-6">
+                <input type="date" class="form-control" formControlName="Booked_date2">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case2' || criteria.value == 'case3'">
+          <div class="form-group">
+            <label for="Permit">Alvará</label>
+            <input type="number" class="form-control" formControlName="Permit" #Permit>
+          </div>
+        </div>
+
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case2' || criteria.value == 'case7'">
+          <div class="form-group">
+            <label for="Status">Status</label>
+            <select class="form-control" formControlName="Status" #id_type>
+              <option *ngFor="let status of statuses" value={{status.idT_ID_type}}>{{status.ID_name}}</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Student_name">Nome</label>
+            <input type="text" class="form-control" formControlName="Student_name" #Student_name>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Student_num">Número</label>
+            <input type="text" class="form-control" formControlName="Student_num" #Student_num>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Student_license">Número da Licença</label>
+            <input type="text" class="form-control" formControlName="Student_license" #Student_license>
+          </div>
+        </div>
+        <div class="col"
+          *ngIf="criteria.value == 'all' || criteria.value == 'case4' || criteria.value == 'case3' || criteria.value == 'case7'">
+          <div class="form-group">
+            <label for="Timeslot_date">Data do exame</label>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="date" class="form-control mr-1" formControlName="Timeslot_date1" #Pauta_num>
+              </div>
+              <div class="col-6">
+                <input type="date" class="form-control" formControlName="Timeslot_date2" #Pauta_num>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-control custom-checkbox form-group">
+        <input type="checkbox" class="custom-control-input form-control"
+          formControlName="T_exam_results_idT_exam_results" id="hasPayment">
+        <label class="custom-control-label" for="hasPayment">Tem Pagamento</label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #listagens let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Listagens</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Lista de pautas anuladas</option>
+              <option value="numero">Pauta anulada</option>
+              <option value="numero">Pautas cum atribucao manual de examinadores</option>
+              <option value="numero">Pautas por examinador</option>
+              <option value="numero">Listagem discriminada de pautas</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #sicc let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title text-light font-weight-light" id="modal-basic-title">Introduza as condições da pesquisa</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <form [formGroup]="siccForm">
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label" for="Timeslot_date">Data do exame</label>
+        <div class="col-sm-9">
+          <div class="form-row">
+            <div class="col-6">
+              <input type="date" formControlName="Timeslot_date1" class="form-control mr-1">
+            </div>
+            <div class="col-6">
+              <input type="date" formControlName="Timeslot_date2" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="pautaNum" class="col-sm-3 col-form-label">Número da pauta</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" formControlName="Pauta_num" placeholder="Número da pauta">
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label for="licenseNum" class="col-sm-3 col-form-label">Número da licença</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" formControlName="Student_license" placeholder="Número da licença">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="something" class="col-sm-3 col-form-label">Status SICC</label>
+        <div class="col-sm-9">
+          <select class="form-control" formControlName="Status_SICC">
+            <option *ngFor="let item of statusSicc" value={{item.idsicc_status}}>{{ item.state}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="statusSicc" class="col-sm-3 col-form-label">Tipo de exame</label>
+        <div class="col-sm-9">
+          <select class="form-control" formControlName="Exam_type_idExam_type">
+            <option *ngFor="let item of examTypes" value={{item.idExam_type}}>{{ item.Exam_type_name}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitPEP(siccForm, confirmModal); modal.close('Save click'); resetSearch()">OK</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #confirmModal let-modal>
+
+        <div class="modal-header">
+          <h4 class="modal-title text-light font-weight-light" id="modal-basic-title">Introduza as condições da pesquisa
+          </h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body modal-lg">
+
+          <div class="container">
+            <table class="table table-responsive">
+              <thead>
+                <tr>
+                  <th scope="col">docIdNumber</th>
+                  <th scope="col">docIdType</th>
+                  <th scope="col">examCenterCode</th>
+                  <th scope="col">examCode</th>
+                  <th scope="col">examDate</th>
+                  <th scope="col">examTime</th>
+                  <th scope="col">learningLicenseNumber</th>
+                  <th scope="col">name</th>
+                  <th scope="col">schoolLicense</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of pepResults">
+                  <td>{{item.docIdNumber}}</td>
+                  <td>{{item.docIdType}}</td>
+                  <td>{{item.examCenterCode}}</td>
+                  <td>{{item.examCode}}</td>
+                  <td>{{item.examDate}}</td>
+                  <td>{{item.examTime}}</td>
+                  <td>{{item.learningLicenseNumber}}</td>
+                  <td>{{item.name}}</td>
+                  <td>{{item.schoolLicense}}</td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark"
+              (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+            <button type="button" class="btn btn-outline-success"
+              (click)="sendPEPResults(); modal.close('Save click'); resetSearch()">OK</button>
+          </div>
+        </div>
+ 
+</ng-template>
+
+
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Aviso</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja cancelar a marcação selecionada?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger float-right" (click)="cancelBooking(selectedBookings[0].idBooked)"
+          data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog  modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Aviso</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4">
+            <p><img src="/assets/logo2.png" class="rounded float-right" alt="ANIECA"></p>
+            <p>ANIECA - Centro no 4 - Barreiro</p>
+          </div>
+          <div class="col-md-8">
+            <h3>Pauta no 4195</h3>
+            <p>Tipo de exame: Cat. C</p>
+            <p>Percurso: 7 - FONTAINHAS (RUA DE AMIZADE)</p>
+            <p>Data:</p>
+            <p>Hora</p>
+          </div>
+        </div>
+        <div class="row" *ngFor="let selectedBooking of selectedBookings">
+          <table class="table table-bordered">
+            <tr>
+              <th rowspan="2" scope="row">Candidato</th>
+              <th rowspan="2" scope="row">Licença</th>
+              <th rowspan="2" scope="row">B.I.</th>
+              <th rowspan="2" scope="row">Alvará</th>
+              <th rowspan="2" scope="row">Tipo de Exame</th>
+              <th colspan="4" scope="row">Resultado</th>
+            </tr>
+            <tr>
+              <td>A</td>
+              <td>R</td>
+              <td>F</td>
+              <td>S</td>
+            </tr>
+            <tr>
+            <tr>
+              <td>{{ selectedBooking.Student_num }} {{ selectedBooking.Student_name }}</td>
+              <td>{{ selectedBooking.Student_license }} </td>
+              <td>{{ selectedBooking.ID_num }}</td>
+              <td>{{ selectedBooking.Permit }}</td>
+              <td>{{ selectedBooking.Category }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+
+          <table class="table table-bordered">
+            <tr>
+              <th></th>
+              <th>Matricula</th>
+            </tr>
+            <tr>
+              <td>{{ selectedBooking.Student_num }}</td>
+              <td></td>
+            </tr>
+          </table>
+
+          <table class="table table-bordered">
+            <tr>
+              <th>Grupo</th>
+              <th>Examinador</th>
+              <th>Assinatura</th>
+            </tr>
+            <tr>
+              <td>{{ selectedBooking.Exam_group }}</td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger float-right" data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>

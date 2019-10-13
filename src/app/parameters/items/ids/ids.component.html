@@ -1,0 +1,67 @@
+<div class="container-fluid">
+  <div class="row p-3">
+    <div class="col-sm-10 bg-light border rounded-lg">
+        <h2  class="font-weight-light">Documento de identificação</h2>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Descrição</th>
+              <th scope="col">ID Tipo Documento</th>
+              <th scope="col">Tipo Documento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of ids; let i = index" (click)="setClickedRow(item)"
+              [class.active]="item === selectedRow" style="cursor:pointer">
+              <td>{{item.ID_name}}</td>
+              <td>{{item.IMT_type}}</td>
+              <td>{{item.Doc_type}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-sm-2" *ngIf="subject.includes('PATCH_Parameters')">
+      <div>
+        <button type="button" class="btn btn-secondary btn-block mb-3" (click)="open(content)">Novo</button>
+        <button type="button" class="btn btn-secondary btn-block mb-3" [disabled]="!selectedRow"
+          (click)="editID(content)">Editar</button>
+        <button type="button" class="btn btn-secondary btn-block" [disabled]="!selectedRow"
+          (click)="deleteID(selectedRow.idT_ID_type)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 *ngIf="!editState" class="modal-title" id="modal-basic-title">Novo tipo de identificação</h4>
+    <h4 *ngIf="editState" class="modal-title" id="modal-basic-title">Editar tipo de identificação</h4>
+    <button type="button" class="close" aria-label="Close" (click)="resetModal(); modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editForm">
+      <div class="form-group">
+        <label for="id">Descrição</label>
+        <input type="text" class="form-control" formControlName="ID_name">
+      </div>
+      <div class="form-group">
+        <label for="id">ID Tipo Documento</label>
+        <input type="text" class="form-control" formControlName="IMT_type">
+      </div>
+      <div class="form-group">
+        <label for="id">Tipo Documento</label>
+        <input type="text" class="form-control" formControlName="Doc_type">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="resetModal(); modal.close('Save click')">Fechar</button>
+        <button *ngIf="!editState" type="button" class="btn btn-outline-success" (click)="onSubmit(); resetModal(); modal.close('Save click')">Criar</button>
+        <button *ngIf="editState" type="button" class="btn btn-outline-success" (click)="saveChanges(editForm); resetModal(); modal.close('Save click')">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>

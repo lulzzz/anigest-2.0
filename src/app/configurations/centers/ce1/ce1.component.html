@@ -1,0 +1,146 @@
+<div class="container mt-3 mb-3">
+  <div class="card">
+    <div class="card-header text-center">
+      <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+            aria-selected="true">Centro de exames</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+            aria-selected="false">Contas bancarias</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
+            aria-selected="false">Email</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+        <form [formGroup]="CE">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputEmail4">Centro de exames</label>
+              <input type="email" class="form-control" formControlName="Exam_center_name">
+            </div>
+            <div class="form-group col-md-3">
+              <label for="inputZip">Número do centro</label>
+              <input type="text" class="form-control" formControlName="Center_num" >
+            </div>
+            <div class="form-group col-md-3">
+              <label for="inputCity">Código do centro</label>
+              <input type="text" class="form-control" formControlName="Center_code">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputPassword4">Morada</label>
+              <input type="text" class="form-control" formControlName="Address">
+            </div>
+            <div class="form-group col-md-3">
+              <label for="inputAddress">Código postal</label>
+              <input type="text" class="form-control" formControlName="Zip_code">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputZip">Contribuinte</label>
+                <input type="text" class="form-control" formControlName="Tax_num">
+              </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="inputAddress2">Telefone 1</label>
+              <input type="text" class="form-control" formControlName="Telephone1">
+            </div>
+            <div class="form-group col-md-4">
+              <label for="inputAddress2">Telefone 2</label>
+              <input type="text" class="form-control" formControlName="Telephone2">
+            </div>
+            <div class="form-group col-md-4">
+              <label for="inputState">Email</label>
+              <input type="text" class="form-control" formControlName="Email1">
+            </div>
+          </div>
+
+          <div class="form-row">
+        
+          </div>
+
+          <button type="button" class="btn btn-dark" (click)="getDirtyValues(CE)">Submeter</button>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+        <form [formGroup]="Bank_acc">
+          <div class="form-row">
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputEmail4">Banco (faturacao) </label>
+              <input type="text" class="form-control" formControlName="Acc_Bank">
+            </div>
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputPassword4">Numero de conta (faturacao) </label>
+              <input type="text" class="form-control" formControlName="Acc_Bank_num">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputAddress">Banco (taxas para o IMTT) </label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputAddress2">Numero da conta (taxas para o IMTT)</label>
+              <input type="text" class="form-control" formControlName="IMT_Bank_num">
+            </div>
+          </div>
+          <button type="button" class="btn btn-dark" (click)="getDirtyValues(Bank_acc)">Submeter</button>
+        </form>
+
+      </div>
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+
+        <form>
+          <div class="form-row">
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputEmail4">Servidor SMTP</label>
+              <input type="email" class="form-control">
+            </div>
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputPassword4">Numero de porta</label>
+              <input type="password" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputAddress">Email de envio</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputAddress2">Nome a apresentar</label>
+              <input type="text" class="form-control">
+            </div>
+
+          </div>
+          <div class="form-row">
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputState">Utilizador</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group ml-5 col-md-5">
+              <label for="inputZip">Palavra-passe</label>
+              <input type="text" class="form-control">
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-dark" (click)="getDirtyValues(Bank_acc)">Submeter</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>

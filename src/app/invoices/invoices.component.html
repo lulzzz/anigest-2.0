@@ -1,0 +1,187 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light text-dark">Faturas</li>
+  
+    <form class="form-inline mr-auto" [formGroup]="searchForm">
+    <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock" #param1>
+      <option value="userId">Numero</option>
+      <option value="Student_license">Pesquisar tudo</option>
+    </select>
+    <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+      aria-label="Search" #param2>
+    <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+    <button class="btn btn-outline-secondary btn-sm" type="button" (click)="open(content)">Pesquisa avançada</button>
+  </form>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="fas fa-paper-plane"></i>
+        Enviar</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="advancedSearch">
+  
+          <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label for="dropdown">Pesquisa...</label>
+                  <select class="form-control" #criteria>
+                    <option value="all">Todos os critérios</option>
+                    <option value="numero">Todas as faturas/recibos</option>
+                    <option value="alvara">Por alvará ou escola</option>
+                    <option value="alvara">Extractos por data e alvará</option>
+                    <option value="alvara">SAFT-T (PT)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+      
+  
+       <!--  <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="Fax1">Tipo de exame</label>
+              <select class="form-control" formControlName="Exam_type_idExam_type">
+                <option *ngFor="let examType of examTypes" [ngValue]="examType.idExam_type">{{ examType.Category}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="Result">Resultado</label>
+              <input type="date" class="form-control" formControlName="T_exam_results_idT_exam_results" #Result>
+            </div>
+          </div>
+  
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="Permit">Alvará</label>
+              <input type="number" class="form-control" formControlName="Permit" #Permit>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="School_name">Escola</label>
+              <input type="text" class="form-control" formControlName="School_name" #School_name>
+            </div>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="Student_name">Nome do candidato</label>
+              <input type="text" class="form-control" formControlName="Student_name" #Student_name>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="Student_num">Número do candidato</label>
+              <input type="text" class="form-control" formControlName="Student_num" #Student_num>
+            </div>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="ID_name">Documento de Identificação</label>
+              <input type="text" class="form-control" formControlName="T_ID_type_idT_ID_type" #ID_name>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="ID_num">Número do BI</label>
+              <input type="text" class="form-control" formControlName="ID_num" #ID_num>
+            </div>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="Student_license">Número da Licença</label>
+              <input type="text" class="form-control" formControlName="Student_license" #Student_license>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="Timeslot_date">Data do exame</label>
+              <input type="date" class="form-control" formControlName="Timeslot_date" #Timeslot_date>
+            </div>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="Status">Status</label>
+              <input type="text" class="form-control" formControlName="Status" #Status>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="Pauta_num">Número da pauta</label>
+              <input type="number" class="form-control" formControlName="Pauta_num" #Pauta_num>
+            </div>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="Status">Matricula</label>
+              <input type="text" class="form-control" formControlName="Status" #Status>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="custom-control custom-checkbox form-group">
+              <input type="checkbox" class="custom-control-input form-control"
+                formControlName="T_exam_results_idT_exam_results" id="hasPayment">
+              <label class="custom-control-label" for="hasPayment">Tem Pagamento</label>
+            </div>
+            <div class="custom-control custom-checkbox form-group">
+              <input type="checkbox" class="custom-control-input form-control" formControlName="Revision" id="revision">
+              <label class="custom-control-label" for="revision">Revisão</label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="custom-control custom-checkbox form-group">
+              <input type="checkbox" class="custom-control-input form-control" formControlName="Complain" id="complain">
+              <label class="custom-control-label" for="complain">Reclamação</label>
+            </div>
+          </div>
+        </div> -->
+  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+          <button type="button" class="btn btn-outline-success" (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>

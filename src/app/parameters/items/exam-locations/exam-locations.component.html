@@ -1,0 +1,82 @@
+<div class="container-fluid">
+    <div class="row p-3">
+      <div class="col-sm-10 bg-light border rounded-lg">
+          <h2  class="font-weight-light">Locais de exame</h2>
+          <div class="table-responsive">
+              <table class="table table-hover table-bordered">
+                  <thead>
+                      <tr>
+                        <th scope="col">Local de exame</th>
+                        <th scope="col">Activo</th>
+                        <th scope="col">Código</th>
+                        <th scope="col">Inclui auto-estrada</th>
+                        <th scope="col">Percurso condicionado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of locations; let i = index" (click)="setClickedRow(item)" [class.active]="item == selectedRow" style="cursor:pointer">
+                        <td>{{ item.Route }}</td>
+                        <td>{{ item.Active === 1 ? 'Sim' : 'Não' }}</td>
+                        <td>{{ item.Code }}</td>
+                        <td>{{ item.High_way === 1 ? 'Sim' : 'Não' }}</td>
+                        <td>{{ item.Conditioned_route === 1 ? 'Sim' : 'Não' }}</td>
+                      </tr>
+                    </tbody>
+              </table>
+            </div>
+      </div>
+      <div class="col-sm-2" *ngIf="subject.includes('PATCH_Parameters')">
+        <div>
+        <button type="button" class="btn btn-secondary btn-block mb-3"(click)="open(content)">Novo</button>
+        <button type="button" class="btn btn-secondary btn-block mb-3" [disabled]="!selectedRow" (click)="editExamLocation(content)">Editar</button>
+        <button type="button" class="btn btn-secondary btn-block" [disabled]="!selectedRow" (click)="deleteExamLocation(selectedRow.idExam_route)">Eliminar</button>
+      </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Novo tipo de identificação</h4>
+      <button type="button" class="close" aria-label="Close" (click)="resetModal(); modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup] = "elocationsForm">
+        <div class="form-group">
+          <label for="id">Local de exame</label>
+          <input type="text" class="form-control" formControlName="Route">
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [checked]="checkbx"formControlName="Active">
+            <label class="form-check-label" for="gridCheck"> Activo</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="id">Código</label>
+          <input type="text" class="form-control" formControlName="Code">
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" formControlName="High_way">
+            <label class="form-check-label" for="gridCheck">Inclui auto-estrada</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" formControlName="Conditioned_route">
+            <label class="form-check-label" for="gridCheck">Percurso condicionado</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button (click)="assgn()">Do</button>
+            <button type="button" class="btn btn-outline-dark" (click)="resetModal(); modal.close('Save click')">Fechar</button>
+            <button *ngIf="!editState" type="button" class="btn btn-outline-success" (click)="onSubmit(); resetModal(); modal.close('Save click')">Criar</button>
+            <button *ngIf="editState" type="button" class="btn btn-outline-success" (click)="saveChanges(elocationsForm); resetModal(); modal.close('Save click')">Guardar</button>
+          </div>
+      </form>
+    </div> 
+  </ng-template>
+  

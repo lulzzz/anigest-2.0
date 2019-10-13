@@ -1,0 +1,503 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Pautas</li>
+
+    <form *ngIf="subject.includes('GET_Pauta')" class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGet()">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
+        #param1>
+        <option value="userId">Numero</option>
+        <option value="Student_license" (click)="onGet()">Pesquisar tudo</option>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa avançada
+      </button>
+    </form>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" disabled><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openSchedule()"><i class="fas fa-calendar-alt"></i>
+        Horario</button>
+    </li>
+
+    <li class="nav-item">
+      <button *ngIf="subject.includes('PATCH_Pauta')" type="button" class="btn btn-light" (click)="openModal(resultados)"><i class="fas fa-clipboard-check"></i>
+        Resultados</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openModal(sicc)" disabled><i class="fas fa-paper-plane"></i>
+        Enviar</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openModal(listagens)" disabled><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="results.length">
+      <div class="row">
+        <div class="col">
+          <h3 class="font-weight-light">Resultados da pesquisa</h3>
+        </div>
+        <div class="col">
+          <h5 class="float-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span>
+            resultados foram encontrados</h5>
+        </div>
+      </div>
+      <table class="table table-hover table-sm bg-light">
+        <thead>
+          <tr>
+            <th scope="col">Número</th>
+            <th scope="col">Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let result of results | slice: pageSize | slice: 0:itemsPerPage"
+            (click)="openCard(result.idPauta); onShow()">
+            <td>{{ result.Pauta_num }}</td>
+            <td>{{ result.Timeslot_date | date: 'shortDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="results.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"
+        (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false"
+        [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+    <div class="col-md" *ngIf="show && selectedPautas.length">
+      <div class="card">
+        <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Pauta<button
+            type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <button type="button" class="btn btn-outline-light float-right ml-2" data-toggle="modal"
+            data-target="#viewModal">Imprimir</button>
+        </h4>
+        <div class="card-body">
+          <h5 class="card-title font-weight-light">Informaçoes</h5>
+          <table class="table">
+            <tr>
+              <th scope="row">Número da pauta:</th>
+              <td>{{ selectedPautas[0].Pauta_num }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Data do exame:</th>
+              <td>{{ selectedPautas[0].Timeslot_date | date: 'shortDate' }} </td>
+            </tr>
+            <tr>
+              <th scope="row">Hora de inicio:</th>
+              <td>{{ selectedPautas[0].Begin_time }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Hora de fim:</th>
+              <td>{{ selectedPautas[0].End_time }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Número do candidatos:</th>
+                <td>{{ candidateNo }}</td>
+              </tr>
+          </table>
+
+          <h5 class="card-title font-weight-light">Exames</h5>
+          <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">Candidato</th>
+                  <th scope="col">Tipo de exame</th>
+                  <th scope="col">Escola</th>
+                  <th scope="col">Matricula</th>
+                  <th scope="col">Resultado</th>
+                  <th scope="col">Rev</th>
+                  <th scope="col">Rec</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let item of selectedPautas">
+                <tr>
+                  <th>{{ item.Student_num }} - {{ item.Student_name }}</th>
+                  <td>{{ item.Short }}</td>
+                  <td>{{ item.permit }} - </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+
+
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Numerar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="pautaStart">
+          <div class="form-group">
+            <label for="pautaData">Data</label>
+            <input type="date" class="form-control" formControlName="Timeslot_date">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="startPauta()" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="advancedSearch">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Todos os critérios</option>
+              <option value="numero">Com resultado</option>
+              <option value="alvara">Por data</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Pauta_num">Número da pauta</label>
+            <input type="text" class="form-control" formControlName="Pauta_num" #birth_date>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Fax1">Tipo de exame</label>
+            <select class="form-control" formControlName="Exam_type_idExam_type">
+              <option *ngFor="let examType of examTypes" [ngValue]="examType.idExam_type">{{ examType.Category}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Pauta_num">Data</label>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="date" class="form-control mr-1" formControlName="Timeslot_date" #Pauta_num>
+              </div>
+              <div class="col-6">
+                <input type="date" class="form-control" formControlName="Timeslot_date2" #Pauta_num>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Fax1">Local do exame</label>
+            <input type="date" class="form-control" formControlName="Exam_route_idExam_route">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Pauta_num">Hora de incio</label>
+            <input type="time" class="form-control" formControlName="Begin_time" #Pauta_num>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Fax1">Hora de fim</label>
+            <input type="time" class="form-control" formControlName="End_time">
+          </div>
+        </div>
+      </div>
+      <div class="custom-control custom-checkbox form-group">
+        <input type="checkbox" class="custom-control-input form-control"
+          formControlName="T_exam_results_idT_exam_results" id="Active">
+        <label class="custom-control-label" for="Active">Tem Pagamento</label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Guardar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #listagens let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Listagens</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Lista de pautas anuladas</option>
+              <option value="numero">Pauta anulada</option>
+              <option value="numero">Pautas cum atribucao manual de examinadores</option>
+              <option value="numero">Pautas por examinador</option>
+              <option value="numero">Listagem discriminada de pautas</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #sicc let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Introduza as condições da pesquisa</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="siccForm">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label" for="Timeslot_date">Data do exame</label>
+        <div class="col-sm-9">
+          <div class="form-row">
+            <div class="col-6">
+              <input type="date" formControlName="Timeslot_date" class="form-control mr-1">
+            </div>
+            <div class="col-6">
+              <input type="date" formControlName="Timeslot_date2" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="pautaNum" class="col-sm-3 col-form-label">Número da pauta</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" formControlName="Pauta_num" placeholder="Número da pauta">
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label for="licenseNum" class="col-sm-3 col-form-label">Número da licença</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" formControlName="Student_license" placeholder="Número da licença">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="statusSicc" class="col-sm-3 col-form-label">Status SICC</label>
+        <div class="col-sm-9">
+          <select class="form-control" formControlName="Status_SICC">
+            <option *ngFor="let examiner of examinersList" value={{examiner.idExaminer}}>{{ examiner.Examiner_name}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label for="statusSicc" class="col-sm-3 col-form-label">Tipo de exame</label>
+        <div class="col-sm-9">
+          <select class="form-control">
+            <option *ngFor="let examiner of examinersList" value={{examiner.idExaminer}}>{{ examiner.Examiner_name}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #resultados let-modal>
+  <div class="modal-header" style="background-color: rgb(52, 58, 64)">
+    <h4 class="modal-title text-light font-weight-light" id="modal-basic-title">Recolha de resultados</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group row">
+        <label for="colFormLabelSm" class="col-sm-2 col-form-label">Pauta:</label>
+        <div class="col-sm-5">
+          <input type="number" class="form-control form-control" id="infoPauta" placeholder="Numéro da pauta"
+            #infoPauta>
+        </div>
+        <div class="col-sm-4">
+          <button class="btn btn-dark" (click)="getPautaInfo(infoPauta.value)">OK</button>
+        </div>
+      </div>
+    </form>
+
+    <div  *ngIf="assignResult.length">
+    <div class="p-1 mb-1 bg-dark text-white">Candidatos</div>
+    <form id="myForm" [formGroup]="sendResults">
+      <div [formArrayName]="'results'">
+        <div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Número</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Resultado</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let x of assignResult; let i = index">
+              <tr [formGroupName]="i">
+                <td>
+                  {{ x.Student_num }}
+                </td>
+                <td>
+                  {{ x.Student_name }}
+                </td>
+                <td>
+                  <select class="form-control form-control-sm" formControlName="T_exam_results_idT_exam_results">
+                    <option *ngFor="let result of resultsOptions" [ngValue]="result.idT_exam_results">{{ result.Result }}
+                    </option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </form>
+  </div>
+
+    <div *ngIf="assignResult.length">
+    <div class="p-1 mb-1 bg-dark text-white">Examinadores</div>
+    <ul class="list-group">
+      <li class="list-group-item">{{ assignResult[0].Examiner_name }}</li>
+    </ul>
+  </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark"
+        (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+      <button type="button" class="btn btn-outline-success"
+        (click)="onSubmit( assignResult.idPauta); modal.close('Save click'); resetSearch()">Guardar</button>
+    </div>
+
+  </div>
+</ng-template>
+
+<div class="modal fade" id="assignExaminer" tabindex="-1" role="dialog" aria-labelledby="assignExaminer"
+  aria-hidden="true" draggable="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-secondary">
+        <h4 class="modal-title text-light font-weight-light" id="exampleModalLabel">Relatório de atribuição de
+          examinadores</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Examinadores seleccionades:</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Pauta examinador</th>
+              <th scope="col">Percurso</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>JOAO MANUEL JORGE FERREIRA CAMBEZ</td>
+              <td>6 - FIDALGUINHOS (PRACETA G. F. CLUBE)</td>
+            </tr>
+            <tr>
+              <td>EMA MARIA CARDOSO DE ALMEIDA</td>
+              <td>4 - STO. ANTONIO (RUA DE LISBOA)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Aviso</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja cancelar a pauta selecionada?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger float-right" (click)="cancelPauta()"
+          data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>

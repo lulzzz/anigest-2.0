@@ -1,0 +1,62 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+      <li class="h4 mr-auto font-weight-light">Operadores</li>
+
+      <form *ngIf="subject.includes('GET_Operator')" class="form-inline mr-auto" [formGroup]="searchForm"
+      (ngSubmit)="onGetOperators()">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock" #param1>
+        <option value="userId">Nome</option>
+        <option value="Student_license" (click)="onGet()">Todos os operadores</option>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button">Pesquisa avançada</button>
+    </form>
+
+    <li class="nav-item">
+      <button *ngIf="subject.includes('POST_Operator')" type="button" class="btn btn-light" (click)="showAddOperator()"><i class="fas fa-user-plus"></i>
+        Novo</button>
+    </li>
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="showAddRole()"  disabled><i class="fas fa-plus"></i>
+       Perfil</button>
+    </li>
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="far fa-flag"></i>
+        Status</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<table *ngIf="searchedOperators.length" class="table bg-light mt-3">
+  <thead>
+    <tr>
+      <th scope="col">Utilizator</th>
+      <th scope="col">Tipo de perfil</th>
+      <th scope="col">Centro de exame</th>
+      <th scope="col">Email</th>
+      <th scope="col">Nome de escola</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of searchedOperators">
+      <td>{{ item.User }}</td>
+      <td>{{ item.role_name }}</td>
+      <td>{{ item.Exam_center_name }}</td>
+      <td>{{ item.User_email }}</td>
+      <td>{{ item.school_name }}</td>
+      <td>{{ item.status  === 1 ? 'Ativo' : 'Inativo' }}</td>
+    </tr>
+
+  </tbody>
+</table>

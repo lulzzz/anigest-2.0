@@ -1,0 +1,204 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+  <h2 class="font-weight-light text-light ml-auto">Nova marcação</h2>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form class="form" [formGroup]="addExam" (ngSubmit)="onSubmit()">
+    <legend class="h2 font-weight-light">Escola</legend>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <div class="form-group">
+          <label for="alvara">Alvará:</label>
+          <p *ngIf="select.value">{{selectedUser.Permit}}</p>
+
+        </div>
+      </div>
+      <div class="col-9">
+        <div class="form-group">
+          <label for="School_name">Escola:</label>
+          <select class="form-control" formControlName="School_name" (ngModelChange)="setNewUser($event)" #select>
+            <option *ngFor="let user of users" [ngValue]="user">{{ user.School_name }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <legend class="h2 font-weight-light">Candidato</legend>
+    <hr>
+    <div class="row">
+      <div class="col-5">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Nº de BI" #param1>
+        </div>
+      </div>
+
+      <div class="col-7">
+        <button type="button" (click)="searchBI(param1.value)" class="btn btn-outline-info mr-1"
+          [disabled]="select.value == ''">Procurar Nº de BI</button>
+        <button type="button" class="btn btn-outline-info mr-1" [disabled]="select.value == ''" (click)="onNav()">Criar candidato</button>
+        <button *ngIf="show" type="button" class="btn btn-outline-info" (click)="onPatch()">Editar candidato</button>
+      </div>
+    </div>
+
+    <div *ngIf="show">
+      <div class="row">
+        <div class="col-4">
+          <div class="form-group">
+            <label for="Student_num">Número:</label>
+            <input type="text" class="form-control" placeholder="Número" formControlName="Student_num" #Student_num>
+          </div>
+        </div>
+        <div class="col-8">
+          <div class="form-group">
+            <label for="Student_name">Nome:</label>
+            <input type="text" class="form-control" formControlName="Student_name">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="id_type">Documento identificação:</label>
+            <input type="text" class="form-control" formControlName="T_ID_type_idT_ID_type">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="ID_num">Nº:</label>
+            <input type="text" class="form-control" formControlName="ID_num">
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="ID_expire">Validade do BI:</label>
+            <input type="text" class="form-control" formControlName="ID_expire_date">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Birth_date">Data de nascimento:</label>
+            <input type="text" class="form-control" formControlName="Birth_date">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Student_license">Número de licença:</label>
+            <input type="text" class="form-control" formControlName="Student_license">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Expiration_date">Validade:</label>
+            <input type="text" class="form-control" formControlName="Expiration_date">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Tax_num">Nº Contribuinte:</label>
+            <input type="text" class="form-control" formControlName="Tax_num">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Drive_license_num">Número da carta:</label>
+            <input type="text" class="form-control" formControlName="Drive_license_num">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="Obs">Observações:</label>
+        <textarea class="form-control" rows="3" formControlName="Obs1"></textarea>
+      </div>
+    </div>
+
+    <legend class="h2 font-weight-light">Exame</legend>
+    <hr>
+<!--     <div class="row">
+       <div class="col">
+        <div class="form-group">
+          <label for="Booked_date">Data de recepção:</label>
+          <input type="datetime-local" class="form-control" formControlName="Booked_date">
+        </div>
+      </div> -->
+
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label for="Exam_date">Data do exame:</label>
+          <input type="datetime-local" class="form-control" formControlName="Timeslot_date">
+        </div>
+      </div>
+
+      <div class="col">
+          <div class="form-group">
+            <label for="Fax1">Tipo de exame:</label>
+            <select class="form-control" formControlName="Exam_type_idExam_type">
+              <option *ngFor="let examType of examTypes" [ngValue]="examType.idExam_type">{{ examType.Category}}</option>
+            </select>
+          </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="Obs">Observações</label>
+      <textarea class="form-control" rows="3" formControlName="Obs"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-lg mr-auto"
+        (click)="activeModal.close('Close click')">Fechar</button>
+      <button type="submit" class="btn btn-outline-success btn-lg">Criar marcação</button>
+    </div>
+  </form>
+</div>
+
+<ng-template #notificationModal let-notificationModal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title font-weight-light text-light">Notificação</h4>
+    <button type="button" class="close" aria-label="Close" (click)="notificationModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>Um candidato foi encontrado. Deseja continuar?</h5>
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-outline-danger mr-auto" focus="true"
+      (click)="notificationModal.dismiss('Cancel click')">Cancelar</button>
+    <button class="btn btn-outline-success" focus="true"
+      (click)="notificationModal.dismiss('Ok click'); clicky()">Sim</button>
+  </div>
+</ng-template>
+
+<ng-template #notificationModal2 let-notificationModal2>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title font-weight-light text-light">Notificação</h4>
+    <button type="button" class="close" aria-label="Close" (click)="notificationModal2.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>O candidato com o BI inserido não existe. Quer criar um novo candidato?</h5>
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-outline-danger mr-auto" focus="true"
+      (click)="notificationModal2.dismiss('Cancel click')">Não</button>
+    <button class="btn btn-outline-success" focus="true"
+      (click)="notificationModal2.dismiss('Ok click'); onNav()">Sim</button>
+  </div>
+</ng-template>

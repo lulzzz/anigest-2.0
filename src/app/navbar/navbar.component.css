@@ -1,0 +1,19 @@
+a{
+    color: rgb(242, 242, 242) !important;
+    font-size:14px
+}
+
+.card-header{
+    border: 0;  
+}
+
+.navbar {
+    /* border-bottom: 5px solid rgb(200, 45, 38); */
+    /* border-bottom: 5px solid rgb(52, 58, 64); */
+    border-bottom: 10px solid rgb(181, 39, 32);
+}
+
+i.fas, i.far {
+    color:rgb(242, 242, 242); 
+}
+

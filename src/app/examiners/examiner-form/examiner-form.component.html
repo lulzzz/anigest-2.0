@@ -1,0 +1,72 @@
+   
+  <div class="modal-header" style="background-color: rgb(52, 58, 64)">
+    <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='edit'">EDITAR EXAMINADOR</h2>
+    <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='new'">NOVO EXAMINADOR</h2>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.close('Close click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="addExaminerForm">
+
+      <div class="row">
+        <div class="col-4">
+          <div class="form-group">
+            <label for="Num">Número*</label>
+            <input type="number" class="form-control" formControlName="Num">
+          </div>
+        </div>
+
+        <div class="col-8">
+          <div class="form-group">
+            <label for="Examiner_name">Nome*</label>
+            <input type="text" class="form-control" formControlName="Examiner_name">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="License_num">Número da licença*</label>
+            <input type="text" class="form-control" formControlName="License_num">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="License_expiration">Validade da licença*</label>
+            <input type="date" class="form-control" formControlName="License_expiration">
+          </div>
+        </div>
+      </div>
+  
+      <div class="custom-control custom-checkbox form-group">
+        <input type="checkbox" class="custom-control-input form-control" formControlName="Active" id="Active">
+          <label class="custom-control-label" for="Active">Activo</label>
+      </div>
+
+      <div class="row" *ngIf="action === 'edit'">
+          <div class="col">
+            <button class="btn btn-secondary mr-2">Escolas</button>
+            <button class="btn btn-secondary mr-2">Tipos</button>
+          </div>
+      </div>
+    
+      <div class="form-group">
+        <label for="Obs">Observações</label>
+        <textarea class="form-control" rows="3" formControlName="Obs" #Obs></textarea>
+        <small id="helpText" class="form-text text-muted">
+            Os campos marcados com * são obrigatórios.
+          </small>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg mr-auto"
+          (click)="activeModal.close('Close click');">Fechar</button>
+        <button class="btn btn-outline-success btn-lg" (click)="onSubmit()" *ngIf="action ==='new'">Criar examinador</button>
+        <button class="btn btn-outline-success btn-lg" (click)="onEdit(addExaminerForm); activeModal.close('Save click')" *ngIf="action === 'edit'">Guardar</button>
+      </div>
+    </form>
+  </div>
+

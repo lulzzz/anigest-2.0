@@ -1,0 +1,105 @@
+<app-navbar></app-navbar>
+<div style="overflow-x: hidden; max-width: 100%">
+  <div class="card-header bg-light shadow-sm">
+    <ul class="nav nav-pills card-header-pills justify-content-end">
+      <li class="h4 mr-auto font-weight-light">Horário</li>
+
+      <li class="nav-item" *ngIf="route == 'results' && subject.includes('ALL_School')">
+        <button type="button" class="btn btn-light"><i
+            class="fas fa-file-invoice-dollar"></i>
+          Numerar</button>
+      </li>
+
+      <li class="nav-item" *ngIf="route == 'results' && subject.includes('ALL_School')">
+        <button type="button" class="btn btn-light" (click)="randomizeExaminer()"><i
+            class="fas fa-file-invoice-dollar"></i>
+          Iniciar</button>
+      </li>
+
+      <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
+        <button type="button" class="btn btn-light"><i
+            class="fas fa-calendar-day"></i>
+          Novo timeslot</button>
+      </li>
+
+      <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
+        <button type="button" class="btn btn-light"><i
+            class="fas fa-calendar-week"></i>
+          Novo grupo</button>
+      </li>
+
+      <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
+        <button type="button" class="btn btn-light"><i
+            class="fas fa-calendar-minus"></i>
+          Eliminar último grupo</button>
+      </li>
+
+      <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
+        <button type="button" class="btn btn-light"><i
+            class="fas fa-calendar-plus"></i>
+          Gerar Calendário</button>
+      </li>
+
+    </ul>
+  </div>
+  <div *ngIf="!hide">
+    <schedule-component></schedule-component>
+  </div>
+  <ng-template #calendarModal let-dismiss="dismiss">
+    <div class="modal-header">
+      <h4 class="font-weight-light text-light ml-auto">ESCOLHER DATA</h4>
+      <button type="button" class="close" aria-label="Fechar" (click)="dismiss(); goBack()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Data:<br>
+      <input type="date" class="form-control" #data>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-dark" (click)="setConfig(data.value); dismiss()">Escolher</button>
+      <button class="btn btn-secondary" (click)="dismiss(); goBack()" >Cancelar</button>
+    </div>
+  </ng-template>
+
+  <ng-template #dayIsWeekend let-dismiss="dismiss">
+    <div class="modal-header">
+      <h4 class="font-weight-light text-light ml-auto mr-auto">CONFIRMAR</h4>
+      <button type="button" class="close" (click)="dismiss(); goBack()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      O dia atual é fim-de-semana.<br>Pretende gerar um calendário neste dia?
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm btn-dark" (click)="dismiss(); openModal(newScheduleModal)">Sim</button>
+      <button class="btn btn-sm btn-secondary" (click)="dismiss();goBack()">Não</button>
+    </div>
+  </ng-template>
+
+  <ng-template id="newScheduleModal" #newScheduleModal let-dismiss="dismiss">
+    <div class="modal-header">
+      <h4 class ="font-weight-light text-light ml-auto">Criar novo horário</h4>
+      <button type="button" class="close" (click)="dismiss(); goBack()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Ainda não existe um horário nesta data.</p>
+      <p>Se desejar criar um novo indique a quantidade de grupos que o horário deve ter:</p>
+      <p-spinner [min]="1" [(ngModel)]="groupValue" #groupAmount></p-spinner>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-dark" (click)="dismiss(); createNewSchedule(groupAmount.value)">Criar</button>
+      <button class="btn btn-secondary" (click)="dismiss(); goBack()">Cancelar</button>
+    </div>
+  </ng-template>
+  <p-confirmDialog #cd header="Confirmar" [style]="{width: '50vw'}">
+    <p-footer>
+      <button type="button" class="btn btn-sm btn-dark" label="Sim" (click)="cd.accept()">Sim</button>
+      <button type="button" class="btn btn-sm btn-secondary" label="Não" (click)="cd.reject()">Não</button>
+    </p-footer>
+  </p-confirmDialog>
+  <router-outlet></router-outlet> 
+ </div>

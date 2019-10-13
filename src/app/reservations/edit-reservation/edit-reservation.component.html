@@ -1,0 +1,121 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+    <h2 class="font-weight-light text-light ml-auto">EDITAR RESERVA</h2>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.close('Close click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editReservation">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="Num">Candidato</label>
+            <input type="text" class="form-control" formControlName="Student_name">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="Examiner_name">Número do BI</label>
+            <input type="text" class="form-control" formControlName="ID_num">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="License_num">Validade do BI</label>
+            <input type="date" class="form-control" formControlName="ID_expire_date">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="License_expiration">Data do nascimento</label>
+            <input type="date" class="form-control" formControlName="Birth_date">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="License_num">Alvará</label>
+            <input type="text" class="form-control" formControlName="School_Permit">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="License_expiration">Escola</label>
+            <input type="text" class="form-control" formControlName="School_name">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="License_num">Número da licença:</label>
+            <input type="text" class="form-control" formControlName="Student_license">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="License_expiration">Validade da licença:</label>
+            <input type="datetime-local" class="form-control" formControlName="Student_license_Expiration_date">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="License_num">Contribuinte:</label>
+            <input type="text" class="form-control" formControlName="Tax_num">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="License_expiration">Tipo de exame:</label>
+            <select class="form-control" formControlName="Exam_type_idExam_type" #id_type>
+              <option *ngFor="let item of examTypes" value={{item.idExam_type}}>{{item.Exam_type_name}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="License_num">Status</label>
+            <select class="form-control" formControlName="T_exam_status_idexam_status" #id_type>
+              <option *ngFor="let item of status" value={{item.idexam_status}}>{{item.Status}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+    
+      <div class="form-group">
+        <label for="Obs">Observações</label>
+        <textarea class="form-control" rows="3" formControlName="Obs" #Obs></textarea>
+        <small id="helpText" class="form-text text-muted">
+            Os campos marcados com * são obrigatórios.
+          </small>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg mr-auto"
+          (click)="activeModal.close('Close click');">Fechar</button>
+        <button class="btn btn-outline-success btn-lg" (click)="getDirtyValues(editReservation)">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+

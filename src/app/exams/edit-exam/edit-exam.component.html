@@ -1,0 +1,45 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+  <h2 class="font-weight-light text-light ml-auto">Editar exame</h2>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form class="form" [formGroup]="editExam">
+  
+      <div class="row">
+          <div class="col">
+              <div class="form-group">
+                <label for="Booked_date">Matricula:</label>
+                <input type="text" class="form-control" formControlName="Car_plate">
+              </div>
+            </div>
+      </div>
+
+
+      <div class="form-group">
+          <label for="exampleFormControlSelect1">Revisão</label>
+          <select class="form-control" formControlName="Revision">
+              <option [ngValue]="1">Sim</option>
+              <option [ngValue]="0">Não</option>
+
+          </select>
+        </div>
+
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Reclamação</label>
+            <select class="form-control" formControlName="Complain">
+              <option [ngValue]="1">Sim</option>
+              <option [ngValue]="0">Não</option>
+
+            </select>
+          </div>
+
+  
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-lg mr-auto"
+        (click)="activeModal.close('Close click')">Fechar</button>
+      <button type="submit" class="btn btn-outline-success btn-lg" (click)="getDirtyValues(editExam)">Guardar</button>
+    </div>
+  </form>
+</div>

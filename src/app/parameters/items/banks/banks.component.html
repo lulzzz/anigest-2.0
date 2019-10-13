@@ -1,0 +1,58 @@
+<div class="container-fluid">
+  <div class="row p-3">
+    <div class="col-sm-10 bg-light border rounded-lg">
+      <h2  class="font-weight-light">Bancos</h2>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Banco</th>
+              <th scope="col">Designação do banco</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let item of banks; let i = index" (click)="setClickedRow(item)" [class.active]="item == selectedRow" style="cursor:pointer">
+                  <td>{{item.Bank_name}}</td>
+                  <td>{{item.Description}}</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div *ngIf="subject.includes('PATCH_Parameters')">
+          <button type="button" class="btn btn-secondary btn-block mb-3"(click)="open(content)">Novo</button>
+          <button type="button" class="btn btn-secondary btn-block mb-3" [disabled]="!selectedRow" (click)="editBank(content)">Editar</button>
+          <button type="button" class="btn btn-secondary btn-block" [disabled]="!selectedRow" (click)="deleteBank(selectedRow.idBanks)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 *ngIf="!editState" class="modal-title" id="modal-basic-title">Novo banco</h4>
+    <h4 *ngIf="editState" class="modal-title" id="modal-basic-title">Editar banco</h4>
+    <button type="button" class="close" aria-label="Close" (click)="resetModal(); modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="banksForm">
+      <div class="form-group">
+        <label for="id">Banco</label>
+        <input type="text" class="form-control" formControlName="Bank_name">
+      </div>
+      <div class="form-group">
+          <label for="id">Designação do banco</label>
+          <input type="text" class="form-control" formControlName="Description">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="resetModal(); modal.close('Save click')">Fechar</button>
+          <button *ngIf="!editState" type="button" class="btn btn-outline-success" (click)="onSubmit(); resetModal(); modal.close('Save click')">Criar</button>
+          <button *ngIf="editState" type="button" class="btn btn-outline-success" (click)="saveChanges(banksForm); resetModal(); modal.close('Save click')">Guardar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

@@ -1,0 +1,441 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Exames</li>
+    <form *ngIf="subject.includes('GET_Exam')" class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGet(param1.value, param2.value)">
+      <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
+        #param1>
+        <option value="userId">Numero</option>
+        <option value="Student_license" (click)="onGet()">Pesquisar tudo</option>
+      </select>
+      <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
+        aria-label="Search" #param2>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="open(content)">Pesquisa avançada </button>
+    </form>
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" disabled><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="far fa-list-alt"></i>
+        Status</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="open(sicc)" disabled><i class="fas fa-paper-plane"></i>
+        Enviar</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="open(listagens)" disabled><i class="far fa-list-alt"></i>
+        Listagens</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<div class="container-fluid">
+  <div class="row pt-4">
+    <div class="col-md" *ngIf="exams.length">
+      <div class="row">
+        <div class="col">
+          <h3 class="font-weight-light">Resultados da pesquisa </h3>
+        </div>
+        <div class="col">
+          <h5 class="float-right font-weight-light mt-2"><span class="badge badge-pill badge-dark">{{ count }}</span>
+            resultados foram encontrados</h5>
+        </div>
+      </div>
+      <table class="table table-hover table-sm bg-light">
+        <thead>
+          <tr>
+            <th scope="col">Tipo do exame</th>
+            <th scope="col">Data do exame</th>
+            <th scope="col">Alvará</th>  
+            <th scope="col">Escola</th>
+            <th scope="col">Número</th>
+            <th scope="col">Candidato</th>          
+            
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let exam of exams | slice: pageSize | slice: 0:itemsPerPage" (click)="openCard(exam.idExam); onShow()">
+            <td>{{ exam.Exam_type }}</td>
+            <td>{{ exam.Booked_date | date: 'dd/MM/yyyy'}}</td>
+            <td>{{ exam.Permit }}</td>
+            <td>{{ exam.School_name }}</td>
+            <td>{{ exam.Student_num }}</td>
+            <td>{{ exam.Student_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ngb-pagination [collectionSize]="exams.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage"
+        (pageChange)="onPageChange(currentPage)" [maxSize]='5' [rotate]="true" [ellipses]="false"
+        [boundaryLinks]="true"></ngb-pagination>
+    </div>
+
+    <div class="col-md" *ngIf="show">
+      <div class="card">
+        <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Exame<button
+          type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+            <button type="button" class="btn btn-outline-light float-right ml-2">Imprimir</button>
+          </h4>
+        <div class="card-body" *ngFor="let selectedExam of selectedExams">
+          <h5 class="card-title font-weight-light">Informaçoes</h5>
+          <table class="table table-borderless">
+            <tr>
+              <th scope="row">Tipo de exame:</th>
+              <td>{{ selectedExam.Exam_num}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Data do exame:</th>
+              <td>{{ selectedExam.Booked_date | date: 'dd/MM/yyyy' }} </td>
+            </tr>
+            <tr>
+              <th scope="row">Escola:</th>
+              <td>{{ selectedExam.Permit }} </td>
+              <td>{{ selectedExam.School_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Candidato:</th>
+              <td>{{ selectedExam.Student_num }} </td>
+              <td>{{ selectedExam.Student_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Bilhete de Identidade:</th>
+              <td>{{ selectedExam.ID_num }} </td>
+              <td>{{ selectedExam.ID_expire_date | date: 'dd/MM/yyyy' }} </td>
+              <td>{{ selectedExam.ID_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Numéro contribuinte</th>
+              <td>{{ selectedExam.Tax_num }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Data de Nascimento:</th>
+              <td>{{ selectedExam.Birth_date | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ age }} anos</td>
+            </tr>
+            <tr>
+              <th scope="row">Licença:</th>
+              <td>{{ selectedExam.Student_license }} {{ selectedExam.Expiration_date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Matricula:</th>
+              <td>{{ selectedExam.Car_plate }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Status SICC:</th>
+              <td>{{ siccItem[0].state }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Revisão:</th>
+              <td>{{ selectedExam.Revision }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Reclamação:</th>
+              <td>{{ selectedExam.Complain }}</td>
+            </tr>
+          </table>
+            <div class="p-1 mb-2 bg-dark text-white">Pagamento</div>
+            <table class="table">
+              <tr>
+                <td scope="row">Número do pagamento</td>
+                <td scope="row">Banco</td>
+                <td scope="row">Valor</td>
+              </tr>
+            </table>
+            <div class="p-1 mb-2 bg-dark text-white">Status do exame</div>
+            <table class="table">
+              <tr>
+                <td scope="row">Status/Hora</td>
+                <td scope="row">Operador</td>
+                <td scope="row">Status</td>
+                <td scope="row">Marcação</td>
+                <td scope="row">Resultado</td>
+                <td scope="row">Obs</td>
+              </tr>
+            </table>
+            <div class="p-1 mb-2 bg-dark text-white">Status do SICC</div>
+            <table class="table">
+              <tr>
+                <td scope="row">Status/Hora</td>
+                <td scope="row">Operador</td>
+                <td scope="row">Status</td>
+                <td scope="row">Marcação</td>
+                <td scope="row">Resultado</td>
+                <td scope="row">Obs</td>
+              </tr>
+            </table>
+
+
+          
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn btn-danger" data-toggle="modal"
+            data-target="#deletionModal" *ngIf="subject.includes('PATCH_Exam')">Cancelar</button>
+          <button type="button" class="btn btn-success text-white float-right" (click)="editExam()" *ngIf="subject.includes('PATCH_Exam')">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pesquisa avançada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="advancedSearch">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Todos os critérios</option>
+              <option value="case1">Sem pagamento por alvará</option>
+              <option value="case2">Efectuados por resultado</option>
+              <option value="case3">Lista de aprovados pendentes</option>
+              <option value="case4">Exames sem resultado</option>
+              <option value="case5">Lista de exames por escola</option>
+              <option value="case6">Pesquisa por nome</option>
+              <option value="case7">Exames por status do SICC</option>
+              <option value="case8">Exames efectuado por data</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case5' || criteria.value == 'case8'">
+          <div class="form-group">
+            <label for="Fax1">Tipo de exame</label>
+            <select class="form-control" formControlName="Exam_type_idExam_type">
+              <option *ngFor="let examType of examTypes" [ngValue]="examType.idExam_type">{{ examType.Exam_type_name}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case2'">
+          <div class="form-group">
+            <label for="Result">Resultado</label>
+            <input type="date" class="form-control" formControlName="T_exam_results_idT_exam_results" #Result>
+          </div>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col"
+          *ngIf="criteria.value == 'all' || criteria.value == 'case1' || criteria.value == 'case2' || criteria.value == 'case5' || criteria.value == 'case6' || criteria.value == 'case8'">
+          <div class="form-group">
+            <label for="Permit">Alvará</label>
+            <input type="number" class="form-control" formControlName="Permit" #Permit>
+          </div>
+        </div>
+
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case6'">
+          <div class="form-group">
+            <label for="Student_num">Número do candidato</label>
+            <input type="text" class="form-control" formControlName="Student_num" #Student_num>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case3' || criteria.value == 'case6'">
+          <div class="form-group">
+            <label for="Student_name">Nome do candidato</label>
+            <input type="text" class="form-control" formControlName="Student_name" #Student_name>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case3' || criteria.value == 'case6'">
+          <div class="form-group">
+            <label for="ID_num">Número do BI</label>
+            <input type="text" class="form-control" formControlName="ID_num" #ID_num>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case6'">
+          <div class="form-group">
+            <label for="Student_license">Número da Licença</label>
+            <input type="text" class="form-control" formControlName="Student_license" #Student_license>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="Timeslot_date">Data do exame</label>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="date" class="form-control mr-1" formControlName="Timeslot_date" #Pauta_num>
+              </div>
+              <div class="col-6">
+                <input type="date" class="form-control" formControlName="Timeslot_date2" #Pauta_num>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case6' || criteria.value == 'case7'">
+          <div class="form-group">
+            <label for="Status">Status</label>
+            <input type="text" class="form-control" formControlName="Status" #Status>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case5'">
+          <div class="form-group">
+            <label for="Status">Matricula</label>
+            <input type="text" class="form-control" formControlName="Car_plate" #Status>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="criteria.value == 'all' ||  criteria.value == 'case7'">
+          <div class="form-group">
+            <label for="Status">Status SICC</label>
+            <select class="form-control" formControlName="Exam_type_idExam_type">
+              <option *ngFor="let item of statusSicc" [ngValue]="item.idsicc_status">{{ item.state}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="criteria.value == 'all' || criteria.value == 'case1'">
+          <div class="form-group">
+            <label for="inputState">Tem pagamento</label>
+            <select id="inputState" class="form-control" formControlName="T_exam_results_idT_exam_results">
+              <option value="True">Sim</option>
+              <option value="False">Não</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #listagens let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Listagens</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="dropdown">Pesquisa...</label>
+            <select class="form-control" #criteria>
+              <option value="all">Relação de exames marcados por escola</option>
+              <option value="all">Relação de candidatos aprovados numa data</option>
+              <option value="all">Relação de candidatos aprovados pendentes</option>
+              <option value="all">Relação de candidatos aprovados na prova prática</option>
+              <option value="all">Relação de exames para levantamento de licenças</option>
+              <option value="all">Relação de exames por examinador</option>
+              <option value="numero">Exames a marcar no SICC</option>
+              <option value="numero">Proveitos antecipados</option>
+              <option value="numero">Não enviados para emissão</option>
+              <option value="numero">Erros no SICC</option>
+              <option value="numero">Cancelamentos de reservas online</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #sicc let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Introduza as condições da pesquisa</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="siccForm">
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label" for="Timeslot_date">Data do exame</label>
+        <div class="col-sm-9">
+          <div class="form-row">
+            <div class="col-6">
+              <input type="date" formControlName="Timeslot_date" class="form-control mr-1">
+            </div>
+            <div class="col-6">
+              <input type="date" formControlName="Timeslot_date2" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="statusSicc" class="col-sm-3 col-form-label">Status SICC</label>
+        <div class="col-sm-9">
+          <select class="form-control" formControlName="Status_SICC">
+            <option *ngFor="let examiner of examinersList" value={{examiner.idExaminer}}>{{ examiner.Examiner_name}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="submitAdvancedSearch(advancedSearch); modal.close('Save click'); resetSearch()">Pesquisar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-light font-weight-light">Aviso</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja cancelar o exame selecionado?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-danger float-right" (click)="cancelExam()"
+          data-dismiss="modal">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>

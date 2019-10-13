@@ -1,0 +1,86 @@
+<app-navbar></app-navbar>
+<div class="card-header bg-light shadow-sm">
+  <ul class="nav nav-pills card-header-pills justify-content-end">
+    <li class="h4 mr-auto font-weight-light">Ficheiros do IMT</li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="openIMT()"><i class="fas fa-download"></i>
+        IMTT</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="fileInput.click()"><i class="fas fa-envelope-open-text"></i>
+        Abrir
+        <input #fileInput type="file" (change)="handleFileInput($event.target.files)" style="display:none;"/>
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="fas fa-print"></i>
+        Imprimir</button>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="btn btn-light"><i class="far fa-trash-alt"></i>
+        Eliminar</button>
+    </li>
+  </ul>
+</div>
+
+<router-outlet></router-outlet>
+
+<div class="container-fluid">
+  <div class="row pt-3">
+    <div class="col-2 mr-5">
+      <p-tree [value]="files"></p-tree> 
+    </div>
+
+    <div class="col-9 bg-white border" *ngIf="newFile">
+    {{ newFile }}
+    <br>
+    <button (click)="uploadFileToActivity(siccModal)">Enviar</button>
+
+
+
+    </div>
+
+
+  </div>
+
+</div>
+
+<ng-template #siccModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Informações</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <table class="table table-hover table-sm bg-light">
+      <thead>
+        <tr>
+          <th scope="col">Número de estudante</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Número de BI</th>
+          <th scope="col">Data do exame/th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of siccInfo;  let i = index">
+          <td>{{ item[1] }}</td>
+          <td>{{ item[4] }} {{ item[5] }}</td>
+          <td>{{ item[3] }}</td>
+          <td>{{ item[8] }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Fechar</button>
+      <button type="button" class="btn btn-outline-success" (click)="modal.close('Save click');">OK</button>
+    </div>
+
+  </div>
+</ng-template>
+
