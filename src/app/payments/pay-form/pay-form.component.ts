@@ -142,7 +142,7 @@ export class PayFormComponent implements OnInit {
     const forms = this.payment.value;
     this.service.submitPayment(forms).subscribe(
       res => this.toastr.success('O pagamento foi criado com sucesso.', 'Notificação'),
-      error => this.toastr.error('ocorreu um erro. Por favor, tente novamente.', 'Notificação')
+      error => this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Notificação')
     )
     console.log(forms);
     this.payment.reset();

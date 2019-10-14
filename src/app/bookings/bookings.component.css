@@ -22,7 +22,8 @@ ngb-pagination ::ng-deep ul > li > a {
   color:black;
 }
 
-.modal-lg {
-  width: 950px;
-  margin: auto;
+::ng-deep .myclass .modal-dialog {
+  max-width: 85%;
+  width:85%;
+  margin:auto
 }

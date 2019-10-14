@@ -85,7 +85,7 @@ export class EditBookingComponent implements OnInit {
       });
 
     this.service.patchBooking(dirtyValues, this.idExaminer.idBooked)
-      .subscribe(res => { this.toastr.success('O candidato foi atualizado com sucesso.', 'Notificação'); })
+      .subscribe(res => { this.toastr.success('Marcação foi atualizada com sucesso.', 'Notificação'); })
     this.activeModal.close();
 
   }

@@ -34,6 +34,8 @@ export class ResultsComponent implements OnInit {
   resultsOptions = [];
   candidateNo:number;
   subject;
+  param1;
+  param2;
 
   @ViewChild('notificationModal', { static: false }) public content: TemplateRef<any>;
 
@@ -147,7 +149,7 @@ export class ResultsComponent implements OnInit {
     this.service.numerarPauta(obj).subscribe(
       res => {
         if (res) {
-          this.toastr.success('Pautas foram criadas', 'Notificação')
+          this.toastr.success('Pautas foram numeradas.', 'Notificação')
         }
       },
       error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') }
@@ -277,7 +279,7 @@ export class ResultsComponent implements OnInit {
     let form = this.sendResults.value;
      this.service.sendResults(form, id).subscribe(
       res=> {
-        this.toastr.success('RESULTS PATCHED')
+        this.toastr.success('Resultados foram atribuidos.')
       }
     ) 
   }

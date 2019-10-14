@@ -130,7 +130,7 @@ onSubmit() {
     this.service.deleteExamType(id).subscribe(
       res => {
         if (res) {
-          this.toastr.info('O banco foi eliminado com sucesso', 'Notificação');
+          this.toastr.info('Informação foi eliminada com sucesso.', 'Notificação');
           this.getStuff();
           this.selectedRow = null
         }

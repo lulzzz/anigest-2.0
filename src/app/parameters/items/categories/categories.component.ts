@@ -108,7 +108,7 @@ export class CategoriesComponent implements OnInit {
     this.service.deleteCategory(id).subscribe(
       res => {
         if (res) {
-          this.toastr.info('O banco foi eliminado com sucesso', 'Notificação');
+          this.toastr.info('Categoria foi eliminada com sucesso.', 'Notificação');
           this.getList();
           this.selectedRow = null
         }

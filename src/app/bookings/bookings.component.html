@@ -6,8 +6,8 @@
       *ngIf="subject.includes('GET_Booked')">
       <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
         #param1>
-        <option value="Permit">Alvará</option>
-        <option value="Permit">Pesquisar aluno por BI</option>
+        <option value="Exam_num">Número</option>
+
       </select>
       <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
         aria-label="Search" #param2>
@@ -18,16 +18,6 @@
     <li class="nav-item" *ngIf="subject.includes('POST_Booked')">
       <button type="button" class="btn btn-light" (click)="addBooking()"><i class="fas fa-plus"></i>
         Novo</button>
-    </li>
-
-    <li class="nav-item">
-      <button type="button" class="btn btn-light"><i class="far fa-list-alt"></i>
-        Status</button>
-    </li>
-
-    <li class="nav-item">
-      <button type="button" class="btn btn-light"><i class="fas fa-calendar-alt"></i>
-        Horario</button>
     </li>
 
     <li class="nav-item">
@@ -307,7 +297,7 @@
 <ng-template #sicc let-modal>
   <div class="modal-header">
     <h4 class="modal-title text-light font-weight-light" id="modal-basic-title">Introduza as condições da pesquisa</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -366,9 +356,9 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark"
-          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+          (click)="modal.close('Save click'); resetModal()">Fechar</button>
         <button type="button" class="btn btn-outline-success"
-          (click)="submitPEP(siccForm, confirmModal); modal.close('Save click'); resetSearch()">OK</button>
+          (click)="submitPEP(siccForm, confirmModal); modal.close('Save click'); resetModal()">OK</button>
       </div>
     </form>
   </div>
@@ -377,27 +367,27 @@
 <ng-template #confirmModal let-modal>
 
         <div class="modal-header">
-          <h4 class="modal-title text-light font-weight-light" id="modal-basic-title">Introduza as condições da pesquisa
+          <h4 class="modal-title text-light font-weight-light" id="modal-basic-title">Ficheiro 
           </h4>
-          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); resetSearch()">
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body modal-lg">
+        <div class="modal-body">
 
-          <div class="container">
+          
             <table class="table table-responsive">
               <thead>
                 <tr>
-                  <th scope="col">docIdNumber</th>
-                  <th scope="col">docIdType</th>
-                  <th scope="col">examCenterCode</th>
-                  <th scope="col">examCode</th>
-                  <th scope="col">examDate</th>
-                  <th scope="col">examTime</th>
-                  <th scope="col">learningLicenseNumber</th>
-                  <th scope="col">name</th>
-                  <th scope="col">schoolLicense</th>
+                  <th scope="col">Número BI</th>
+                  <th scope="col">Tipo BI</th>
+                  <th scope="col">Codigo CE</th>
+                  <th scope="col">Codigo de exame</th>
+                  <th scope="col">Data do exame</th>
+                  <th scope="col">Hora de exame</th>
+                  <th scope="col">Número da carta</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Número da licençanu</th>
                 </tr>
               </thead>
               <tbody>
@@ -415,13 +405,12 @@
 
               </tbody>
             </table>
-          </div>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-dark"
-              (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+              (click)="modal.close('Save click')">Fechar</button>
             <button type="button" class="btn btn-outline-success"
-              (click)="sendPEPResults(); modal.close('Save click'); resetSearch()">OK</button>
+              (click)="sendPEPResults(); modal.close('Save click')">OK</button>
           </div>
         </div>
  

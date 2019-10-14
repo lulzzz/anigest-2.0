@@ -123,7 +123,7 @@ subject;
     this.service.deleteStatus(id).subscribe(
       res => {
         if (res) {
-          this.toastr.info('O banco foi eliminado com sucesso', 'Notificação');
+          this.toastr.info('Status foi eliminado com sucesso.', 'Notificação');
           this.getList();
           this.selectedRow = null
         }

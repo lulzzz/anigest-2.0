@@ -47,7 +47,7 @@ export class AddOperatorComponent implements OnInit {
       .subscribe(
         res => {
           console.log(res),
-          this.toastr.success('Operador criado', 'Notificação')
+          this.toastr.success('Operador criado.', 'Notificação')
           localStorage.setItem('token', res.token);
           
         },

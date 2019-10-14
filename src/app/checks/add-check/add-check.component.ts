@@ -48,7 +48,7 @@ createForm() {
       }
     },
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro');
     }) 
     console.log(forms)
     this.activeModal.close()

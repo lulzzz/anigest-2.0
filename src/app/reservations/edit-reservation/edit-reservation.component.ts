@@ -102,7 +102,8 @@ export class EditReservationComponent implements OnInit {
       });
 
     this.service.patchReservation(dirtyValues, this.Reservation.idReservation, this.Reservation.idTemp_Student)
-      .subscribe(res => { this.toastr.success('A reserva foi atualizada com sucesso.', 'Notificação'); })
+      .subscribe(res => { this.toastr.success('A reserva foi atualizada com sucesso.', 'Notificação'); },
+      error=> this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'))
     this.activeModal.close();
     this.service.sendEvent()
 

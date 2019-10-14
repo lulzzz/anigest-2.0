@@ -70,7 +70,7 @@ export class Ce1Component implements OnInit {
       });
 
     this.service.patchConfig(dirtyValues)
-      .subscribe(res => { this.toastr.success('O candidato foi atualizado com sucesso.', 'Notificação'); })
+      .subscribe(res => { this.toastr.success('Informação foi atualizada com sucesso.', 'Notificação'); })
 
   }
 

@@ -6,8 +6,7 @@
     <form *ngIf="subject.includes('GET_Pauta')" class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGet()">
       <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
         #param1>
-        <option value="userId">Numero</option>
-        <option value="Student_license" (click)="onGet()">Pesquisar tudo</option>
+        <option value="Pauta_num">Número</option>
       </select>
       <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
         aria-label="Search" #param2>
@@ -139,7 +138,7 @@
 
         </div>
         <div class="card-footer">
-          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Cancelar</button>
+          <!-- <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Cancelar</button> -->
         </div>
       </div>
     </div>

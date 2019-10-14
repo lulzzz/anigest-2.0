@@ -118,7 +118,7 @@ export class ExamLocationsComponent implements OnInit {
     this.service.deleteExamLocation(id).subscribe(
       res => {
         if (res) {
-          this.toastr.info('O banco foi eliminado com sucesso', 'Notificação');
+          this.toastr.info('Informação foi eliminada com sucesso.', 'Notificação');
           this.getList();
           this.selectedRow = null
         }

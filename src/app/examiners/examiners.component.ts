@@ -110,7 +110,7 @@ export class ExaminersComponent implements OnInit {
           console.log(this.examiners);
         }
         else {
-          this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação')
+          this.toastr.error('Nenhum examindor foi encontrado.', 'Notificação')
         }
       },
         error => {
@@ -128,7 +128,7 @@ export class ExaminersComponent implements OnInit {
           console.log(this.examiners);
         }
         else {
-          this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação')
+          this.toastr.error('Nenhum examindor foi encontrado.', 'Notificação')
         }
       },
         error => {
@@ -223,14 +223,14 @@ export class ExaminersComponent implements OnInit {
   submitChanges(){
     const form = this.changeStatusForm.value;
       this.service.patchExaminer(form, this.selectedExaminer.idExaminer)
-      .subscribe(res => {this.toastr.success('Hey hey')})
+      .subscribe(res => {this.toastr.success('Status alterado.')})
       console.log(form)
   }
 
     submitChanges2(){
       const form2 = { Active:1}
       this.service.patchExaminer(form2,this.selectedExaminer.idExaminer)
-      .subscribe(res => {this.toastr.success('Changes made')})
+      .subscribe(res => {this.toastr.success('Status alterado.')})
     console.log(form2)}
 
  /*    public printData() {

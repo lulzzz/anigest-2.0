@@ -144,10 +144,10 @@ export class BookingsComponent implements OnInit {
         console.log(this.exams);
       }
       else {
-        this.toastr.error('Nenhuma reserva foi encontrada.','Notificação')}
+        this.toastr.error('Nenhum resultado foi encontrado.','Notificação')}
     },
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro');
       console.log(error)
     },
     )
@@ -161,9 +161,9 @@ export class BookingsComponent implements OnInit {
         data1 => {
           if (data1) { this.exams = Object.values(data1),
             this.count = this.exams.length; }
-          else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.') }
+          else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro') }
         },
-        error => this.toastr.error('Ocorreu um erro. Por favor, tente novamente.'));
+        error => this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'));
   }
 
 
@@ -183,7 +183,7 @@ export class BookingsComponent implements OnInit {
       console.log(this.result[1]),
       this.openModal(this.content)},
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro');
     }
     )
     this.startExamForm.reset();
@@ -192,7 +192,7 @@ export class BookingsComponent implements OnInit {
 
   openModal(template: TemplateRef<any>) {
     this.service.getCategory().subscribe( res => {this.categories = Object.values(res)})
-    this.modalService.open(template, { size: 'lg', centered: true, backdrop: 'static' });
+    this.modalService.open(template, { size:'lg', centered: true, backdrop: 'static' });
    console.log(template)
   }
 
@@ -218,7 +218,7 @@ export class BookingsComponent implements OnInit {
     .subscribe(res =>{
   this.exams = Object.values(res),
   console.log(this.exams)},
-    error=>  this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Notificação'))
+    error=>  this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'))
   }
 
   submitPEP(advancedSearch, template){
@@ -244,7 +244,7 @@ export class BookingsComponent implements OnInit {
       if(res){
         this.pepResults = Object.values(res)
         console.log(res)
-         this.modalService.open(template, { size: 'lg', centered: true, backdrop: 'static' }); 
+         this.modalService.open(template, { windowClass: 'myclass', centered: true, backdrop: 'static' }); 
       }
     
 /*     this.toastr.success('Ficheiro criado com sucesso','Notificação')},
@@ -255,9 +255,9 @@ export class BookingsComponent implements OnInit {
     this.service.createPEP(this.pepValues)
     .subscribe(res =>{
       if(res){
-        this.toastr.success('File was created')
+        this.toastr.success('Ficheiro criado com sucesso','Notificação')
       }
-      else {this.toastr.error('Something went wrong')}
+      else {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro')}
     })
   }
 
@@ -278,6 +278,10 @@ export class BookingsComponent implements OnInit {
     console.log(status)
     this.service.cancelBooking(id, status)
     .subscribe(res => {this.toastr.warning('Marcação foi cancelada.','Notificação')},
-    error => {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Notificação')})
+    error => {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro')})
+  }
+
+  resetModal(){
+    this.siccForm.reset()
   }
 }

@@ -160,7 +160,7 @@ getHorario(){
           else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
 
         },
-        error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.') });
+        error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro') });
   }}
 
   openCard(id) {
@@ -247,7 +247,7 @@ getHorario(){
       else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
 
     },
-      error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.') });
+      error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro') });
   }
 }
 

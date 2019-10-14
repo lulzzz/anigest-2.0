@@ -120,7 +120,7 @@ export class AddBookingComponent implements OnInit {
     this.service.addBooking(forms)
     .subscribe(res => {
       if(res) {
-        this.toastr.success('Marcação foi criado com sucesso.','Notificação')
+        this.toastr.success('Marcação foi criada com sucesso.','Notificação')
       }
     },
     error => { 
@@ -184,7 +184,7 @@ export class AddBookingComponent implements OnInit {
   }
 
   callMyMethod() {
-    console.log('HEEEELOOOOOOO', this.student[0].ID_num);
+    console.log(this.student[0].ID_num);
 
     this.ss.getStudentbyBI(this.student[0].ID_num)
       .subscribe(
@@ -192,7 +192,7 @@ export class AddBookingComponent implements OnInit {
           if (data) {
             this.student = Object.values(data),
               this.passData(this.student);
-            console.log('Student FOUND!!!', this.student)
+            console.log( this.student)
           }
           else { console.log('DATA NOT FOUND') }
         })

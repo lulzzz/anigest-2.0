@@ -5,8 +5,7 @@
     <form *ngIf="subject.includes('GET_Exam')" class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGet(param1.value, param2.value)">
       <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
         #param1>
-        <option value="userId">Numero</option>
-        <option value="Student_license" (click)="onGet()">Pesquisar tudo</option>
+        <option value="Exam_num">Numero</option>
       </select>
       <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
         aria-label="Search" #param2>
