@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://192.168.0.106:4200/api/'
-};
+  apiUrl: 'http://anieca.herokuapp.com/api/'
+}; 
 
 /**http://192.168.1.133 */
 /* 'http://192.168.0.106:4200/api/' */

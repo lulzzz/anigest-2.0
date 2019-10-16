@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from './server.service';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { ActivatedRoute} from '@angular/router';
 import { NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
@@ -14,11 +14,13 @@ import { ToastrService } from 'ngx-toastr';
 export class AddStudentComponent implements OnInit{
 
   pipe = new DatePipe('pt-PT');
-
+  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ' , /[A-Z]/, /\d/];
   public students:Array<any> = [];
   public schools = [];
   public idTypes = [];
   public categories = [];
+  categoryName;
+
 
   angForm: FormGroup;
   constructor(private fb: FormBuilder, private bs: ServerService, private route:ActivatedRoute, public activeModal: NgbActiveModal, private toastr: ToastrService) {
@@ -29,14 +31,14 @@ export class AddStudentComponent implements OnInit{
   createForm() {
     this.angForm = this.fb.group({
       number: [null, Validators.required],
-      name: [null, Validators.required ],
+      name: ['', Validators.required],
       id_type: [null, Validators.required],
       birth_date:[null, Validators.required],
       id: [null, Validators.required],
       id_expiration: [null, Validators.required],
       school: [null, Validators.required],
       category: [null, Validators.required],
-      license:[null, Validators.required, ],
+      license:[null, Validators.required],
       license_expiration:[null, Validators.required],    
       fiscal_number:[null, [Validators.required, Validators.pattern("^[0-9]*$")]],
       existing_license:[null], 
@@ -65,7 +67,27 @@ else {
     .subscribe(school => this.schools = Object.values(school)); 
 
     this.bs.getCategory()
-    .subscribe(category => this.categories = Object.values(category)); 
+    .subscribe(category => {this.categories = Object.values(category)
+    console.log(this.categories)}); 
 }
+
+sendValue(id){
+  const category = this.categories.filter(item => item.idType_category === +id);
+
+  console.log(category[0].Category.substring(2))
+  this.categoryName = category[0].Category.substring(2)
+}
+
+/*  licenseValidator(control: AbstractControl):{ [key: string]: boolean }  | null {
+
+  const please =  control.value.substring(15,17)
+
+  if ( please === this.categoryName) {
+    console.log('HOORAY')
+    return { 'ageRange': true };
+} 
+
+  return null;
+} */
 
 }

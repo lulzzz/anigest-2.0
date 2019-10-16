@@ -239,6 +239,8 @@ export class ScheduleComponent {
   examinerQualificationsExamType: any[] = []
   examinersExamType: any[] = []
 
+  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ' , /[A-Z]/, /\d/];
+
   oldEnd: any
   oldStart: any
   oldGroup: any
@@ -252,6 +254,8 @@ export class ScheduleComponent {
   @ViewChild('generateDay', {static: false}) generateDay: TemplateRef<any>;
   @ViewChild('dayIsWeekend', {static: false}) dayIsWeekend: TemplateRef<any>;
   @ViewChild('examinerTable', {static: false}) examinerTable: TemplateRef<any>;
+  @ViewChild('timeslotForm', {static: false}) timeslotForm: TemplateRef<any>;
+  @ViewChild('chooseToGenerate', {static: false}) chooseToGenerate: TemplateRef<any>;
   
 
   constructor(
@@ -295,9 +299,9 @@ export class ScheduleComponent {
       this.dataFetchService.getExams().subscribe(res => this.exams = res)
     }
 
-    this.reservationService.getReservation().subscribe(res => this.reservations = res)
+    this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}})
     registerLocaleData(localePt, 'pt-PT')
-    this.pautaService.getPautas().subscribe(res => this.pautas = res)
+    this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
     this.dayLockIcon = this.scheduleLocked
     this.dataFetchService.getExamTypes().subscribe((data) => this.examTypes = data, (e) => {},
     async () => {
@@ -361,11 +365,19 @@ export class ScheduleComponent {
     this.groupAmount = null
   }
 
-  checkFile(event) {
+  checkFile(event, id) {
     this.fileToUpload = event.files[0]
     if (this.fileToUpload.name.length) {
+      const format = /^(Modelo2{1}_[0-9]{9})$/gi
+      let validated = format.test(this.fileToUpload.name.split(".",1))
       console.log(this.fileToUpload)
-      this.toastr.success('Complete a reserva para enviar o ficheiro.', 'Sucesso')
+      if (validated)  {
+        this.reservationService.sendFile(this.fileToUpload, id)
+        this.toastr.success('Ficheiro enviado.', 'Sucesso')
+      }
+      else {
+        this.toastr.error('Nome com formato errado', 'Erro')
+      }
     }
   }
 
@@ -392,8 +404,8 @@ export class ScheduleComponent {
     // console.log(exam)
     // console.log(this.selectedOption)
   }
-
   setFormValidators() {
+    let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
     this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
     this.reservationForm.controls["Student_name"].updateValueAndValidity()
     this.reservationForm.controls["Birth_date"].setValidators(Validators.required)
@@ -402,10 +414,10 @@ export class ScheduleComponent {
     this.reservationForm.controls["ID_num"].updateValueAndValidity()
     this.reservationForm.controls["ID_expire_date"].setValidators(Validators.required)
     this.reservationForm.controls["ID_expire_date"].updateValueAndValidity()
-    this.reservationForm.controls["tax_num"].setValidators(Validators.required)
+    this.reservationForm.controls["tax_num"].setValidators([Validators.required, Validators.maxLength(11)])
     this.reservationForm.controls["tax_num"].updateValueAndValidity()
-    this.reservationForm.controls["Drive_license_num"].setValidators(Validators.required)
-    this.reservationForm.controls["Drive_license_num"].updateValueAndValidity()
+    // this.reservationForm.controls["Drive_license_num"].setValidators()
+    // this.reservationForm.controls["Drive_license_num"].updateValueAndValidity()
     if (this.userIdSchool === 'null') {
       this.reservationForm.controls["School_Permit"].setValidators(Validators.required)
       this.reservationForm.controls["School_Permit"].updateValueAndValidity()
@@ -416,7 +428,7 @@ export class ScheduleComponent {
     this.reservationForm.controls["Expiration_date"].updateValueAndValidity()
     this.reservationForm.controls["T_ID_type_idT_ID_type"].setValidators(Validators.required)
     this.reservationForm.controls["T_ID_type_idT_ID_type"].updateValueAndValidity()
-    this.reservationForm.controls["Car_plate"].setValidators(Validators.maxLength(8))
+    this.reservationForm.controls["Car_plate"].setValidators([Validators.minLength(8), Validators.maxLength(8), Validators.pattern(carPlateFormat)])
     this.reservationForm.controls["Car_plate"].updateValueAndValidity()
   }
 
@@ -519,6 +531,7 @@ export class ScheduleComponent {
       else {
         this.viewDate = new Date(date)
         this.getNewWeekTimeslots()
+        this.switchDate('none')
       }
     }
   }
@@ -608,63 +621,12 @@ export class ScheduleComponent {
       this.toastr.error('Um exame não pode acabar antes de começar','Erro')
     }
     else {
-      let countInGroup = 0
-      let a = 0
-      for (let i = 0; i < this.events.length+1; i++) {
-        let exists = this.checkIfEventExists(i)
-        if (exists === false){
-          a = i
-          break;
-        }
-      }
-      let abc = this.events.filter((event) => {
-        return event.meta.group.id == group.id
-      })
-      countInGroup = abc.length
-      let color = colors.white
-      let canResize = true
-      let canDrag = true
-      if (endDate.getTime() < new Date().getTime()) {
-        color = colors.blue
-        canResize = false
-        canDrag = false
-      }
-      else if (startDate.getTime() <= new Date().getTime() && endDate.getTime() > new Date().getTime()) {
-        color = colors.green
-        canResize = false
-        canDrag = false
-      }
-      if (!this.subject.includes('ALL_School')) {
-        canResize = false
-        canDrag = false
-      }
-      if (this.route != "reservations") {
-        canResize = false
-        canDrag = false
-      }
-      let sH = `${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2, '0')}`
-      let eH = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`
-      this.events[a] = {
-        id: a,
-        title: `${sH} - ${eH}`,
-        start: startDate,
-        end: endDate,
-        meta: {
-          group: this.groups[group.id]
-        },
-        resizable: {
-          beforeStart: canResize,
-          afterEnd: canResize
-        },
-        draggable: canDrag,
-        color: color
-      }
       let groupNumber = group.title.substr(6,2)
-      let timeslotDate = this.events[a].start.getFullYear() + '-' + (this.events[a].start.getMonth()+1) + '-' + this.events[a].start.getDate()
+      let timeslotDate = startDate.getFullYear() + '-' + (startDate.getMonth()+1) + '-' + startDate.getDate()
       let timeslot = {
         Timeslot_date: timeslotDate,
-        Begin_time: this.events[a].start.toTimeString().substr(0, 8),
-        End_time: this.events[a].end.toTimeString().substr(0, 8),
+        Begin_time: startDate.toTimeString().substr(0, 8),
+        End_time: endDate.toTimeString().substr(0, 8),
         Exam_group: groupNumber,
         Exam_type_idExam_type: null,
         Exam_center_idExam_center: this.idExamCenter
@@ -674,6 +636,7 @@ export class ScheduleComponent {
         this.toastr.error('Erro ao criar timeslot', 'Erro')
       },
       () => {
+        this.toastr.success('Timeslot criado', 'Sucesso')
         this.getSchedule()
       })
       this.events = [...this.events]
@@ -711,13 +674,15 @@ export class ScheduleComponent {
         let color = colors.white
         let canResize = true
         let canDrag = true
-        let filterReservations = this.reservations.filter((reservation) => {
-          return reservation.idTimeslot == eventsToAdd[i].idTimeslot
-        })
-        let filterByStatus = filterReservations.filter((reservation) => {
-          return reservation.T_exam_status_idexam_status !== 1
-        })
-        
+        let filterByStatus = []
+        if (this.reservations.length) {
+          let filterReservations = this.reservations.filter((reservation) => {
+            return reservation.idTimeslot == eventsToAdd[i].idTimeslot
+          })
+          filterByStatus = filterReservations.filter((reservation) => {
+            return reservation.T_exam_status_idexam_status !== 1
+          })
+        }
         let startDate = new Date(date.setHours(hourStart,minStart))
         let endDate = new Date(date.setHours(hourEnd, minEnd))
         let sH = `${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2, '0')}`
@@ -729,7 +694,7 @@ export class ScheduleComponent {
         }
         else if (startDate.getTime() > new Date().getTime()) {
           if (!filterByStatus.length && eventsToAdd[i].Max_Num_Students) {
-            color = colors.red
+            color = colors.white
           }
           else if (filterByStatus.length > 0 && filterByStatus.length < eventsToAdd[i].Max_Num_Students) {
             color = colors.orange
@@ -760,10 +725,13 @@ export class ScheduleComponent {
           return pauta.Timeslot_idTimeslot == id
         })
         if (eventsToAdd[i].Exam_type_name !== null) {
+          console.log(this.examTypes)
           let examTypeShort = this.examTypes.filter((type) => {
+            console.log(eventsToAdd[i].Exam_type_name)
             return type.Exam_type_name == eventsToAdd[i].Exam_type_name
           })
-          eventsToAdd[i].Exam_type_name = examTypeShort[0].Short
+          console.log(examTypeShort)
+          eventsToAdd[i].Exam_type_name = examTypeShort[0]
         }
         if (timeslotPauta.length) {
           this.events[id] = {
@@ -777,6 +745,7 @@ export class ScheduleComponent {
               maxStudents: eventsToAdd[i].Max_Num_Students,
               currentNumStudents: filterByStatus.length || 0,
               examType: eventsToAdd[i].Exam_type_name,
+              // examTypeShort: eventsToAdd[i].Exam_type_name.Short,
               pauta: timeslotPauta[0]
             },
             resizable: {
@@ -799,6 +768,7 @@ export class ScheduleComponent {
               maxStudents: eventsToAdd[i].Max_Num_Students,
               currentNumStudents: filterByStatus.length || 0,
               examType: eventsToAdd[i].Exam_type_name
+              // examTypeShort: eventsToAdd[i].Exam_type_name.Short
             },
             resizable: {
               beforeStart: canResize,
@@ -881,7 +851,7 @@ export class ScheduleComponent {
         Day_lock: dayLock
       }
       this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
-    }
+      }
     }
     
     let eventCount = 0;
@@ -992,16 +962,35 @@ export class ScheduleComponent {
       
       startHour = startHour+this.intervalValue
       if (typeof(option) == 'undefined' || option !== 'scheduleGen') {
-        let timeslotDate = this.events[id].start.getFullYear() + '-' + (this.events[id].start.getMonth()+1) + '-' + this.events[id].start.getDate()
+        let timeslotDate = startDate.getFullYear() + '-' + (startDate.getMonth()+1) + '-' + startDate.getDate()
         let timeslot = {
           Timeslot_date: timeslotDate,
-          Begin_time: this.events[id].start.toTimeString().substr(0, 8),
-          End_time: this.events[id].end.toTimeString().substr(0, 8),
+          Begin_time: startDate.toTimeString().substr(0, 8),
+          End_time: endDate.toTimeString().substr(0, 8),
           Exam_group: maxGroups+1,
           Exam_type_idExam_type: null,
           Exam_center_idExam_center: this.idExamCenter
         }
-        this.timeslotService.addTimeslot(timeslot).subscribe()
+        if (startHour < endHour) {
+          this.timeslotService.addTimeslot(timeslot).subscribe()
+        }
+        else {
+          this.timeslotService.addTimeslot(timeslot).subscribe(() => {
+
+          }, () => {
+
+          }, () => {
+            setTimeout(() => {
+              this.getSchedule()
+              setTimeout(() => {
+                this.getSchedule()
+                // setTimeout(() => {
+                //   this.getSchedule()
+                // }, 1000)
+              }, 1000)
+            }, 500)
+          })
+        }
       }
       if (startHour >= endHour){
         break;
@@ -1015,7 +1004,7 @@ export class ScheduleComponent {
       setTimeout(() => {
         this.getSchedule()
         this.toastr.success('Grupo criado', 'Sucesso')
-      },500)      
+      },1000)      
     }
   }
 
@@ -1193,6 +1182,7 @@ export class ScheduleComponent {
           this.timeslotExists = false
         }
         this.event = chosenEvent[0]
+        this.chosenExamType = this.event.meta.examType
         if (this.event.meta.pauta) {
           let chosenType = this.examTypes.filter((type) => {
             return type.idExam_type === this.event.meta.pauta.Exam_type_idExam_type
@@ -1214,7 +1204,6 @@ export class ScheduleComponent {
                   })
                 }
               })
-            console.log()
             // this.dataFetchService.getExaminerQualifications(this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications)
             //let filteredExaminers = this
             console.log(this.examiners)
@@ -1252,7 +1241,7 @@ export class ScheduleComponent {
           // })
         }
         this.openModal(modal)
-        if (this.userIdSchool == 'null') {
+        if (this.userIdSchool === 'null') {
           this.timeslotReservations = this.reservations.filter((reservation) => {
             return reservation.idTimeslot == this.event.id
           })
@@ -1399,9 +1388,10 @@ export class ScheduleComponent {
 
   async defineExamType(examType) {
     this.event.meta.maxStudents = examType.Num_students,
-    this.event.meta.examType = examType.Short
+    this.event.meta.examType = examType
+    this.event.meta.examTypeShort = examType.Short
     let dataToSend =this.examTypes.filter((type) => {
-      return type.Short == this.event.meta.examType
+      return type == this.event.meta.examType
     })
     let newEnd = new Date(this.event.start)
     let durHours = dataToSend[0].Duration.substr(0,2)
@@ -1575,7 +1565,7 @@ export class ScheduleComponent {
 
   accumulateReservations() {
     let examType = this.examTypes.filter((type) => {
-      return type.Short == this.event.meta.examType
+      return type == this.event.meta.examType
     })
     this.reservationForm.patchValue({idTimeslot: this.event.id, Exam_type_idExam_type: examType[0].Exam_type_idExam_type, Type_category_idType_category: examType[0].Type_category_idType_category})
     if (this.userIdSchool !== 'null') {
@@ -1685,22 +1675,33 @@ export class ScheduleComponent {
       if (buttonPressed === 'previous') {
         this.viewDate.setDate(this.viewDate.getDate() - 1)
       }
-      if (buttonPressed === 'next') {
+      else if (buttonPressed === 'next') {
         this.viewDate.setDate(this.viewDate.getDate() + 1)
       }
     }
     let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
     if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
       this.weekNumber = {...newWeekNumber}
+      console.log('abc')
       this.getSchedule()
     }
     this.currentDate = this.viewDate.getFullYear() +'/'+(this.viewDate.getMonth()+1)+'/'+this.viewDate.getDate()
     let currentDate = this.getCurrentDateFormatted()
     this.endValue = this.viewDate
-    this.groupsInDate = this.groups.filter((group)=> {
+    console.log(this.groups)
+    console.log(currentDate)
+    this.groupsInDate = this.groups.filter((group) => {
       return group.date == currentDate
     })
-    this.checkIfLocked()
+    let weekDay = this.viewDate.getDay()
+    if(!this.groupsInDate.length && this.viewDate > new Date()) {
+      if (this.weekendDays.includes(weekDay)) {
+        this.openModal(this.dayIsWeekend)
+      }
+      else {
+        this.openModal(this.chooseToGenerate)
+      }
+    }
     this.setTime('startHour')
     this.setTime('startMinute')
     this.setTime('endHour')
@@ -1747,7 +1748,7 @@ export class ScheduleComponent {
       else {
         if ((newStart.getTime() == event.start.getTime() && newEnd.getTime() > event.end.getTime() && examTypeDefined) || (newStart.getTime() < event.start.getTime() && newEnd.getTime() == event.end.getTime() && examTypeDefined)) {
           let typeOfExam = this.examTypes.filter((type) => {
-            return type.Short == event.meta.examType
+            return type == event.meta.examType
           })
           let examDuration = typeOfExam[0].Duration
           let compare = new Date()
@@ -1771,13 +1772,16 @@ export class ScheduleComponent {
         }
         else {
           event.end = newEnd
-          event.meta.examType = newExamType.value.Short
+          event.meta.examType = newExamType.value
+          console.log(newExamType.value)
+          event.meta.examTypeShort = newExamType.value.Short
           event.meta.currentNumStudents = 0
           event.meta.maxStudents = newExamType.value.Num_students
           this.titleFormatter.day(event)
         }
         let stH = `${String(newStart.getHours()).padStart(2,'0')}:${String(newStart.getMinutes()).padStart(2, '0')}`
         let enH = `${String(newEnd.getHours()).padStart(2, '0')}:${String(newEnd.getMinutes()).padStart(2, '0')}`
+        let oldEventTitle = event.title
         event.title = `${stH} - ${enH}`
         let eventsInDate = this.events.filter((otherEvent) => {
           return otherEvent.meta.group === event.meta.group
@@ -1785,6 +1789,10 @@ export class ScheduleComponent {
         let operation = 'none'
         let eventPosition
         let resizeElement = eventsInDate.filter((otherEvent) => {
+          if (otherEvent !== event && otherEvent.start.toString() === event.start.toString() && otherEvent.end.toString() === event.end.toString() && otherEvent.meta.group === event.meta.group) {
+            operation = 'cancel'
+            return 0
+          }
           if (otherEvent.start < event.start && otherEvent.end > event.end) {
             operation = 'cancel'
             return 0
@@ -1818,6 +1826,7 @@ export class ScheduleComponent {
         if (operation == 'cancel') {
           event.start = oldStart
           event.end = oldEnd
+          event.title = oldEventTitle
           this.toastr.error('Não pode sobrepor timeslots', 'Erro')
           resizeElement = []
         }
@@ -1863,7 +1872,12 @@ export class ScheduleComponent {
           if (this.subject.includes('ALL_School') && update == true) {
             this.updateTimeslots()
           }
-          
+        }
+        if (event.start > oldStart && event.end == oldEnd) {
+          this.generateNewEvent(oldStart, event.start, event.meta.group)
+        }
+        else if (event.end < oldEnd && event.start == oldStart) {
+          this.generateNewEvent(event.end, oldEnd, event.meta.group)
         }
       }
         

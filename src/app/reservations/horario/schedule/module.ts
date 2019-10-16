@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms'
 import { SpinnerModule } from 'primeng/spinner'
 import { ReactiveFormsModule } from '@angular/forms';
 import { FileUploadModule } from 'primeng/fileupload'
+import { TextMaskModule } from 'angular2-text-mask'
 import localePt from '@angular/common/locales/pt-PT'
 
 registerLocaleData(localePt)
@@ -36,7 +37,8 @@ registerLocaleData(localePt)
     SpinnerModule,
     DropdownModule,
     ReactiveFormsModule,
-	  FileUploadModule
+    FileUploadModule,
+    TextMaskModule
   ],
   declarations: [ScheduleComponent, DayViewSchedulerComponent],
   exports: [ScheduleComponent]

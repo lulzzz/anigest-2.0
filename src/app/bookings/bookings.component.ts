@@ -100,7 +100,7 @@ export class BookingsComponent implements OnInit {
     this.service.getExamType().subscribe(data => {this.examTypes = Object.values(data), console.log(data)});
     this.service.getStatusSicc().subscribe( res => {this.statusSicc = Object.values(res), console.log(res)});
     this.auth.currentUserSubject.subscribe(message => {this.subject = message,
-      console.log(this.subject)})
+      console.log(this.subject)});
 
   }
 
@@ -144,10 +144,16 @@ export class BookingsComponent implements OnInit {
         console.log(this.exams);
       }
       else {
-        this.toastr.error('Nenhum resultado foi encontrado.','Notificação')}
+        this.toastr.error('Nenhum resultado foi encontrado.','Notificação', {
+          timeOut: 10000,
+          closeButton: true
+        })}
     },
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+        timeOut: 10000,
+        closeButton: true
+      });
       console.log(error)
     },
     )
@@ -161,9 +167,15 @@ export class BookingsComponent implements OnInit {
         data1 => {
           if (data1) { this.exams = Object.values(data1),
             this.count = this.exams.length; }
-          else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro') }
+          else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+            timeOut: 10000,
+            closeButton: true
+          }) }
         },
-        error => this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'));
+        error => this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+          timeOut: 10000,
+          closeButton: true
+        }));
   }
 
 
@@ -183,7 +195,10 @@ export class BookingsComponent implements OnInit {
       console.log(this.result[1]),
       this.openModal(this.content)},
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+        timeOut: 10000,
+        closeButton: true
+      });
     }
     )
     this.startExamForm.reset();
@@ -218,7 +233,10 @@ export class BookingsComponent implements OnInit {
     .subscribe(res =>{
   this.exams = Object.values(res),
   console.log(this.exams)},
-    error=>  this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'))
+    error=>  this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+      timeOut: 10000,
+      closeButton: true
+    }))
   }
 
   submitPEP(advancedSearch, template){
@@ -255,9 +273,17 @@ export class BookingsComponent implements OnInit {
     this.service.createPEP(this.pepValues)
     .subscribe(res =>{
       if(res){
-        this.toastr.success('Ficheiro criado com sucesso','Notificação')
+        this.toastr.success('Ficheiro criado com sucesso','Notificação',
+        {
+          timeOut: 10000,
+          closeButton: true
+        })
       }
-      else {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro')}
+      else {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro',
+      {
+        timeOut: 10000,
+        closeButton: true
+      })}
     })
   }
 
@@ -277,8 +303,16 @@ export class BookingsComponent implements OnInit {
     }
     console.log(status)
     this.service.cancelBooking(id, status)
-    .subscribe(res => {this.toastr.warning('Marcação foi cancelada.','Notificação')},
-    error => {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro')})
+    .subscribe(res => {this.toastr.warning('Marcação foi cancelada.','Notificação',
+    {
+      timeOut: 10000,
+      closeButton: true
+    })},
+    error => {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro',
+    {
+      timeOut: 10000,
+      closeButton: true
+    })})
   }
 
   resetModal(){

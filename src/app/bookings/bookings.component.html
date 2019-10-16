@@ -80,7 +80,7 @@
           <table class="table">
             <tr>
               <th scope="row">Data do exame:</th>
-              <td>{{ selectedBooking.Timeslot_date }}</td>
+              <td>{{ selectedBooking.Timeslot_date | date: 'dd/MM/yyyy' }}</td>
             </tr>
             <tr>
               <th scope="row">Tipo do exame:</th>
@@ -387,7 +387,7 @@
                   <th scope="col">Hora de exame</th>
                   <th scope="col">Número da carta</th>
                   <th scope="col">Nome</th>
-                  <th scope="col">Número da licençanu</th>
+                  <th scope="col">Número da licença</th>
                 </tr>
               </thead>
               <tbody>
@@ -396,7 +396,7 @@
                   <td>{{item.docIdType}}</td>
                   <td>{{item.examCenterCode}}</td>
                   <td>{{item.examCode}}</td>
-                  <td>{{item.examDate}}</td>
+                  <td>{{item.examDate | date: 'dd/MM/yyyy'}}</td>
                   <td>{{item.examTime}}</td>
                   <td>{{item.learningLicenseNumber}}</td>
                   <td>{{item.name}}</td>

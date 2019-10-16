@@ -53,11 +53,17 @@ createForm() {
     this.es.addExaminer(forms)
     .subscribe(res => {
       if(res) {
-        this.toastr.success('Examinador foi criado com sucesso.','Notificação')
+        this.toastr.success('Examinador foi criado com sucesso.','Notificação', {
+          timeOut: 10000,
+          closeButton: true
+        })
       }
     },
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+        timeOut: 10000,
+        closeButton: true
+      });
     })
     console.log(forms)
     this.activeModal.close()
@@ -80,8 +86,14 @@ onEdit(addExaminerForm){
       });
   
   this.es.patchExaminer(dirtyValues, this.idExaminer.idExaminer)
-  .subscribe(res => this.toastr.success('Examinador foi editado com sucesso.','Notificação'),
-  error=>  this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Notificação'))
+  .subscribe(res => this.toastr.success('Examinador foi editado com sucesso.','Notificação', {
+    timeOut: 10000,
+    closeButton: true
+  }),
+  error=>  this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Notificação', {
+    timeOut: 10000,
+    closeButton: true
+  }))
 }
 
 

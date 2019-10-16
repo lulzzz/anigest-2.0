@@ -11,7 +11,7 @@
           </div>
           <div class="form-group">
             <label for="password">Palavra-passe</label>
-            <input type="password" formControlName="password" class="form-control">
+            <input type="password" formControlName="password" class="form-control" (keyup.enter)="loginUser()">
           </div>
         </form>
 

@@ -34,6 +34,7 @@ export class ExaminersComponent implements OnInit {
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private service: ExaminerServiceService, private toastr: ToastrService, private auth:AuthService) {
     this.createForm();
+    
   }
 
   createForm() {
@@ -75,10 +76,11 @@ export class ExaminersComponent implements OnInit {
 
   ngOnInit() {
     this.service.getAllExaminers().subscribe(res => {this.examinersList = Object.values(res),
-      console.log(this.examinersList);
-      this.auth.currentUserSubject.subscribe(message => {this.subject = message,
-        console.log(this.subject)})
+      console.log(this.examinersList);    
     });
+    this.auth.currentUserSubject.subscribe(message => {this.subject = message,
+      console.log(this.subject)})
+
   }
 
   onShow() {
@@ -110,11 +112,17 @@ export class ExaminersComponent implements OnInit {
           console.log(this.examiners);
         }
         else {
-          this.toastr.error('Nenhum examindor foi encontrado.', 'Notificação')
+          this.toastr.error('Nenhum examindor foi encontrado.', 'Notificação', {
+            timeOut: 10000,
+            closeButton: true
+          })
         }
       },
         error => {
-          this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro');
+          this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro', {
+            timeOut: 10000,
+            closeButton: true
+          });
         },
       )
   }

@@ -120,11 +120,17 @@ export class AddBookingComponent implements OnInit {
     this.service.addBooking(forms)
     .subscribe(res => {
       if(res) {
-        this.toastr.success('Marcação foi criada com sucesso.','Notificação')
+        this.toastr.success('Marcação foi criada com sucesso.','Notificação', {
+          timeOut: 10000,
+          closeButton: true
+        })
       }
     },
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+        timeOut: 10000,
+        closeButton: true
+      } );
     })
     this.activeModal.close()
    

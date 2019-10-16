@@ -38,7 +38,7 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
         // 0 de 2
         // Prática Cat. A
         return `${event.meta.currentNumStudents} / ${event.meta.maxStudents}<br>
-        ${event.meta.examType}`
+        ${event.meta.examType.Short}`
       }
       else {
         // if (event.meta.examType == 'Teórica') {

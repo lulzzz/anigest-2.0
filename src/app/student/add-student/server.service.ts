@@ -3,7 +3,7 @@ import { Student } from '../../studentmodel';
 import { Observable, throwError, Subject, BehaviorSubject } from 'rxjs';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 import { AuthService } from '../../services/auth.service';
 
 

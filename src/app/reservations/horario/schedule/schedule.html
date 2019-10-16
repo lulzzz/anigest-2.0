@@ -65,9 +65,17 @@
   </div>
   <div class="modal-body">
     <div>Hora de início:</div>
-    <div><p-calendar [showTime]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="viewDate" [locale]="pt" #startHour></p-calendar></div><br>
+    <div>
+      <!-- <p-calendar [showTime]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="viewDate" [locale]="pt" #startHour></p-calendar> -->
+      <!-- <input type="time" #startHour> -->
+      <p-calendar [timeOnly]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="viewDate" [locale]="pt" #startHour></p-calendar>
+    </div><br>
     <div>Hora de fim:</div>
-    <div><p-calendar [showTime]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="endValue" [locale]="pt" #endHour></p-calendar></div><br>
+    <div>
+      <!-- <p-calendar [showTime]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="endValue" [locale]="pt" #endHour></p-calendar> -->
+      <!-- <input type="time" #endHour> -->
+      <p-calendar [timeOnly]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="endValue" [locale]="pt" #endHour></p-calendar>
+    </div><br>
     <div>Grupo</div>
     <div><p-dropdown [options]="groupsInDate" [(ngModel)]="group" optionLabel="title" #selectedGroup></p-dropdown> </div>
   </div>
@@ -244,9 +252,10 @@
           <th>Estado do Exame</th>
           <th>Visualizar</th>
           <div *ngIf="route == 'reservations'">
-            <th>Pedir Marcação</th>
+            <th *ngIf="!subject.includes('ALL_School')">Validar Reserva</th>
             <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School'))">Editar</th>
             <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))">Desmarcar</th>
+            <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')">Enviar Modelo 2</th>
           </div>
         </tr>
         <tr *ngFor="let reservation of timeslotReservations">
@@ -256,9 +265,10 @@
           <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{examStatuses[reservation.T_exam_status_idexam_status-1]?.Status}}</td>
           <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')"><button class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'view')"><i class="fas fa-book-open"></i> Visualizar</button></td>
           <div *ngIf="route == 'reservations'">
-            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')"><button [disabled]="this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9 || scheduleLocked" class="btn btn-white" (click)="dismiss();askForBooking(reservation);"><i class="fas fa-check"></i><br>Pedir Marcação</button></td>
+            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && !subject.includes('ALL_School')"><button [disabled]="this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9 || scheduleLocked" class="btn btn-white" (click)="dismiss();askForBooking(reservation);"><i class="fas fa-check"></i><br>Validar Reserva</button></td>
             <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School')))"><button [disabled]="scheduleLocked || this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9" class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'edit')"><i class="fas fa-edit"></i> Editar</button></td>
             <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || (reservation.T_exam_status_idexam_status !== 9 && reservation.T_exam_status_idexam_status !== 3)) && !subject.includes('ALL_School') && !subject.includes('DELETE_Reservation') || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="unbookReservation(reservation); dismiss();"><i class="fas fa-times"></i> Desmarcar</button></td>
+            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')"><p-fileUpload mode="basic" auto="true" accept="application/pdf, text/*, image/*" customUpload="true" (uploadHandler)="checkFile($event, reservation.idReservation)" name="fileUpload[]" fileLimit="1" chooseLabel="Escolher Ficheiro" uploadLabel="Enviar Ficheiro" cancelLabel="Cancelar"></p-fileUpload></td>
           </div>
         </tr>
       </table>
@@ -270,8 +280,25 @@
 </ng-template>
 
 
-<!--  CHOOSE AMOUNT OF RESERVATIONS TO MAKE  -->
+<!--    CHOOSE TO GENERATE A NEW CALENDAR    -->
+<ng-template #chooseToGenerate let-dismiss="dismiss">
+  <div class="modal-header">
+    <h4 class="font-weight-light text-light ml-auto">GERAR CALENDÁRIO</h4>
+    <button type="button" class="close" aria-label="Fechar" (click)="dismiss()">
+      <span>&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Não existe um calendário neste dia</p>
+    <p>Pretende gerar um calendário?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-dark" (click)="dismiss(); openModal(generateDay)">Sim</button>
+    <button class="btn btn-secondary" (click)="dismiss()">Não</button>
+  </div>
+</ng-template>
 
+<!--  CHOOSE AMOUNT OF RESERVATIONS TO MAKE  -->
 <ng-template #reservationAmountForm let-dismiss="dismiss">
   <div class="modal-header">
     <h4 class="font-weight-light text-light ml-auto">QUANTIDADE DE RESERVAS</h4>
@@ -303,6 +330,7 @@
     </button>
   </div>
   <div class="modal-body">
+    <h4>Tipo de exame: {{this.chosenExamType.Exam_type_name}}</h4><br>
     <form [formGroup]="reservationForm">
       <div class="row">
         <div class="col">
@@ -363,7 +391,7 @@
         <div class="col">
           <div class="form-group">
             <label for="License_num">Número da licença do candidato:</label>
-            <input type="text" class="form-control" formControlName="Student_license">
+            <input [textMask]="{mask:mask}" type="text" class="form-control" formControlName="Student_license">
           </div>
         </div>
 
@@ -385,7 +413,7 @@
 
         <div class="col">
           <div class="form-group">
-            <label>Número da licença de condução:</label>
+            <label>Número da carta de condução:</label>
             <input type="text" class="form-control"  aria-label="Username"
               aria-describedby="basic-addon1" formControlName="Drive_license_num">
           </div>
@@ -401,15 +429,6 @@
         <small id="helpText" class="form-text text-muted">
           Os campos marcados com * são obrigatórios.
         </small>
-      </div>
-
-      <div *ngIf="formIsEditable">
-        <!-- <form enctype="multipart/form-data" action="__URL__" method="POST">
-          <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
-          <input name="userfile" type="file" #file>
-          <input type="submit" (click)="checkFile(file)" value="Send File" />
-        </form> -->
-        <p-fileUpload mode="basic" auto="true" accept="application/pdf, text/*, image/*" customUpload="true" (uploadHandler)="checkFile($event)" name="fileUpload[]" fileLimit="1" chooseLabel="Escolher Ficheiro" uploadLabel="Enviar Ficheiro" cancelLabel="Cancelar"></p-fileUpload>
       </div>
     </form>
   </div>

@@ -135,7 +135,9 @@ export class HorarioComponent implements OnInit {
         let tempDate = new Date(dateValue)
         for (let i = 0; i < this.weekTimeslots.length; i++) {
           let compareDate = new Date(this.weekTimeslots[i][0].Group_day)
-          if (tempDate.toString() === compareDate.toString()) {
+          let tempDateString = `${tempDate.getFullYear()}-${tempDate.getMonth()+1}-${tempDate.getDate()}`
+          let compDateString = `${compareDate.getFullYear()}-${compareDate.getMonth()+1}-${compareDate.getDate()}`
+          if (tempDateString === compDateString) {
             this.date = dateValue
             this.dataShareService.defineDate(this.date)
             this.dataShareService.defineHighestGroupId(this.highestGroupId)

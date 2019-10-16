@@ -44,11 +44,17 @@ createForm() {
       this.service.addTransaction(forms)
     .subscribe(res => {
       if(res) {
-        this.toastr.success('Entrada foi criada com sucesso.','Notificação')
+        this.toastr.success('Entrada foi criada com sucesso.','Notificação', {
+          timeOut: 10000,
+          closeButton: true
+        })
       }
     },
     error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro');
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+        timeOut: 10000,
+        closeButton: true
+      });
     }) 
     console.log(forms)
     this.activeModal.close()

@@ -13,7 +13,8 @@
           <label for="number">Número*</label>
           <input type="number" class="form-control" formControlName="number" #number [ngClass]="{'is-invalid': angForm.get('number').touched && angForm.get('number').invalid}">
           <div class="invalid-feedback">
-            <div>Number is required</div>
+            <div>
+              Número é obrigatório</div>
           </div>
         </div>
       </div>
@@ -71,10 +72,11 @@
       <div class="col">
         <div class="form-group">
           <label for="category">Categoria*</label>
-          <select class="form-control" formControlName="category" #category>
+          <select class="form-control" formControlName="category" (focusout)="sendValue(category.value)" #category>
             <option *ngFor="let category of categories" value={{category.idType_category}}>{{category.Category}}
             </option>
           </select>
+          <p>{{angForm.value.category}}</p>
         </div>
       </div>
     </div>
@@ -83,7 +85,8 @@
       <div class="col">
         <div class="form-group">
           <label for="license">Número da Licença*</label>
-          <input type="text" class="form-control" formControlName="license" #license>
+          <input type="text"  [textMask]="{mask:mask}" class="form-control" formControlName="license" #license>
+          <p>{{angForm.value.license}}</p>
         </div>
       </div>
       <div class="col">
