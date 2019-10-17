@@ -1,0 +1,112 @@
+<div class="modal-header" style="background-color: rgb(52, 58, 64)">
+  <h2 class="font-weight-light text-light ml-auto">EDITAR CANDIDATO</h2>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+
+  <form [formGroup]="editForm">
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="name">Nome</label>
+          <input type="text" class="form-control" formControlName="Student_name" #Student_name>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="id_type">Documento de Identificação</label>
+          <select class="form-control" formControlName="T_ID_type_idT_ID_type" #id_type>
+            <option *ngFor="let idType of idTypes" value={{idType.idT_ID_type}}>{{idType.ID_name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="birth_date">Data de Nascimento</label>
+          <input type="date" class="form-control" formControlName="Birth_date">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="id">Número do BI</label>
+          <input type="text" class="form-control" formControlName="ID_num" #id>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="id_expiration">Validade do BI</label>
+          <input type="date" class="form-control" formControlName="ID_expire_date" #id_expiration>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="school">Escola</label>
+          <select class="form-control" formControlName="School_idSchool" #school>
+            <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="category">Categoria</label>
+          <select class="form-control" formControlName="Type_category_idType_category" #category>
+            <option *ngFor="let category of categories" value={{category.idType_category}}>{{category.Category}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="license">Número da Licença</label>
+          <input type="text" class="form-control" formControlName="Student_license" #license>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="license_expiration">Validade da Licença</label>
+          <input type="date" class="form-control" formControlName="Expiration_date" #license_expiration>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="Tax_num">Número contribuinte</label>
+          <input type="text" class="form-control" formControlName="Tax_num" #fiscal_number>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="existing_license_num">Número da Carta</label>
+          <input type="text" class="form-control" formControlName="Drive_license_num" #existing_license>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="observations">Observações</label>
+      <textarea class="form-control" rows="3" formControlName="Obs" #observations></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-lg mr-auto" (click)="activeModal.close('Close click')">Fechar</button>
+      <button (click)="getDirtyValues(editForm); activeModal.close()" class="btn btn-warning btn-lg">Atualizar candidato</button>
+    </div>
+  </form>
+</div>
+
+
