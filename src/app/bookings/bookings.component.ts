@@ -40,6 +40,7 @@ export class BookingsComponent implements OnInit {
   item2;
   item3;
   public show:boolean = false;
+  public createState:boolean = false;
   currentPage = 1;
   itemsPerPage = 10;
   pageSize: number;
@@ -167,7 +168,7 @@ export class BookingsComponent implements OnInit {
         data1 => {
           if (data1) { this.exams = Object.values(data1),
             this.count = this.exams.length; }
-          else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+          else { this.toastr.error('Nenhum resultado foi encontrado.','Notificação', {
             timeOut: 10000,
             closeButton: true
           }) }
@@ -240,6 +241,7 @@ export class BookingsComponent implements OnInit {
   }
 
   submitPEP(advancedSearch, template){
+    this.createState = true;
     let dirtyValues = {};
     console.log(dirtyValues);
   
@@ -256,7 +258,7 @@ export class BookingsComponent implements OnInit {
         });
         dirtyValues["sicc"]="PEP";
        
-        this.pepValues=dirtyValues;
+        this.pepValues = dirtyValues;
     this.service.getPEP(dirtyValues)
     .subscribe(res =>{
       if(res){
@@ -264,12 +266,17 @@ export class BookingsComponent implements OnInit {
         console.log(res)
          this.modalService.open(template, { windowClass: 'myclass', centered: true, backdrop: 'static' }); 
       }
+      else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+        timeOut: 10000,
+        closeButton: true
+      })}
     
 /*     this.toastr.success('Ficheiro criado com sucesso','Notificação')},
     error=>  this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Notificação')) */
   })}
 
-  sendPEPResults(){
+  sendPEPResults(template){
+    this.createState = false;
     this.service.createPEP(this.pepValues)
     .subscribe(res =>{
       if(res){
@@ -277,7 +284,8 @@ export class BookingsComponent implements OnInit {
         {
           timeOut: 10000,
           closeButton: true
-        })
+        });
+        this.modalService.open(template, { windowClass: 'myclass', centered: true, backdrop: 'static' }); 
       }
       else {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro',
       {

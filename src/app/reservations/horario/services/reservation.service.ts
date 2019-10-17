@@ -63,6 +63,8 @@ export class ReservationService {
   }
 
   sendFile(file, reservationId) {
+
+    /* return this.http.post<any>(`${this.url}?idReservation=${reservationId}&file=true`,) */
     console.log(file)
     console.log(reservationId)
   }

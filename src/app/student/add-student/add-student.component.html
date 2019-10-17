@@ -1,4 +1,4 @@
-<div class="modal-header bg-secondary">
+<div class="modal-header">
   <h2 class="font-weight-light text-light ml-auto">NOVO CANDIDATO</h2>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
     <span aria-hidden="true">&times;</span>
@@ -72,11 +72,10 @@
       <div class="col">
         <div class="form-group">
           <label for="category">Categoria*</label>
-          <select class="form-control" formControlName="category" (focusout)="sendValue(category.value)" #category>
+           <select class="form-control" formControlName="category" (focusout)="sendValue(category.value)" #category>
             <option *ngFor="let category of categories" value={{category.idType_category}}>{{category.Category}}
             </option>
-          </select>
-          <p>{{angForm.value.category}}</p>
+          </select> 
         </div>
       </div>
     </div>
@@ -85,8 +84,10 @@
       <div class="col">
         <div class="form-group">
           <label for="license">Número da Licença*</label>
-          <input type="text"  [textMask]="{mask:mask}" class="form-control" formControlName="license" #license>
-          <p>{{angForm.value.license}}</p>
+          <input type="text"  [textMask]="{mask:mask}" class="form-control" formControlName="license" (focusout)="checkValue(license.value)" #license [ngClass]="{'is-invalid': angForm.get('license').touched && angForm.get('license').invalid}">
+          <div class="invalid-feedback">
+            <div>{{ errorMessage }}</div>
+          </div>
         </div>
       </div>
       <div class="col">
@@ -102,13 +103,9 @@
       <div class="col">
         <div class="form-group">
           <label for="fiscal_number">Número contribuinte</label>
-          <input type="text" class="form-control" formControlName="fiscal_number" #fiscal_number>
-          <div
-            *ngIf="angForm.controls['fiscal_number'].invalid && (angForm.controls['fiscal_number'].dirty || angForm.controls['fiscal_number'].touched)"
-            class="alert alert-danger">
-            <div *ngIf="angForm.controls['fiscal_number'].errors.required">
-              Insira o número contribuinte
-            </div>
+          <input type="text"  [textMask]="{mask:contribuente}" class="form-control" formControlName="fiscal_number" #fiscal_number [ngClass]="{'is-invalid': angForm.get('fiscal_number').touched && angForm.get('fiscal_number').invalid}">
+          <div class="invalid-feedback">
+            <div>Número contribuinte e obrigatório.</div>
           </div>
         </div>
       </div>

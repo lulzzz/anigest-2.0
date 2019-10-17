@@ -336,7 +336,7 @@
         <div class="col">
           <div class="form-group">
             <label for="Num">Nome do candidato:</label>
-            <input type="text" class="form-control" formControlName="Student_name">
+            <input pattern="[a-zA-Z]*" type="text" class="form-control" formControlName="Student_name">
           </div>
         </div>
         <div class="col">
@@ -407,7 +407,7 @@
         <div class="col">
           <div class="form-group">
             <label for="License_num">Número de contribuinte:</label>
-            <input type="text" class="form-control" formControlName="tax_num">
+            <input [textMask]="{mask:taxMask}" type="text" class="form-control" formControlName="tax_num">
           </div>
         </div>
 
@@ -421,7 +421,7 @@
       </div>
       <div class="form-group">
         <label>Matrícula</label>
-        <input type="text" class="form-control" placeholder="Exemplo: 00-AA-00" formControlName="Car_plate">
+        <input [textMask]="{mask:plateMask}" type="text" class="form-control" formControlName="Car_plate">
       </div>
       <div class="form-group">
         <label for="Obs">Observações:</label>

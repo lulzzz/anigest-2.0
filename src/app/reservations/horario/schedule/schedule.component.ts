@@ -239,7 +239,9 @@ export class ScheduleComponent {
   examinerQualificationsExamType: any[] = []
   examinersExamType: any[] = []
 
-  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ' , /[A-Z]/, /\d/];
+  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', ''];
+  public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
+  public plateMask = [/[A-Z0-9]/, /[A-Z0-9]/, '-', /[A-Z0-9]/, /[A-Z0-9]/, '-', /[A-Z0-9]/, /[A-Z0-9]/]
 
   oldEnd: any
   oldStart: any
@@ -372,8 +374,16 @@ export class ScheduleComponent {
       let validated = format.test(this.fileToUpload.name.split(".",1))
       console.log(this.fileToUpload)
       if (validated)  {
-        this.reservationService.sendFile(this.fileToUpload, id)
-        this.toastr.success('Ficheiro enviado.', 'Sucesso')
+        /* this.reservationService.sendFile(this.fileToUpload, id).subscribe(() => {
+
+        }, (e) => {
+          this.toastr.error('Erro ao enviar ficheiro', 'Erro')
+          console.log(e)
+        },
+        () => {
+          this.toastr.success('Ficheiro enviado.', 'Sucesso')
+        }) */
+        this.toastr.error('Erro ao enviar ficheiro', 'Erro')
       }
       else {
         this.toastr.error('Nome com formato errado', 'Erro')
@@ -404,20 +414,21 @@ export class ScheduleComponent {
     // console.log(exam)
     // console.log(this.selectedOption)
   }
+  
   setFormValidators() {
     let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
-    this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
+    this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z]*')])
     this.reservationForm.controls["Student_name"].updateValueAndValidity()
     this.reservationForm.controls["Birth_date"].setValidators(Validators.required)
     this.reservationForm.controls["Birth_date"].updateValueAndValidity()
-    this.reservationForm.controls["ID_num"].setValidators(Validators.required)
+    this.reservationForm.controls["ID_num"].setValidators([Validators.required, Validators.pattern('^[0-9]*')])
     this.reservationForm.controls["ID_num"].updateValueAndValidity()
     this.reservationForm.controls["ID_expire_date"].setValidators(Validators.required)
     this.reservationForm.controls["ID_expire_date"].updateValueAndValidity()
-    this.reservationForm.controls["tax_num"].setValidators([Validators.required, Validators.maxLength(11)])
+    this.reservationForm.controls["tax_num"].setValidators([Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]*')])
     this.reservationForm.controls["tax_num"].updateValueAndValidity()
-    // this.reservationForm.controls["Drive_license_num"].setValidators()
-    // this.reservationForm.controls["Drive_license_num"].updateValueAndValidity()
+    this.reservationForm.controls["Drive_license_num"].setValidators(Validators.pattern('^[0-9]*'))
+    this.reservationForm.controls["Drive_license_num"].updateValueAndValidity()
     if (this.userIdSchool === 'null') {
       this.reservationForm.controls["School_Permit"].setValidators(Validators.required)
       this.reservationForm.controls["School_Permit"].updateValueAndValidity()
@@ -1183,6 +1194,24 @@ export class ScheduleComponent {
         }
         this.event = chosenEvent[0]
         this.chosenExamType = this.event.meta.examType
+        if (this.chosenExamType !== null) {
+          let character = ''
+          if (this.chosenExamType.Short.substr(6,1) !== ',' && this.chosenExamType.Short.substr(6,1) !== '+') {
+            // if (this.chosenExamType.Short.substr(5,1) == 'A') {
+            //   this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', this.chosenExamType.Short.substr(5,1)];
+            // }
+            if (this.chosenExamType.Short !== 'TEÓRICA') {
+              character = this.chosenExamType.Short.substr(5,1)
+            }
+            else {
+              character = 'T'
+            }
+          }
+          else {
+            character = this.chosenExamType.Short.substr(5)
+          }
+          this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', character];
+        }
         if (this.event.meta.pauta) {
           let chosenType = this.examTypes.filter((type) => {
             return type.idExam_type === this.event.meta.pauta.Exam_type_idExam_type

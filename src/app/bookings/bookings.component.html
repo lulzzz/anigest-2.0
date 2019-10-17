@@ -409,8 +409,8 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-dark"
               (click)="modal.close('Save click')">Fechar</button>
-            <button type="button" class="btn btn-outline-success"
-              (click)="sendPEPResults(); modal.close('Save click')">OK</button>
+            <button *ngIf="createState" type="button" class="btn btn-outline-success"
+              (click)="sendPEPResults(confirmModal); modal.close('Save click')">Criar</button>
           </div>
         </div>
  

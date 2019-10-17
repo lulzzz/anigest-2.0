@@ -120,9 +120,13 @@ export class ExamsComponent implements OnInit {
         this.count = this.exams.length;
         console.log(this.exams);
       }
+      else { this.toastr.error('Nenhum resultado foi encontrado.', 'Notificação', {
+        timeOut: 20000,
+        closeButton: true
+      }) }
     },
     error => {
-      if(error.status === 404){this.toastr.info('Nenhum exame foi encontrado.','Notificação', {closeButton:true, timeOut:40000})}
+      if(error.status === 404){this.toastr.info('Nenhum resultado foi encontrado.','Notificação', {closeButton:true, timeOut:40000})}
       else  {this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'), {closeButton:true, timeOut:40000}}
   
     },

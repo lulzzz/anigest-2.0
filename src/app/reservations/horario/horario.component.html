@@ -5,14 +5,12 @@
       <li class="h4 mr-auto font-weight-light">Horário</li>
 
       <li class="nav-item" *ngIf="route == 'results' && subject.includes('ALL_School')">
-        <button type="button" class="btn btn-light"><i
-            class="fas fa-file-invoice-dollar"></i>
+        <button type="button" class="btn btn-light"><i class="fas fa-th"></i>
           Numerar</button>
       </li>
 
       <li class="nav-item" *ngIf="route == 'results' && subject.includes('ALL_School')">
-        <button type="button" class="btn btn-light" (click)="randomizeExaminer()"><i
-            class="fas fa-file-invoice-dollar"></i>
+        <button type="button" class="btn btn-light" (click)="randomizeExaminer()"><i class="fas fa-pen"></i>
           Iniciar</button>
       </li>
 
