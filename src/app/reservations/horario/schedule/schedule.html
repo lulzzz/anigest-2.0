@@ -268,7 +268,11 @@
             <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && !subject.includes('ALL_School')"><button [disabled]="this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9 || scheduleLocked" class="btn btn-white" (click)="dismiss();askForBooking(reservation);"><i class="fas fa-check"></i><br>Validar Reserva</button></td>
             <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School')))"><button [disabled]="scheduleLocked || this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9" class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'edit')"><i class="fas fa-edit"></i> Editar</button></td>
             <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || (reservation.T_exam_status_idexam_status !== 9 && reservation.T_exam_status_idexam_status !== 3)) && !subject.includes('ALL_School') && !subject.includes('DELETE_Reservation') || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="unbookReservation(reservation); dismiss();"><i class="fas fa-times"></i> Desmarcar</button></td>
-            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')"><p-fileUpload mode="basic" auto="true" accept="application/pdf, text/*, image/*" customUpload="true" (uploadHandler)="checkFile($event, reservation.idReservation)" name="fileUpload[]" fileLimit="1" chooseLabel="Escolher Ficheiro" uploadLabel="Enviar Ficheiro" cancelLabel="Cancelar"></p-fileUpload></td>
+            <!-- <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')"><p-fileUpload mode="basic" auto="true" accept="application/pdf, text/*, image/*" customUpload="true" (uploadHandler)="checkFile($event, reservation.idReservation)" name="fileUpload[]" fileLimit="1" chooseLabel="Escolher Ficheiro" uploadLabel="Enviar Ficheiro" cancelLabel="Cancelar"></p-fileUpload></td> -->
+            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')"> <button type="button" class="btn btn-success" (click)="fileInput.click(reservation.idReservation)"><i class="fas fa-upload"></i>
+              Escolher Ficheiro
+              <input #fileInput type="file" (change)="handleFileInput($event.target.files)" style="display:none;"/>
+            </button></td>
           </div>
         </tr>
       </table>
@@ -336,7 +340,7 @@
         <div class="col">
           <div class="form-group">
             <label for="Num">Nome do candidato:</label>
-            <input pattern="[a-zA-Z]*" type="text" class="form-control" formControlName="Student_name">
+            <input type="text" class="form-control" formControlName="Student_name">
           </div>
         </div>
         <div class="col">

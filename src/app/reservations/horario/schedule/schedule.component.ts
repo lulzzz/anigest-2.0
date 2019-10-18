@@ -235,9 +235,9 @@ export class ScheduleComponent {
   userIdSchool: any
   userSchoolPermit: any
   selectedOption: any
-  fileToUpload: any
   examinerQualificationsExamType: any[] = []
-  examinersExamType: any[] = []
+  examinersExamType: any[] = [];
+  fileToUpload: File = null;
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', ''];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -367,14 +367,14 @@ export class ScheduleComponent {
     this.groupAmount = null
   }
 
-  checkFile(event, id) {
+/*   checkFile(event, id) {
     this.fileToUpload = event.files[0]
     if (this.fileToUpload.name.length) {
       const format = /^(Modelo2{1}_[0-9]{9})$/gi
       let validated = format.test(this.fileToUpload.name.split(".",1))
       console.log(this.fileToUpload)
       if (validated)  {
-        /* this.reservationService.sendFile(this.fileToUpload, id).subscribe(() => {
+         this.reservationService.sendFile(this.fileToUpload, id).subscribe(() => {
 
         }, (e) => {
           this.toastr.error('Erro ao enviar ficheiro', 'Erro')
@@ -382,13 +382,31 @@ export class ScheduleComponent {
         },
         () => {
           this.toastr.success('Ficheiro enviado.', 'Sucesso')
-        }) */
+        }) 
         this.toastr.error('Erro ao enviar ficheiro', 'Erro')
       }
       else {
         this.toastr.error('Nome com formato errado', 'Erro')
       }
     }
+  } */
+
+  handleFileInput(files: FileList, resID) {
+    this.fileToUpload = files.item(0);
+    this.uploadFileToActivity(resID)
+  }
+
+  uploadFileToActivity(resID) {
+    this.reservationService.sendFile(this.fileToUpload, resID).subscribe(data => {
+      if (data) {
+        this.toastr.success('File uploaded')
+      }
+      console.log(Object.values(data))
+    }, error => {
+      this.toastr.error('WRONG', 'Erro')
+    });
+
+
   }
 
   defineExaminer() {
@@ -417,7 +435,7 @@ export class ScheduleComponent {
   
   setFormValidators() {
     let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
-    this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z]*')])
+    this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
     this.reservationForm.controls["Student_name"].updateValueAndValidity()
     this.reservationForm.controls["Birth_date"].setValidators(Validators.required)
     this.reservationForm.controls["Birth_date"].updateValueAndValidity()
@@ -1667,8 +1685,8 @@ export class ScheduleComponent {
   editReservation() {
     let reservation = this.reservationForm.getRawValue()
     this.reservationService.updateReservation(this.reservation.idReservation, reservation).subscribe(res => console.log(res))
-    this.reservationService.sendFile(this.fileToUpload, this.reservation.idReservation)
-    this.fileToUpload = {}
+/*     this.reservationService.sendFile(this.fileToUpload, this.reservation.idReservation)
+    this.fileToUpload = {} */
   }
 
   lockSchedule() {

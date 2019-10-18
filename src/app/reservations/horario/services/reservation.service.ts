@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs'
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { retry, catchError, map } from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
 
@@ -62,11 +62,15 @@ export class ReservationService {
     return this.http.patch<any>(`${this.url}?idReservation=${reservationId}&aprove=true`, '')
   }
 
-  sendFile(file, reservationId) {
-
-    /* return this.http.post<any>(`${this.url}?idReservation=${reservationId}&file=true`,) */
+  sendFile(file, resID) {
+    const endpoint = 'http://192.168.0.106:4200/api/centro-exames/4/reservas';
+    const formData: FormData = new FormData();
+    formData.append('file', file, file.name);
+    const params = new HttpParams().append('idReservation', resID).append('file','true')
+    return this.http.post(endpoint, formData, { params})
+/*      return this.http.post<any>(`${this.url}?idReservation=${reservationId}&file=true`,) 
     console.log(file)
-    console.log(reservationId)
+    console.log(reservationId) */
   }
 
   getExamStatus() {
