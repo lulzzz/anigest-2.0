@@ -98,7 +98,17 @@ export class ScheduleComponent {
         this.toastr.warning(toastrMessage, 'Aviso')
       }
       else{
-        this.openModal(this.confirmGroupDelete)
+        let curDate = new Date(this.currentDate)
+        let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+        let groupsInDate = this.timeslots.filter((obj) => {
+          return new Date(obj[0].Group_day).toISOString() == comparisonDate
+        })
+        if (groupsInDate[0].Max > 1) {
+          this.openModal(this.confirmGroupDelete)
+        }
+        else {
+          this.toastr.warning('Não pode eliminar todos os grupos de um calendário', 'Aviso')
+        }
       }
     }
     else if (eventText == 'gerar calendário') {
@@ -115,6 +125,7 @@ export class ScheduleComponent {
             return new Date(obj[0].Group_day).toISOString() == comparisonDate
           })
           if(groupsInDate.length){
+            console.log(groupsInDate)
             this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro')
             return
           }
@@ -762,6 +773,7 @@ export class ScheduleComponent {
           })
           console.log(examTypeShort)
           eventsToAdd[i].Exam_type_name = examTypeShort[0]
+          canResize = false
         }
         if (timeslotPauta.length) {
           this.events[id] = {
@@ -1191,6 +1203,7 @@ export class ScheduleComponent {
   //=======================TIMESLOT OPERATIONS=======================\\
 
   async chooseTimeslot(checkIfEvent, modal) {
+    // this.timeslotService.
     this.examiner = {}
     this.examsInPauta = []
     if (!this.timesChanged) {
