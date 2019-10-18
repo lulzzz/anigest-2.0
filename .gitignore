@@ -8,8 +8,11 @@
 /bazel-out
 
 # dependencies
-/node_modules
-!**/node_modules/angular-calendar
+!/node_modules/
+
+/node_modules/*
+!/node_modules/angular-calendar
+# !**/node_modules/angular-calendar
 
 # profiling files
 chrome-profiler-events.json
