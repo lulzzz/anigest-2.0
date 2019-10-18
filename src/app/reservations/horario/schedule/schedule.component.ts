@@ -238,6 +238,7 @@ export class ScheduleComponent {
   examinerQualificationsExamType: any[] = []
   examinersExamType: any[] = [];
   fileToUpload: File = null;
+  navigationDisabled: boolean = false
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', ''];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -1718,6 +1719,7 @@ export class ScheduleComponent {
   }
 
   async switchDate(buttonPressed) {
+    this.navigationDisabled = true
     if (this.viewDate.getDay() === 0) {
       if (buttonPressed === 'previous') {
         this.viewDate.setDate(this.viewDate.getDate() - 1)
@@ -1726,28 +1728,54 @@ export class ScheduleComponent {
         this.viewDate.setDate(this.viewDate.getDate() + 1)
       }
     }
-    let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
-    if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
-      this.weekNumber = {...newWeekNumber}
-      console.log('abc')
-      this.getSchedule()
+    try {
+      let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
+      if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
+        this.weekNumber = {...newWeekNumber}
+        await this.getSchedule()
+      }
+    }
+    catch {
+      let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
+      if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
+        this.weekNumber = {...newWeekNumber}
+        await this.getSchedule()
+      }
     }
     this.currentDate = this.viewDate.getFullYear() +'/'+(this.viewDate.getMonth()+1)+'/'+this.viewDate.getDate()
     let currentDate = this.getCurrentDateFormatted()
     this.endValue = this.viewDate
-    console.log(this.groups)
-    console.log(currentDate)
-    this.groupsInDate = this.groups.filter((group) => {
-      return group.date == currentDate
-    })
-    let weekDay = this.viewDate.getDay()
-    if(!this.groupsInDate.length && this.viewDate > new Date()) {
-      if (this.weekendDays.includes(weekDay)) {
-        this.openModal(this.dayIsWeekend)
+    if (this.groups.length === 0) {
+      setTimeout(() => {
+        this.groupsInDate = this.groups.filter((group) => {
+          return group.date == currentDate
+        })
+        let weekDay = this.viewDate.getDay()
+        if(!this.groupsInDate.length && this.viewDate > new Date()) {
+          if (this.weekendDays.includes(weekDay)) {
+            this.openModal(this.dayIsWeekend)
+          }
+          else {
+            this.openModal(this.chooseToGenerate)
+          }
+        }
+        this.navigationDisabled = false
+      }, 1000)
+    }
+    else {
+      this.groupsInDate = this.groups.filter((group) => {
+        return group.date == currentDate
+      })
+      let weekDay = this.viewDate.getDay()
+      if(!this.groupsInDate.length && this.viewDate > new Date()) {
+        if (this.weekendDays.includes(weekDay)) {
+          this.openModal(this.dayIsWeekend)
+        }
+        else {
+          this.openModal(this.chooseToGenerate)
+        }
       }
-      else {
-        this.openModal(this.chooseToGenerate)
-      }
+      this.navigationDisabled = false
     }
     this.setTime('startHour')
     this.setTime('startMinute')
