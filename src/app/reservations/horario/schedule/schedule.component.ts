@@ -193,8 +193,8 @@ export class ScheduleComponent {
   workHours: WorkHours[] = []
   workHour: WorkHours
   tempStudent: TempStudent
-  timeslots: Timeslot[] = [{}]
-  timeslot: Timeslot = {}
+  timeslots: any[] = [{}]
+  timeslot: any = {}
   startHour: any = {}
   endHour: any = {}
   dailyGroup: DailyGroup
@@ -1234,6 +1234,9 @@ export class ScheduleComponent {
             // }
             if (this.chosenExamType.Short !== 'TEÓRICA') {
               character = this.chosenExamType.Short.substr(5,1)
+              if (character.includes('+')) {
+                character.replace('+', '')
+              }
             }
             else {
               character = 'T'
