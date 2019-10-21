@@ -1236,7 +1236,7 @@ export class ScheduleComponent {
         }
         this.event = chosenEvent[0]
         this.chosenExamType = this.event.meta.examType
-        if (this.chosenExamType !== null) {
+       /* if (this.chosenExamType !== null) {
           let character = ''
           if (this.chosenExamType.Short.substr(6,1) !== ',' && this.chosenExamType.Short.substr(6,1) !== '+') {
             // if (this.chosenExamType.Short.substr(5,1) == 'A') {
@@ -1256,7 +1256,7 @@ export class ScheduleComponent {
             character = this.chosenExamType.Short.substr(5)
           }
           this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', character];
-        }
+        }*/
         if (this.event.meta.pauta) {
           let chosenType = this.examTypes.filter((type) => {
             return type.idExam_type === this.event.meta.pauta.Exam_type_idExam_type
