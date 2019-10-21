@@ -146,14 +146,14 @@ export class ScheduleComponent {
   reservationForm = this.fb.group({
     Student_name: ['', [Validators.required, Validators.minLength(8), this.ValidateString]],
     Birth_date: ['', [Validators.required]],
-    ID_num: [''],
-    ID_expire_date: [''],
-    tax_num: [''],
+    ID_num: ['', [Validators.required]],
+    ID_expire_date: ['', [Validators.required]],
+    tax_num: ['', [Validators.required]],
     Drive_license_num: [''],
     Obs: [''],
     School_Permit: [''],
-    Student_license: [''],
-    Expiration_date: [''],
+    Student_license: ['', [Validators.required]],
+    Expiration_date: ['', [Validators.required]],
     Type_category_idType_category: ['', [Validators.required]],
     T_ID_type_idT_ID_type: ['', [Validators.required]],
     Exam_type_idExam_type: ['', [Validators.required]],
@@ -445,7 +445,7 @@ export class ScheduleComponent {
     // console.log(this.selectedOption)
   }
   
-  setFormValidators() {
+/*  setFormValidators() {
     let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
     this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
     this.reservationForm.controls["Student_name"].updateValueAndValidity()
@@ -472,7 +472,7 @@ export class ScheduleComponent {
     this.reservationForm.controls["Car_plate"].setValidators([Validators.minLength(8), Validators.maxLength(8), Validators.pattern(carPlateFormat)])
     this.reservationForm.controls["Car_plate"].updateValueAndValidity()
   }
-  
+  */
        ValidateString(control: FormControl) {
     let pattern = /[*\\/|":?><'!~]/gi; // can change regex with your requirement
     //if validation fails, return error name & value of true
