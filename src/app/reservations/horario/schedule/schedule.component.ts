@@ -1758,7 +1758,9 @@ export class ScheduleComponent {
   }
 
   async switchDate(buttonPressed) {
-    this.navigationDisabled = true
+    if (this.userIdSchool == 'null') {
+      this.navigationDisabled = true
+    }
     if (this.viewDate.getDay() === 0) {
       if (buttonPressed === 'previous') {
         this.viewDate.setDate(this.viewDate.getDate() - 1)
