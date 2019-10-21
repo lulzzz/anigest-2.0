@@ -445,9 +445,9 @@ export class ScheduleComponent {
     // console.log(this.selectedOption)
   }
   
-/*  setFormValidators() {
+  setFormValidators() {
     let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
-    this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
+ /*   this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
     this.reservationForm.controls["Student_name"].updateValueAndValidity()
     this.reservationForm.controls["Birth_date"].setValidators(Validators.required)
     this.reservationForm.controls["Birth_date"].updateValueAndValidity()
@@ -470,9 +470,9 @@ export class ScheduleComponent {
     this.reservationForm.controls["T_ID_type_idT_ID_type"].setValidators(Validators.required)
     this.reservationForm.controls["T_ID_type_idT_ID_type"].updateValueAndValidity()
     this.reservationForm.controls["Car_plate"].setValidators([Validators.minLength(8), Validators.maxLength(8), Validators.pattern(carPlateFormat)])
-    this.reservationForm.controls["Car_plate"].updateValueAndValidity()
+    this.reservationForm.controls["Car_plate"].updateValueAndValidity()*/
   }
-  */
+  
        ValidateString(control: FormControl) {
     let pattern = /[*\\/|":?><'!~]/gi; // can change regex with your requirement
     //if validation fails, return error name & value of true
