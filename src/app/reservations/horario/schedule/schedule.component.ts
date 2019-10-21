@@ -103,7 +103,7 @@ export class ScheduleComponent {
         let groupsInDate = this.timeslots.filter((obj) => {
           return new Date(obj[0].Group_day).toISOString() == comparisonDate
         })
-        if (groupsInDate[0].Max > 1) {
+        if (groupsInDate[0][0].Max > 1) {
           this.openModal(this.confirmGroupDelete)
         }
         else {
