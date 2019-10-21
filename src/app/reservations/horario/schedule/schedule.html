@@ -495,9 +495,9 @@
     </div>
     <div *ngIf="formIsEditable">
         <button class="btn btn-secondary btn-lg mr-auto" (click)="dismiss(); cancelLockReservation(); resetReservationForm();editingReservation=false">Cancelar</button>
-      <button [disabled]="!reservationForm.valid" *ngIf="!canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
-      <button [disabled]="!reservationForm.valid " *ngIf="canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
-      <button [disabled]="!reservationForm.valid" *ngIf="editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(); resetReservationForm();editingReservation=false">Atualizar Reserva</button>
+      <button  *ngIf="!canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
+      <button  *ngIf="canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
+      <button  *ngIf="editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(); resetReservationForm();editingReservation=false">Atualizar Reserva</button>
     </div>
   </div>
 </ng-template>
