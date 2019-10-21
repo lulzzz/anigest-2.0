@@ -1790,15 +1790,20 @@ export class ScheduleComponent {
           return group.date == currentDate
         })
         let weekDay = this.viewDate.getDay()
-        if(!this.groupsInDate.length && this.viewDate > new Date()) {
-          if (this.weekendDays.includes(weekDay)) {
-            this.openModal(this.dayIsWeekend)
-          }
-          else {
-            this.openModal(this.chooseToGenerate)
+        if (this.userIdSchool == 'null') {
+          if(!this.groupsInDate.length && this.viewDate > new Date()) {
+            if (this.weekendDays.includes(weekDay)) {
+              this.openModal(this.dayIsWeekend)
+            }
+            else {
+              this.openModal(this.chooseToGenerate)
+            }
           }
         }
         this.navigationDisabled = false
+        setTimeout(() => {
+          document.getElementById('hid').click()
+        }, 100)
       }, 1000)
     }
     else {
@@ -1806,12 +1811,14 @@ export class ScheduleComponent {
         return group.date == currentDate
       })
       let weekDay = this.viewDate.getDay()
-      if(!this.groupsInDate.length && this.viewDate > new Date()) {
-        if (this.weekendDays.includes(weekDay)) {
-          this.openModal(this.dayIsWeekend)
-        }
-        else {
-          this.openModal(this.chooseToGenerate)
+      if (this.userIdSchool == 'null') {
+        if(!this.groupsInDate.length && this.viewDate > new Date()) {
+          if (this.weekendDays.includes(weekDay)) {
+            this.openModal(this.dayIsWeekend)
+          }
+          else {
+            this.openModal(this.chooseToGenerate)
+          }
         }
       }
       this.navigationDisabled = false
