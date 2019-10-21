@@ -250,7 +250,7 @@
       <table class="table table-responsive" *ngIf="reservation.Student_name != null">
         <tr>
           <th>Nome do Candidato</th>
-          <th>Nome da Escola</th>
+          <th>Alvará</th>
           <!-- <th>Tipo de Exame</th> -->
           <th>Estado do Exame</th>
           <th>Visualizar</th>
@@ -263,7 +263,7 @@
         </tr>
         <tr *ngFor="let reservation of timeslotReservations">
           <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{reservation.Student_name}}</td>
-          <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{reservation.School_name}}</td>
+          <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{reservation.School_Permit}}</td>
           <!-- <td>{{reservation.Exam_type_name}}</td> -->
           <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{examStatuses[reservation.T_exam_status_idexam_status-1]?.Status}}</td>
           <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')"><button class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'view')"><i class="fas fa-book-open"></i> Visualizar</button></td>
@@ -416,7 +416,7 @@
               <select id="CategorySelect" class="form-control custom-select input-group-text"
                 formControlName="School_Permit">
                 <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Alvará</option>
-                <option *ngFor="let school of schools" [ngValue]="school.Permit">{{school.School_name}}</option>
+                <option *ngFor="let school of schools" [ngValue]="school.Permit">{{school.Permit}}</option>
               </select>
             </div>
             <div *ngIf="userIdSchool !== 'null'">
@@ -495,9 +495,9 @@
     </div>
     <div *ngIf="formIsEditable">
         <button class="btn btn-secondary btn-lg mr-auto" (click)="dismiss(); cancelLockReservation(); resetReservationForm();editingReservation=false">Cancelar</button>
-      <button  *ngIf="!canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
-      <button  *ngIf="canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
-      <button  *ngIf="editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(); resetReservationForm();editingReservation=false">Atualizar Reserva</button>
+      <button [disabled]="!reservationForm.valid" *ngIf="!canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
+      <button [disabled]="!reservationForm.valid " *ngIf="canClose && !editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
+      <button [disabled]="!reservationForm.valid" *ngIf="editingReservation" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(); resetReservationForm();editingReservation=false">Atualizar Reserva</button>
     </div>
   </div>
 </ng-template>
