@@ -144,8 +144,8 @@ export class ScheduleComponent {
 //============================FORM DEFINITION===========================\\
   
   reservationForm = this.fb.group({
-    Student_name: [''],
-    Birth_date: [''],
+    Student_name: ['', [Validators.required, Validators.minLength(8), this.ValidateString]],
+    Birth_date: ['', [Validators.required]],
     ID_num: [''],
     ID_expire_date: [''],
     tax_num: [''],
@@ -154,9 +154,9 @@ export class ScheduleComponent {
     School_Permit: [''],
     Student_license: [''],
     Expiration_date: [''],
-    Type_category_idType_category: [''],
-    T_ID_type_idT_ID_type: [''],
-    Exam_type_idExam_type: [''],
+    Type_category_idType_category: ['', [Validators.required]],
+    T_ID_type_idT_ID_type: ['', [Validators.required]],
+    Exam_type_idExam_type: ['', [Validators.required]],
     Car_plate: [''],
     idTimeslot: [''],
   })
@@ -251,7 +251,7 @@ export class ScheduleComponent {
   fileToUpload: File = null;
   navigationDisabled: boolean = false
 
-  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', ''];
+  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[A-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
   public plateMask = [/[A-Z0-9]/, /[A-Z0-9]/, '-', /[A-Z0-9]/, /[A-Z0-9]/, '-', /[A-Z0-9]/, /[A-Z0-9]/]
 
@@ -411,11 +411,11 @@ export class ScheduleComponent {
   uploadFileToActivity(resID) {
     this.reservationService.sendFile(this.fileToUpload, resID).subscribe(data => {
       if (data) {
-        this.toastr.success('File uploaded')
+        this.toastr.success('Modelo 2 enviado com sucesso.','Notificação')
       }
       console.log(Object.values(data))
     }, error => {
-      this.toastr.error('WRONG', 'Erro')
+      this.toastr.error('Ocorreu um erro.', 'Erro')
     });
 
 
@@ -472,6 +472,16 @@ export class ScheduleComponent {
     this.reservationForm.controls["Car_plate"].setValidators([Validators.minLength(8), Validators.maxLength(8), Validators.pattern(carPlateFormat)])
     this.reservationForm.controls["Car_plate"].updateValueAndValidity()
   }
+  
+       ValidateString(control: FormControl) {
+    let pattern = /[*\\/|":?><'!~]/gi; // can change regex with your requirement
+    //if validation fails, return error name & value of true
+    if (pattern.test(control.value)) {
+        return { validString: true };
+    }
+    //otherwise, if the validation passes, we simply return null
+    return null;
+}
 
   createPauta() {
     let date = this.getCurrentDateFormatted(this.viewDate)
@@ -1352,6 +1362,19 @@ export class ScheduleComponent {
        })
   }
 
+    checkValue(val) {
+    const stringy = val.substring(15, 16);
+    console.log(stringy);
+    console.log(this.chosenExamType.Category.substring(0,1))
+     if (stringy === this.chosenExamType.Category.substring(0,1)) {
+      console.log('SUCCEESS')
+    }
+    else {
+      
+        this.reservationForm.controls['Student_license'].setErrors({'formatError': true});
+    } 
+  }
+  
   openReservation(reservation, modal, option) {
     this.reservationForm.patchValue( {
       Student_name: reservation.Student_name,
