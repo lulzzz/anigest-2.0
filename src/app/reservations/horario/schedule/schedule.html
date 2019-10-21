@@ -339,24 +339,45 @@
   <div class="modal-body">
     <h4>Tipo de exame: {{this.chosenExamType.Exam_type_name}}</h4><br>
     <form [formGroup]="reservationForm">
-      <div class="row">
+       <div class="row">
         <div class="col">
           <div class="form-group">
             <label for="Num">Nome do candidato:</label>
-            <input type="text" class="form-control" formControlName="Student_name">
+            <input type="text" class="form-control" formControlName="Student_name"
+              [ngClass]="{'is-invalid': reservationForm.get('Student_name').touched && reservationForm.get('Student_name').invalid || reservationForm.get('Student_name').required}">
+            <div class="invalid-feedback">
+              <div *ngIf="reservationForm.get('Student_name').hasError('minlength')">
+                O comprimento do nome terá no minimo 4 caracteres.</div>
+
+              <div *ngIf="reservationForm.get('Student_name').hasError('required')">
+                Nome é obrigatório.</div>
+              <div *ngIf="reservationForm.get('Student_name').hasError('validString')">
+                Caracteres não são permitidos.</div>
+            </div>
           </div>
         </div>
         <div class="col">
           <label>Tipo de documento:</label>
-          <select id="IDTypeSelect" class="form-control custom-select input-group-text" formControlName="T_ID_type_idT_ID_type">
+          <select id="IDTypeSelect" class="form-control custom-select input-group-text"
+            formControlName="T_ID_type_idT_ID_type"
+            [ngClass]="{'is-invalid': reservationForm.get('T_ID_type_idT_ID_type').touched && reservationForm.get('T_ID_type_idT_ID_type').invalid || reservationForm.get('T_ID_type_idT_ID_type').required}">
             <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Tipo de ID</option>
             <option *ngFor="let idType of idTypes" [ngValue]="idType.idT_ID_type">{{idType.ID_name}}</option>
           </select>
+          <div class="invalid-feedback">
+            <div *ngIf="reservationForm.get('T_ID_type_idT_ID_type').hasError('required')">
+              Selecione uma opção.</div>
+          </div>
         </div>
         <div class="col">
           <div class="form-group">
             <label for="Examiner_name">Número de identificação:</label>
-            <input type="text" class="form-control" formControlName="ID_num">
+            <input type="number" class="form-control" formControlName="ID_num"
+              [ngClass]="{'is-invalid': reservationForm.get('ID_num').touched && reservationForm.get('ID_num').invalid || reservationForm.get('ID_num').required}">
+            <div class="invalid-feedback">
+              <div *ngIf="reservationForm.get('ID_num').hasError('required')">
+                Número de identificação é obrigatório.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -365,14 +386,24 @@
         <div class="col">
           <div class="form-group">
             <label for="License_num">Validade do documento de identificação:</label>
-            <input type="date" class="form-control" formControlName="ID_expire_date">
+            <input type="date" class="form-control" formControlName="ID_expire_date" max="2030-01-01"
+              [ngClass]="{'is-invalid': reservationForm.get('ID_expire_date').touched && reservationForm.get('ID_expire_date').invalid || reservationForm.get('ID_expire_date').required}">
+            <div class="invalid-feedback">
+              <div *ngIf="reservationForm.get('ID_expire_date').hasError('required')">
+                A data de validação é obrigatória</div>
+            </div>
           </div>
         </div>
 
         <div class="col">
           <div class="form-group">
             <label for="License_expiration">Data de nascimento:</label>
-            <input type="date" class="form-control" formControlName="Birth_date">
+            <input type="date" class="form-control" formControlName="Birth_date" max="2030-01-01"
+              [ngClass]="{'is-invalid': reservationForm.get('Birth_date').touched && reservationForm.get('Birth_date').invalid || reservationForm.get('Birth_date').required}">
+            <div class="invalid-feedback">
+              <div *ngIf="reservationForm.get('Birth_date').hasError('required')">
+                A data de nascimento é obrigatória.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -382,7 +413,8 @@
           <div class="form-group">
             <div *ngIf="userIdSchool === 'null'">
               <label for="License_num">Alvará:</label>
-              <select id="CategorySelect" class="form-control custom-select input-group-text" formControlName="School_Permit">
+              <select id="CategorySelect" class="form-control custom-select input-group-text"
+                formControlName="School_Permit">
                 <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Alvará</option>
                 <option *ngFor="let school of schools" [ngValue]="school.Permit">{{school.School_name}}</option>
               </select>
@@ -398,14 +430,27 @@
         <div class="col">
           <div class="form-group">
             <label for="License_num">Número da licença do candidato:</label>
-            <input [textMask]="{mask:mask}" type="text" class="form-control" formControlName="Student_license">
+            <input [textMask]="{mask:mask}" type="text" class="form-control" formControlName="Student_license" #Student_license
+              (focusout)="checkValue(Student_license.value)"
+              [ngClass]="{'is-invalid': reservationForm.get('Student_license').touched && reservationForm.get('Student_license').invalid || reservationForm.get('Student_license').required}">
+            <div class="invalid-feedback">
+              <div *ngIf="reservationForm.get('Student_license').hasError('required')">
+                Número da licença é obrigatório.</div>
+              <div *ngIf="reservationForm.get('Student_license').hasError('formatError')">
+                O número da licença deve corresponder à categoria.</div>
+            </div>
           </div>
         </div>
 
         <div class="col">
           <div class="form-group">
             <label for="License_expiration">Validade da licença:</label>
-            <input type="date" class="form-control" formControlName="Expiration_date">
+            <input type="date" class="form-control" formControlName="Expiration_date" max="2030-01-01"
+              [ngClass]="{'is-invalid': reservationForm.get('Expiration_date').touched && reservationForm.get('Expiration_date').invalid || reservationForm.get('Expiration_date').required}">
+            <div class="invalid-feedback">
+              <div *ngIf="reservationForm.get('Expiration_date').hasError('required')">
+                Validade da licença é obrigatória.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -413,16 +458,21 @@
       <div class="row">
         <div class="col">
           <div class="form-group">
-            <label for="License_num">Número de contribuinte:</label>
-            <input [textMask]="{mask:taxMask}" type="text" class="form-control" formControlName="tax_num">
+            <label for="License_num">Número contribuinte:</label>
+            <input [textMask]="{mask:taxMask}" type="text" class="form-control" formControlName="tax_num"
+              [ngClass]="{'is-invalid': reservationForm.get('tax_num').touched && reservationForm.get('tax_num').invalid || reservationForm.get('tax_num').required}">
+            <div class="invalid-feedback">
+              <div *ngIf="reservationForm.get('tax_num').hasError('required')">
+                Número contribuinte é obrigatório.</div>
+            </div>
           </div>
         </div>
 
         <div class="col">
           <div class="form-group">
             <label>Número da carta de condução:</label>
-            <input type="text" class="form-control"  aria-label="Username"
-              aria-describedby="basic-addon1" formControlName="Drive_license_num">
+            <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1"
+              formControlName="Drive_license_num">
           </div>
         </div>
       </div>
