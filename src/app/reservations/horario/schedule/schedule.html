@@ -344,7 +344,7 @@
           <div class="form-group">
             <label for="Num">Nome do candidato:</label>
             <input type="text" class="form-control" formControlName="Student_name"
-              [ngClass]="{'is-invalid': reservationForm.get('Student_name').touched && reservationForm.get('Student_name').invalid || reservationForm.get('Student_name').required}">
+              [ngClass]="{'is-invalid': reservationForm.get('Student_name').touched && reservationForm.get('Student_name').invalid || reservationForm.get('Student_name').required, 'is-valid':reservationForm.get('Student_name').touched && reservationForm.get('Student_name').valid}">
             <div class="invalid-feedback">
               <div *ngIf="reservationForm.get('Student_name').hasError('minlength')">
                 O comprimento do nome terá no minimo 4 caracteres.</div>
