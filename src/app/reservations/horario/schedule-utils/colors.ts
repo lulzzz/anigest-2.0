@@ -13,8 +13,10 @@ export const colors: any = {
     secondary: '#feffa0'
   },
   white: { // Interdito a marcações
-    primary: '#777777',
-    secondary: '#FFFFFF'
+    // primary: '#777777',
+    primary: '#aaa',
+    // secondary: '#FFFFFF'
+    secondary: '#DDD'
   },
   orange: { // Com alguns exames marcados
     primary: '#e37608',
