@@ -153,7 +153,7 @@ export class ScheduleComponent {
     Exam_type_idExam_type: ['', [Validators.required]],
     Car_plate: [''],
     idTimeslot: [''],
-    Theorical_date: ['']
+    exam_expiration_date: ['']
   })
   //=======================CENTER AND DATE VARIABLES=======================\\
 
@@ -491,7 +491,7 @@ export class ScheduleComponent {
   }
   
   ValidateString(control: FormControl) {
-    let pattern = /[*\\/|":?><'!~]/gi; // can change regex with your requirement
+    let pattern = /[*\\/|":?><.,!~]/gi; // can change regex with your requirement
     //if validation fails, return error name & value of true
     if (pattern.test(control.value)) {
         return { validString: true };
@@ -1503,6 +1503,7 @@ export class ScheduleComponent {
       Exam_type_idExam_type: reservation.Exam_type_idExam_type,
       Car_plate: reservation.Car_plate,
       idTimeslot: reservation.idTimeslot,
+      exam_expiration_date: reservation.exam_expiration_date
     })
     if (this.userIdSchool !== 'null') {
       this.reservationForm.patchValue( {
@@ -1656,7 +1657,9 @@ export class ScheduleComponent {
     })
     // max is the number of groups in that day
     let daylock = 1
-    this.dayLockIcon = this.scheduleLocked
+    this.dayLockIcon = true
+    this.scheduleLocked = true
+    this.lockedDates.push(this.viewDate.getDate())
     let replaced = false
     if (max[0].date.substr(8, 2) == '00') {
       max[0].date = max[0].date.replace('00', '01')
