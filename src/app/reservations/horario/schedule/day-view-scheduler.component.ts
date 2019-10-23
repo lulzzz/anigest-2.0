@@ -45,7 +45,7 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
     `
       .cal-day-view .cal-event {
         color: black !important;
-        font-weight: bold !important;
+        font-weight: light !important;
         opacity: 0.8;
       }
 
@@ -60,6 +60,7 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
       .cal-day-view .cal-time {
         transform: translateY(-24px);
         font-weight: normal !important;
+        background-color: white;
       }
       
       .day-view-column-headers {
