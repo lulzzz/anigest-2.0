@@ -33,13 +33,6 @@ import { Router } from '@angular/router'
 
 @Component({
   selector: 'schedule-component',
-  styles: [
-    `
-      .cal-day-view .cal-event {
-        color: black;
-      }
-    `
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: 'schedule.html',
   providers: [
@@ -144,7 +137,8 @@ export class ScheduleComponent {
 //============================FORM DEFINITION===========================\\
   
   reservationForm = this.fb.group({
-    Student_name: ['', [Validators.required, Validators.minLength(8), this.ValidateString]],
+    Student_name: ['', [Validators.required, Validators.minLength(4), this.ValidateString]],
+    Student_num:   [''],
     Birth_date: ['', [Validators.required]],
     ID_num: ['', [Validators.required]],
     ID_expire_date: ['', [Validators.required]],
@@ -159,6 +153,7 @@ export class ScheduleComponent {
     Exam_type_idExam_type: ['', [Validators.required]],
     Car_plate: [''],
     idTimeslot: [''],
+    Theorical_date: ['']
   })
   //=======================CENTER AND DATE VARIABLES=======================\\
 
@@ -222,6 +217,7 @@ export class ScheduleComponent {
   exam: any
   examsInPauta: any[] = []
   examTypesAllowed: any[] = [];
+  examTypesAllowedSchool: any[] = []
   locale:any;
 
   //=======================MISC. VARIABLES=======================\\
@@ -251,9 +247,21 @@ export class ScheduleComponent {
   fileToUpload: File = null;
   navigationDisabled: boolean = false
 
-  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[A-Z]/, /[A-Z0-9]/];
+  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
   public plateMask = [/[A-Z0-9]/, /[A-Z0-9]/, '-', /[A-Z0-9]/, /[A-Z0-9]/, '-', /[A-Z0-9]/, /[A-Z0-9]/]
+
+  hourMask(value) {
+    const chars = value.split('');
+    const hours: Array<any> = [
+      /[0-2]/,
+      chars[0] == '2' ? /[0-3]/ : /[0-9]/
+    ];
+
+    const minutes: Array<any> = [/[0-5]/, (/[0|5]/)];
+
+    return hours.concat(':').concat(minutes);
+  }
 
   oldEnd: any
   oldStart: any
@@ -387,7 +395,6 @@ export class ScheduleComponent {
       console.log(this.fileToUpload)
       if (validated)  {
          this.reservationService.sendFile(this.fileToUpload, id).subscribe(() => {
-
         }, (e) => {
           this.toastr.error('Erro ao enviar ficheiro', 'Erro')
           console.log(e)
@@ -420,6 +427,16 @@ export class ScheduleComponent {
 
 
   }
+  // formIsValid: boolean = false
+  // validateForm() {
+  //   let form = this.reservationForm.getRawValue() 
+  //   let expirationDate = form.Expiration_date
+  //   let expirationDateMax = `${this.viewDate.getFullYear()}-${this.viewDate.getMonth()+1}-${this.viewDate.getDate()}`
+  //   if (form.Expiration_date) {
+
+  //   }
+  //   console.log(form)
+  // }
 
   defineExaminer() {
     this.pautaService.definePautaExaminer(this.event.meta.pauta.idPauta, this.examiner.idExaminer).subscribe(() => {},
@@ -446,7 +463,7 @@ export class ScheduleComponent {
   }
   
   setFormValidators() {
-    let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
+    // let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
  /*   this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
     this.reservationForm.controls["Student_name"].updateValueAndValidity()
     this.reservationForm.controls["Birth_date"].setValidators(Validators.required)
@@ -473,7 +490,7 @@ export class ScheduleComponent {
     this.reservationForm.controls["Car_plate"].updateValueAndValidity()*/
   }
   
-       ValidateString(control: FormControl) {
+  ValidateString(control: FormControl) {
     let pattern = /[*\\/|":?><'!~]/gi; // can change regex with your requirement
     //if validation fails, return error name & value of true
     if (pattern.test(control.value)) {
@@ -481,7 +498,7 @@ export class ScheduleComponent {
     }
     //otherwise, if the validation passes, we simply return null
     return null;
-}
+  }
 
   createPauta() {
     let date = this.getCurrentDateFormatted(this.viewDate)
@@ -650,20 +667,25 @@ export class ScheduleComponent {
     }
   }
 
-  generateNewEvent(startDate: Date, endDate: Date, group: Group) {
+  generateNewEvent(startDate: string, endDate: string, group: Group) {
     this.groupsInDate = this.groups.filter((group)=> {
       return group.date == this.currentDate
     })
     let startFormatted
     let endFormatted
     try {
-      startFormatted = parseFloat(`${startDate.getHours()}.${(parseInt(startDate.getMinutes().toString()))/6}`)
-      endFormatted = parseFloat(`${endDate.getHours()}.${(parseInt(endDate.getMinutes().toString()))}`)
+      startFormatted = parseFloat(`${startDate.substr(0,2)}.${(parseFloat(startDate.substr(3,2).toString()))/0.6}`)
+      endFormatted = parseFloat(`${endDate.substr(0,2)}.${(parseFloat(endDate.substr(3,2).toString()))/0.6}`)
+      console.log(startFormatted)
+      console.log(endFormatted)
     }
     catch {
     }
     if (!startDate || !endDate || !group) {
       this.toastr.error('Dados em falta','Erro')
+    }
+    else if (startFormatted < 8 || startFormatted > 19 || endFormatted < 8 || endFormatted > 20) {
+      this.toastr.error('Insira uma hora válida', 'Erro')
     }
     else if ((startFormatted >= 13 && startFormatted < 14 || endFormatted <= 14 && endFormatted > 13) || (endFormatted > 13 && startFormatted <= 13) || (endFormatted >= 14 && startFormatted < 14)) {
       this.toastr.error('Um timeslot não pode ocupar a hora de almoço', 'Erro')
@@ -673,11 +695,14 @@ export class ScheduleComponent {
     }
     else {
       let groupNumber = group.title.substr(6,2)
-      let timeslotDate = startDate.getFullYear() + '-' + (startDate.getMonth()+1) + '-' + startDate.getDate()
+      let timeslotDate = this.viewDate.getFullYear() + '-' + (this.viewDate.getMonth()+1) + '-' + this.viewDate.getDate()
+      console.log(timeslotDate)
+      startDate.concat(':00')
+      endDate.concat(':00')
       let timeslot = {
         Timeslot_date: timeslotDate,
-        Begin_time: startDate.toTimeString().substr(0, 8),
-        End_time: endDate.toTimeString().substr(0, 8),
+        Begin_time: startDate,
+        End_time: endDate,
         Exam_group: groupNumber,
         Exam_type_idExam_type: null,
         Exam_center_idExam_center: this.idExamCenter
@@ -767,6 +792,12 @@ export class ScheduleComponent {
           canResize = false
           canDrag = false
         }
+        let startString = startDate.getFullYear().toString() + (startDate.getMonth()+1).toString() + startDate.getDate().toString()
+        let todayString = new Date().getFullYear().toString() + (new Date().getMonth()+1).toString() + new Date().getDate().toString()
+        if (startString === todayString) {
+          canResize = false
+          canDrag = false
+        }
         let exist = false
         if (typeof(this.timeslots) !== 'undefined') {
           exist = true
@@ -801,7 +832,7 @@ export class ScheduleComponent {
               pauta: timeslotPauta[0]
             },
             resizable: {
-              beforeStart: canResize,
+              beforeStart: false,
               afterEnd: canResize
             },
             draggable: canDrag,
@@ -823,7 +854,7 @@ export class ScheduleComponent {
               // examTypeShort: eventsToAdd[i].Exam_type_name.Short
             },
             resizable: {
-              beforeStart: canResize,
+              beforeStart: false,
               afterEnd: canResize
             },
             draggable: canDrag,
@@ -849,6 +880,8 @@ export class ScheduleComponent {
     let compareDate = new Date(date)
     if (group[0].Day_lock == 1) {
       this.lockedDates.push((compareDate.getDate()))
+      console.log(group[0])
+      console.log(this.lockedDates)
     }
     let currentDate = this.getCurrentDateFormatted(compareDate)
     this.groupsInDate = this.groups.filter((group) => {
@@ -1005,7 +1038,7 @@ export class ScheduleComponent {
           group: this.groups[this.highestGroupId]
         },
         resizable: {
-          beforeStart: true,
+          beforeStart: false,
           afterEnd: true
         },
         draggable: false,
@@ -1179,6 +1212,22 @@ export class ScheduleComponent {
               if (eventsInGroup.length == 0) {
                 let groupPosition = this.groups.indexOf(eventGroup)
                 this.groups.splice(groupPosition, 1)
+                let curDate = new Date(this.currentDate)
+                let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+                let groupsInDate = this.timeslots.filter((obj) => {
+                  return new Date(obj[0].Group_day).toISOString() == comparisonDate
+                })
+                let maxGroups = groupsInDate[0][0].Max
+                let dayLock = groupsInDate[0][0].Day_lock
+              
+                let updateObject = {
+                  Max: maxGroups-1,
+                  Day_lock: dayLock
+                }
+                if (updateObject.Max < 0) {
+                  updateObject.Max = 0
+                }
+                this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
               }
               this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
               this.refreshTimeslots(this.groups, this.events)
@@ -1198,8 +1247,25 @@ export class ScheduleComponent {
               return event.meta.group == eventGroup
             })
             if (eventsInGroup.length == 0) {
+              let curDate = new Date(this.currentDate)
+              let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+              let groupsInDate = this.timeslots.filter((obj) => {
+                return new Date(obj[0].Group_day).toISOString() == comparisonDate
+              })
+              let maxGroups = groupsInDate[0][0].Max
+              let dayLock = groupsInDate[0][0].Day_lock
+            
+              let updateObject = {
+                Max: maxGroups-1,
+                Day_lock: dayLock
+              }
+              if (updateObject.Max < 0) {
+                updateObject.Max = 0
+              }
+              this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
               let groupPosition = this.groups.indexOf(eventGroup)
               this.groups.splice(groupPosition, 1)
+              this.checkIfGroupDecrease()
             }
             this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
             this.refreshTimeslots(this.groups, this.events)
@@ -1209,8 +1275,52 @@ export class ScheduleComponent {
     })
   }
 
+  checkIfGroupDecrease() {
+    let curDate = new Date(this.currentDate)
+    let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+    let groupsInDate = this.timeslots.filter((obj) => {
+      return new Date(obj[0].Group_day).toISOString() == comparisonDate
+    })
+    let maxGroups = groupsInDate[0][0].Max-1
+    let viewDateDate = this.viewDate.getFullYear() + '/' + (this.viewDate.getMonth()+1) + '/' + this.viewDate.getDate()
+    let eventsInDate: any[] = []
+    let eventId = 0
+    let sameGroupNumber = []
+    for (let i = 0; i < this.events.length; i++) {
+      if(this.events[i] != undefined) {
+        let eventDate = this.events[i].start.getFullYear() + '/' + (this.events[i].start.getMonth()+1) + '/' + this.events[i].start.getDate()
+        if (eventDate == viewDateDate) {
+          if (parseInt(this.events[i].meta.group.title.substr(6,3)) == maxGroups) {
+            sameGroupNumber.push(this.events[i])
+          }
+          if (parseInt(this.events[i].meta.group.title.substr(6,3)) > maxGroups) {
+            let objectToSend = {
+              Exam_group: parseInt(this.events[i].meta.group.title.substr(6,3)) - 1,
+            }
+            this.timeslotService.updateTimeslot(this.events[i].id, objectToSend).subscribe()
+          }
+          eventsInDate[eventId] = this.events[i]
+          eventId++
+        }
+      }
+    }
+    for (let i = 0; i < sameGroupNumber.length; i++) {
+      let objectToSend = {
+        Exam_group: parseInt(sameGroupNumber[i].meta.group.title.substr(6,3)) - 1,
+      }
+      this.timeslotService.updateTimeslot(sameGroupNumber[i].id, objectToSend).subscribe()
+    }
+    this.getSchedule()
+    console.log(eventsInDate)
+
+  }
+
 
   //=======================TIMESLOT OPERATIONS=======================\\
+  isChecked: boolean = false
+  checkBoxChecked() {
+    this.isChecked = !this.isChecked
+  }
 
   async chooseTimeslot(checkIfEvent, modal) {
     // this.timeslotService.
@@ -1378,6 +1488,7 @@ export class ScheduleComponent {
   openReservation(reservation, modal, option) {
     this.reservationForm.patchValue( {
       Student_name: reservation.Student_name,
+      Student_num: reservation.Student_num,
       Birth_date: this.datePipe.transform(reservation.Birth_date, 'yyyy-MM-dd'),
       ID_num: reservation.ID_num,
       ID_expire_date: this.datePipe.transform(reservation.ID_expire_date, 'yyyy-MM-dd'),
@@ -1471,6 +1582,15 @@ export class ScheduleComponent {
       let hourDiffInHours = hourDiff/1000/60/60
       return hourDiffInHours <= diffInHours
     })
+    if (this.userIdSchool != 'null') {
+      let theoricalExams = this.examTypesAllowed.filter((examType) => {
+        return examType.Description.includes('Teór')
+      })
+      for (let i = 0; i < theoricalExams.length; i++) {
+        let index = this.examTypesAllowed.indexOf(theoricalExams[i])
+        this.examTypesAllowed.splice(index, 1)
+      }
+    }
   }
 
   async defineExamType(examType) {
@@ -1521,6 +1641,8 @@ export class ScheduleComponent {
       }
       this.refreshTimeslots(this.groups, this.events)
     }, 100)
+    this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}})
+    this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
   }
 
   updateTimeslot(objectToSend) {
@@ -1533,7 +1655,7 @@ export class ScheduleComponent {
       return group.date == currentDate
     })
     // max is the number of groups in that day
-    let daylock = 0
+    let daylock = 1
     this.dayLockIcon = this.scheduleLocked
     let replaced = false
     if (max[0].date.substr(8, 2) == '00') {
@@ -1586,27 +1708,15 @@ export class ScheduleComponent {
   }
 
   async createReservation(reservation) {
-    // this.reservationService.addReservation(reservation).subscribe((res) => {
-    //   if (res) {
-    //     this.toastr.success('Reserva criada com sucesso', 'Notificação')
-    //   }
-    // },
-    // (e) => {
-    //   this.toastr.error('A reserva não foi criada', 'Erro')
-    // }, 
-    // () => {
-    //   this.event.meta.currentNumStudents++
-    //   this.timeslotReservations.push(reservation)
-    //   this.reservationService.getReservation().subscribe(res => this.reservations = res, 
-    //     (e) => {
-    //     }, 
-    //     () => {
-    //       this.reservationService.sendFile(this.fileToUpload,)  INCOMPLETO
-    //       this.refreshTimeslots(this.groups, this.events)
-    //     })
-    // })
-    this.reservationService.addReservation(reservation).subscribe()
-    setTimeout(() => {
+    this.reservationService.addReservation(reservation).subscribe((res) => {
+      if (res) {
+        this.toastr.success('Reserva criada com sucesso', 'Notificação')
+      }
+    },
+    (e) => {
+      this.toastr.error('A reserva não foi criada', 'Erro')
+    }, 
+    () => {
       this.event.meta.currentNumStudents++
       this.timeslotReservations.push(reservation)
       this.reservationService.getReservation().subscribe(res => this.reservations = res, 
@@ -1615,13 +1725,14 @@ export class ScheduleComponent {
         () => {
           this.getSchedule()
         })
-    }, 300)
+    })
   }
 
   resetReservationForm() {
     this.reservationForm.enable()
     this.formIsEditable = true
     this.reservationForm.reset()
+    this.isChecked = false
   }
 
   cancelLockReservation() {
@@ -1677,6 +1788,9 @@ export class ScheduleComponent {
       this.lockedReservationId = data.insertId
     },
       error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')
+    },
+    () => {
+      this.openModal(this.timeslotForm)
     })
   }
 
@@ -1710,15 +1824,17 @@ export class ScheduleComponent {
   }
 
   checkIfLocked() {
-    if (this.lockedDates.toString().includes(this.viewDate.getDate().toString())) {
+    if (this.lockedDates.includes(this.viewDate.getDate())) {
       this.scheduleLocked = true
     }
     else {
       this.scheduleLocked = false
     }
     if (this.viewDate < new Date()) {
+      console.log('?')
       this.scheduleLocked = true
     }
+    console.log(this.scheduleLocked)
     this.dayLockIcon = this.scheduleLocked
   }
   
@@ -1785,6 +1901,7 @@ export class ScheduleComponent {
     }
     this.currentDate = this.viewDate.getFullYear() +'/'+(this.viewDate.getMonth()+1)+'/'+this.viewDate.getDate()
     let currentDate = this.getCurrentDateFormatted()
+    this.checkIfLocked()
     this.endValue = this.viewDate
     if (this.groups.length === 0) {
       setTimeout(() => {
@@ -1996,12 +2113,12 @@ export class ScheduleComponent {
             this.updateTimeslots()
           }
         }
-        if (event.start > oldStart && event.end == oldEnd) {
-          this.generateNewEvent(oldStart, event.start, event.meta.group)
-        }
-        else if (event.end < oldEnd && event.start == oldStart) {
-          this.generateNewEvent(event.end, oldEnd, event.meta.group)
-        }
+        // if (event.start > oldStart && event.end == oldEnd) {
+        //   this.generateNewEvent(oldStart, event.start, event.meta.group)
+        // }
+        // else if (event.end < oldEnd && event.start == oldStart) {
+        //   this.generateNewEvent(event.end, oldEnd, event.meta.group)
+        // }
       }
         
     }
