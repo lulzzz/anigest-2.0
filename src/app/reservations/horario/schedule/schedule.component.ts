@@ -62,13 +62,25 @@ export class ScheduleComponent {
   eventClicked(event) {
     let toastrMessage = 'Não pode modificar calendários de dias anteriores ou o de hoje.'
     let eventText = event.target.innerText.trim().toLowerCase()
-    if (event.target.offsetParent.id === 'deleteX') {
-      let chosenEventId = this.dataShareService.getChosenTimeslotId()
-      let chosenEvent = this.events.filter((event) => {
-        return event.id == chosenEventId
-      })
-      this.event = chosenEvent[0]
-      this.deleteEvent()
+    if (event.target.offsetParent) {
+      if (event.target.offsetParent.id === 'deleteX') {
+        let chosenEventId = this.dataShareService.getChosenTimeslotId()
+        let chosenEvent = this.events.filter((event) => {
+          return event.id == chosenEventId
+        })
+        this.event = chosenEvent[0]
+        if (this.userIdSchool == 'null'){
+          if (this.event.meta.currentNumStudents === 0) {
+            this.deleteEvent()
+          }
+          else {
+            this.toastr.warning('Não pode eliminar um timeslot com reservas criadas.', 'Aviso')
+          }
+        }
+        else {
+          this.toastr.warning('Não tem permissão para realizar essa operação.', 'Aviso')
+        }
+      }
     }
     if (eventText == 'numerar') {
       if (this.viewDate.getTime() < new Date().getTime()) {
@@ -126,7 +138,6 @@ export class ScheduleComponent {
             return new Date(obj[0].Group_day).toISOString() == comparisonDate
           })
           if(groupsInDate.length){
-            console.log(groupsInDate)
             this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro')
             return
           }
@@ -150,7 +161,7 @@ export class ScheduleComponent {
     Birth_date: ['', [Validators.required]],
     ID_num: ['', [Validators.required]],
     ID_expire_date: ['', [Validators.required]],
-    tax_num: ['', [Validators.required, Validators.minLength(9), this.ValidateString]],
+    tax_num: ['', [Validators.required, Validators.minLength(9), this.ValidateTax]],
     Drive_license_num: [''],
     Obs: [''],
     School_Permit: [''],
@@ -508,7 +519,7 @@ export class ScheduleComponent {
   }
   
   ValidateString(control: FormControl) {
-    let pattern = /[*\\/|":?><.,!~]/gi; // can change regex with your requirement
+    let pattern = /[*\\/|":?><0-9\-_;ºª.,!~]/gi; // can change regex with your requirement
     //if validation fails, return error name & value of true
     if (pattern.test(control.value)) {
         return { validString: true };
@@ -516,6 +527,22 @@ export class ScheduleComponent {
     //otherwise, if the validation passes, we simply return null
     return null;
   }
+
+  ValidateTax(control: FormControl) {
+    let pattern = /[0-9]{9}/
+    if (pattern.test(control.value)) {
+      return null
+    }
+    return { validString: true }
+  }
+
+  // ValidateBirthDate(control: FormControl) {
+  //   if (control.value) {
+  //     // console.log(this.viewDate)
+  //     console.log(control)
+  //     console.log(control.value)
+  //   }
+  // }
 
   createPauta() {
     let date = this.getCurrentDateFormatted(this.viewDate)
@@ -693,8 +720,6 @@ export class ScheduleComponent {
     try {
       startFormatted = parseFloat(`${startDate.substr(0,2)}.${(parseFloat(startDate.substr(3,2).toString()))/0.6}`)
       endFormatted = parseFloat(`${endDate.substr(0,2)}.${(parseFloat(endDate.substr(3,2).toString()))/0.6}`)
-      console.log(startFormatted)
-      console.log(endFormatted)
     }
     catch {
     }
@@ -713,7 +738,6 @@ export class ScheduleComponent {
     else {
       let groupNumber = group.title.substr(6,2)
       let timeslotDate = this.viewDate.getFullYear() + '-' + (this.viewDate.getMonth()+1) + '-' + this.viewDate.getDate()
-      console.log(timeslotDate)
       startDate.concat(':00')
       endDate.concat(':00')
       let timeslot = {
@@ -824,12 +848,9 @@ export class ScheduleComponent {
           return pauta.Timeslot_idTimeslot == id
         })
         if (eventsToAdd[i].Exam_type_name !== null) {
-          console.log(this.examTypes)
           let examTypeShort = this.examTypes.filter((type) => {
-            console.log(eventsToAdd[i].Exam_type_name)
             return type.Exam_type_name == eventsToAdd[i].Exam_type_name
           })
-          console.log(examTypeShort)
           eventsToAdd[i].Exam_type_name = examTypeShort[0]
           canResize = false
         }
@@ -897,8 +918,6 @@ export class ScheduleComponent {
     let compareDate = new Date(date)
     if (group[0].Day_lock == 1) {
       this.lockedDates.push((compareDate.getDate()))
-      console.log(group[0])
-      console.log(this.lockedDates)
     }
     let currentDate = this.getCurrentDateFormatted(compareDate)
     this.groupsInDate = this.groups.filter((group) => {
@@ -1214,7 +1233,7 @@ export class ScheduleComponent {
       }, () => {
         this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
         (err) => {
-          this.toastr.error('Erro ao eliminar o espaço de tempo', 'Erro')
+          this.toastr.error('Erro ao eliminar o timeslot', 'Erro')
         },
         () => {
           
@@ -1243,7 +1262,7 @@ export class ScheduleComponent {
             }
             this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
           }
-          this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
+          this.toastr.success('Timeslot eliminado', 'Sucesso')
           this.refreshTimeslots(this.groups, this.events)
         })
       })
@@ -1251,7 +1270,7 @@ export class ScheduleComponent {
     else {
       this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
       (err) => {
-        this.toastr.error('Erro ao eliminar o espaço de tempo', 'Erro')
+        this.toastr.error('Erro ao eliminar o timeslot', 'Erro')
       },
       () => {
         
@@ -1281,7 +1300,7 @@ export class ScheduleComponent {
           this.groups.splice(groupPosition, 1)
           this.checkIfGroupDecrease()
         }
-        this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
+        this.toastr.success('Timeslot eliminado', 'Sucesso')
         this.refreshTimeslots(this.groups, this.events)
       })
     }
@@ -1323,8 +1342,6 @@ export class ScheduleComponent {
       this.timeslotService.updateTimeslot(sameGroupNumber[i].id, objectToSend).subscribe()
     }
     this.getSchedule()
-    console.log(eventsInDate)
-
   }
 
 
@@ -1479,21 +1496,16 @@ export class ScheduleComponent {
        () => {
 
        }, () => {
-         console.log(this.examinersExamType)
         this.openModal(this.examinerTable)
        })
   }
 
     checkValue(val) {
     const stringy = val.substring(15, 16);
-    console.log(stringy);
-    console.log(this.chosenExamType.Category.substring(0,1))
      if (stringy === this.chosenExamType.Category.substring(0,1)) {
-      console.log('SUCCEESS')
     }
     else {
-      
-        this.reservationForm.controls['Student_license'].setErrors({'formatError': true});
+      this.reservationForm.controls['Student_license'].setErrors({'formatError': true});
     } 
   }
   
@@ -1503,7 +1515,7 @@ export class ScheduleComponent {
       Student_num: reservation.Student_num,
       Birth_date: this.datePipe.transform(reservation.Birth_date, 'yyyy-MM-dd'),
       ID_num: reservation.ID_num,
-      ID_expire_date: this.datePipe.transform(reservation.ID_expire_date, 'yyyy-MM-dd'),
+      ID_expire_date: this.datePipe.transform(reservation.ID_expire_date, 'yyyy-MM-dd') ,
       tax_num: reservation.Tax_num,
       Drive_license_num: reservation.Drive_license_num,
       Obs: reservation.Obs,
@@ -1515,7 +1527,7 @@ export class ScheduleComponent {
       Exam_type_idExam_type: reservation.Exam_type_idExam_type,
       Car_plate: reservation.Car_plate,
       idTimeslot: reservation.idTimeslot,
-      exam_expiration_date: reservation.exam_expiration_date
+      exam_expiration_date: this.datePipe.transform(reservation.exam_expiration_date, 'yyyy-MM-dd')
     })
     if (this.userIdSchool !== 'null') {
       this.reservationForm.patchValue( {
@@ -1527,6 +1539,9 @@ export class ScheduleComponent {
       this.reservationForm.disable()
       this.formIsEditable = false
       this.editingReservation = false
+      if (reservation.exam_expiration_date != null) {
+        this.isChecked = true
+      }
     }
     else if (option === 'edit') {
       this.editingReservation = true
@@ -1853,10 +1868,8 @@ export class ScheduleComponent {
       this.scheduleLocked = false
     }
     if (this.viewDate < new Date()) {
-      console.log('?')
       this.scheduleLocked = true
     }
-    console.log(this.scheduleLocked)
     this.dayLockIcon = this.scheduleLocked
   }
   
@@ -2035,7 +2048,6 @@ export class ScheduleComponent {
         else {
           event.end = newEnd
           event.meta.examType = newExamType.value
-          console.log(newExamType.value)
           event.meta.examTypeShort = newExamType.value.Short
           event.meta.currentNumStudents = 0
           event.meta.maxStudents = newExamType.value.Num_students
