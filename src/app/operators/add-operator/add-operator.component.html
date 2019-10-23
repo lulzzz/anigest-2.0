@@ -52,7 +52,7 @@
     <div>
       <p *ngIf="selectedRole">{{ selectedRole.Obs }}</p>
     </div>
-    <div *ngIf="selectedRole.idRole === 2 && examcenter.value" class="form-group">
+    <div *ngIf="selectedRole === 2 && examcenter.value" class="form-group">
       <label for="role">Escola</label>
       <select class="form-control" formControlName="School_idSchool" #school>
         <option *ngFor="let school of schools" [ngValue]="school.idSchool">{{school.School_name}} </option>
