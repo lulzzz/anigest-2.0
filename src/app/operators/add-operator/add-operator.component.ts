@@ -23,11 +23,12 @@ export class AddOperatorComponent implements OnInit {
 
   createForm() {
     this.registerForm = this.fb.group({
-      user: [null],
-      password: [null],
-      role:[null],
-      Email:[null],
-      Exam_center_idExam_center:[null]
+      user: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      role:['', [Validators.required]],
+      Email:['', [Validators.required]],
+      Exam_center_idExam_center:['', [Validators.required]],
+      School_idSchool:['']
     });
   }
 
@@ -38,6 +39,13 @@ export class AddOperatorComponent implements OnInit {
 
     this.os.getExamCenters().subscribe(res =>{ this.centers = Object.values(res),
     console.log(this.centers)})
+  }
+  
+    getExamCenter(number){
+    this.os.getSchools(number).subscribe(res => {
+      this.schools = Object.values(res)
+      console.log(this.schools)
+    })
   }
 
   registerUser() {
