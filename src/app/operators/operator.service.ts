@@ -33,5 +33,8 @@ export class OperatorService {
            .http
            .get(this.url +'operadores');
   }
-
+  
+ getSchools(number){
+    return this.http.get(this.url+'centro-exames/'+ number +'/escolas');
+  }
 }
