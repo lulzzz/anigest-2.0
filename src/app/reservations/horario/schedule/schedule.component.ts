@@ -62,6 +62,14 @@ export class ScheduleComponent {
   eventClicked(event) {
     let toastrMessage = 'Não pode modificar calendários de dias anteriores ou o de hoje.'
     let eventText = event.target.innerText.trim().toLowerCase()
+    if (event.target.offsetParent.id === 'deleteX') {
+      let chosenEventId = this.dataShareService.getChosenTimeslotId()
+      let chosenEvent = this.events.filter((event) => {
+        return event.id == chosenEventId
+      })
+      this.event = chosenEvent[0]
+      this.deleteEvent()
+    }
     if (eventText == 'numerar') {
       if (this.viewDate.getTime() < new Date().getTime()) {
         this.toastr.warning(toastrMessage, 'Aviso')
@@ -142,7 +150,7 @@ export class ScheduleComponent {
     Birth_date: ['', [Validators.required]],
     ID_num: ['', [Validators.required]],
     ID_expire_date: ['', [Validators.required]],
-    tax_num: ['', [Validators.required, Validators.minLength(9)]],
+    tax_num: ['', [Validators.required, Validators.minLength(9), this.ValidateString]],
     Drive_license_num: [''],
     Obs: [''],
     School_Permit: [''],
@@ -246,7 +254,8 @@ export class ScheduleComponent {
   examinerQualificationsExamType: any[] = []
   examinersExamType: any[] = [];
   fileToUpload: File = null;
-  navigationDisabled: boolean = false
+  navigationDisabled: boolean = false;
+  todayFormatted: any;
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -302,6 +311,7 @@ export class ScheduleComponent {
   async ngOnInit() {
     this.userIdSchool = localStorage.getItem('idSchool')
     this.today = new Date()
+    this.todayFormatted = `${this.today.getFullYear()}-${this.today.getMonth()+1}-${this.today.getDate()}`
     this.minimumReservationDate = new Date()
     this.minimumReservationDate.setUTCDate(this.minimumReservationDate.getUTCDate() + 6)
     this.minimumReservationDate.setUTCHours(0,0,0,0)
@@ -1193,93 +1203,88 @@ export class ScheduleComponent {
   }
 
   deleteEvent() {
-    this.confirmationService.confirm({
-      message: 'Pretende eliminar este espaço de tempo?',
-      accept: () => {
-        let eventToDelete: CalendarEvent = this.event
-        let eventGroup = eventToDelete.meta.group
-        this.event = undefined
-        let eventPosition = this.events.indexOf(eventToDelete)
-        if (eventToDelete.meta.pauta) {
-          this.pautaService.deletePauta(eventToDelete.meta.pauta.idPauta).subscribe(() => {},
-          () => {
-            this.toastr.error('Erro ao eliminar a pauta', 'Erro')
-          }, () => {
-            this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
-            (err) => {
-              this.toastr.error('Erro ao eliminar o espaço de tempo', 'Erro')
-            },
-            () => {
-              
-              this.events.splice(eventPosition, 1)
-              this.events = [...this.events]
-              let eventsInGroup = this.events.filter((event) => {
-                return event.meta.group == eventGroup
-              })
-              if (eventsInGroup.length == 0) {
-                let groupPosition = this.groups.indexOf(eventGroup)
-                this.groups.splice(groupPosition, 1)
-                let curDate = new Date(this.currentDate)
-                let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
-                let groupsInDate = this.timeslots.filter((obj) => {
-                  return new Date(obj[0].Group_day).toISOString() == comparisonDate
-                })
-                let maxGroups = groupsInDate[0][0].Max
-                let dayLock = groupsInDate[0][0].Day_lock
-              
-                let updateObject = {
-                  Max: maxGroups-1,
-                  Day_lock: dayLock
-                }
-                if (updateObject.Max < 0) {
-                  updateObject.Max = 0
-                }
-                this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
-              }
-              this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
-              this.refreshTimeslots(this.groups, this.events)
-            })
+    let eventToDelete: CalendarEvent = this.event
+    let eventGroup = eventToDelete.meta.group
+    this.event = undefined
+    let eventPosition = this.events.indexOf(eventToDelete)
+    if (eventToDelete.meta.pauta) {
+      this.pautaService.deletePauta(eventToDelete.meta.pauta.idPauta).subscribe(() => {},
+      () => {
+        this.toastr.error('Erro ao eliminar a pauta', 'Erro')
+      }, () => {
+        this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
+        (err) => {
+          this.toastr.error('Erro ao eliminar o espaço de tempo', 'Erro')
+        },
+        () => {
+          
+          this.events.splice(eventPosition, 1)
+          this.events = [...this.events]
+          let eventsInGroup = this.events.filter((event) => {
+            return event.meta.group == eventGroup
           })
-        }
-        else {
-          this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
-          (err) => {
-            this.toastr.error('Erro ao eliminar o espaço de tempo', 'Erro')
-          },
-          () => {
-            
-            this.events.splice(eventPosition, 1)
-            this.events = [...this.events]
-            let eventsInGroup = this.events.filter((event) => {
-              return event.meta.group == eventGroup
+          if (eventsInGroup.length == 0) {
+            let groupPosition = this.groups.indexOf(eventGroup)
+            this.groups.splice(groupPosition, 1)
+            let curDate = new Date(this.currentDate)
+            let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+            let groupsInDate = this.timeslots.filter((obj) => {
+              return new Date(obj[0].Group_day).toISOString() == comparisonDate
             })
-            if (eventsInGroup.length == 0) {
-              let curDate = new Date(this.currentDate)
-              let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
-              let groupsInDate = this.timeslots.filter((obj) => {
-                return new Date(obj[0].Group_day).toISOString() == comparisonDate
-              })
-              let maxGroups = groupsInDate[0][0].Max
-              let dayLock = groupsInDate[0][0].Day_lock
-            
-              let updateObject = {
-                Max: maxGroups-1,
-                Day_lock: dayLock
-              }
-              if (updateObject.Max < 0) {
-                updateObject.Max = 0
-              }
-              this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
-              let groupPosition = this.groups.indexOf(eventGroup)
-              this.groups.splice(groupPosition, 1)
-              this.checkIfGroupDecrease()
+            let maxGroups = groupsInDate[0][0].Max
+            let dayLock = groupsInDate[0][0].Day_lock
+          
+            let updateObject = {
+              Max: maxGroups-1,
+              Day_lock: dayLock
             }
-            this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
-            this.refreshTimeslots(this.groups, this.events)
+            if (updateObject.Max < 0) {
+              updateObject.Max = 0
+            }
+            this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
+          }
+          this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
+          this.refreshTimeslots(this.groups, this.events)
+        })
+      })
+    }
+    else {
+      this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
+      (err) => {
+        this.toastr.error('Erro ao eliminar o espaço de tempo', 'Erro')
+      },
+      () => {
+        
+        this.events.splice(eventPosition, 1)
+        this.events = [...this.events]
+        let eventsInGroup = this.events.filter((event) => {
+          return event.meta.group == eventGroup
+        })
+        if (eventsInGroup.length == 0) {
+          let curDate = new Date(this.currentDate)
+          let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+          let groupsInDate = this.timeslots.filter((obj) => {
+            return new Date(obj[0].Group_day).toISOString() == comparisonDate
           })
+          let maxGroups = groupsInDate[0][0].Max
+          let dayLock = groupsInDate[0][0].Day_lock
+        
+          let updateObject = {
+            Max: maxGroups-1,
+            Day_lock: dayLock
+          }
+          if (updateObject.Max < 0) {
+            updateObject.Max = 0
+          }
+          this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
+          let groupPosition = this.groups.indexOf(eventGroup)
+          this.groups.splice(groupPosition, 1)
+          this.checkIfGroupDecrease()
         }
-      }
-    })
+        this.toastr.success('Espaço de tempo eliminado', 'Sucesso')
+        this.refreshTimeslots(this.groups, this.events)
+      })
+    }
   }
 
   checkIfGroupDecrease() {
