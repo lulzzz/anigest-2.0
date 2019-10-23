@@ -67,7 +67,7 @@ export class ReservationService {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     const params = new HttpParams().append('idReservation', resID).append('file','true')
-    return this.http.post(endpoint, formData, { params})
+    return this.http.post(this.url, formData, { params})
 /*      return this.http.post<any>(`${this.url}?idReservation=${reservationId}&file=true`,) 
     console.log(file)
     console.log(reservationId) */
