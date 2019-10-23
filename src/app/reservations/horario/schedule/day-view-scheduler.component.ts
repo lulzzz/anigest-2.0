@@ -47,6 +47,19 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
         color: black !important;
         font-weight: bold !important;
       }
+
+      .cal-day-view .cal-hour-segment {
+        border-bottom-color: #999 !important;
+      }
+
+      .cal-day-view .cal-hour-segment.cal-after-hour-start .cal-time {
+        display: flex;
+    }
+
+      .cal-day-view .cal-time {
+        transform: translateY(-24px);
+        font-weight: normal !important;
+      }
       
       .day-view-column-headers {
         display: flex;
@@ -55,10 +68,11 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
       }
       .day-view-column-header {
         width: 150px;
-        border: solid 1px black;
-        border-radius: 5px;
-        background-color: #c0c0ff;
+        border: solid 0.5px grey;
+        color: white !important;
+        background-color: #343536;
         text-align: center;
+        // border-radius: 5px;
       }
     `
 
