@@ -10,6 +10,7 @@
       <div class="day-view-column-header" *ngFor="let group of view?.groups">
         {{ group?.title }}
       </div>
+      <div class="pt-4"></div>
     </div>
     <div class="cal-events">
       <div
@@ -52,7 +53,7 @@
             dayEvent.event?.resizable?.beforeStart && !dayEvent.startsBeforeDay
           "
           mwlResizeHandle
-          [resizeEdges]="{ top: true }"
+          [resizeEdges]="{ top: false }"
         ></div>
         <mwl-calendar-day-view-event *ngIf="dayEvent.event.start < dayEvent.event.end"
           [dayEvent]="dayEvent"
