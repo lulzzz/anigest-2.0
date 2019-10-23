@@ -142,7 +142,7 @@ export class ScheduleComponent {
     Birth_date: ['', [Validators.required]],
     ID_num: ['', [Validators.required]],
     ID_expire_date: ['', [Validators.required]],
-    tax_num: ['', [Validators.required]],
+    tax_num: ['', [Validators.required, Validators.minLength(9)]],
     Drive_license_num: [''],
     Obs: [''],
     School_Permit: [''],
@@ -200,6 +200,7 @@ export class ScheduleComponent {
   examTypes: any[] = []
   categories: any[] = []
   schools: any[] = []
+  school: any
   reservation: any = {}
   reservations: any[] = []
   timeslotReservations: any[] = []
@@ -429,7 +430,13 @@ export class ScheduleComponent {
   }
   // formIsValid: boolean = false
   // validateForm() {
+  //   // this.formIsValid = true
   //   let form = this.reservationForm.getRawValue() 
+  //   let studentLicense = form.Student_license
+  //   if (studentLicense.substr(16) === '_') {
+  //     studentLicense = studentLicense.slice(0,-1)
+  //   }
+  //   console.log(studentLicense)
   //   let expirationDate = form.Expiration_date
   //   let expirationDateMax = `${this.viewDate.getFullYear()}-${this.viewDate.getMonth()+1}-${this.viewDate.getDate()}`
   //   if (form.Expiration_date) {
@@ -1718,6 +1725,7 @@ export class ScheduleComponent {
     },
     (e) => {
       this.toastr.error('A reserva não foi criada', 'Erro')
+      this.cancelLockReservation()
     }, 
     () => {
       this.event.meta.currentNumStudents++
@@ -1772,6 +1780,12 @@ export class ScheduleComponent {
     if (this.userIdSchool !== 'null') {
       this.reservationForm.patchValue({School_Permit: this.userSchoolPermit})
     }
+    let formValues = this.reservationForm.getRawValue()
+    // if (formValues.Student_license.toString().substr(16,1) == '_') {
+    //   formValues.Student_license.toString().splice(16,1)
+    //   this.reservationForm.patchValue({Student_license: formValues.Student_license})
+    // }
+
     this.createReservation(this.reservationForm.getRawValue())
     this.createdReservations++
     if (this.createdReservations == this.reservationAmount - 1) {
