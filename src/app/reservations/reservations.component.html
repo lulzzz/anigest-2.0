@@ -72,12 +72,12 @@
         [boundaryLinks]="true"></ngb-pagination>
     </div>
 
-    <div class="col-md" *ngIf="show">
+    <div class="col-md" *ngIf="show  && selectedReservation.length">
       <div class="card">
         <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Reserva<button
             type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
               aria-hidden="true">&times;</span></button>
-          <button type="button" class="btn btn-success float-right"
+          <button *ngIf="selectedReservation[0].T_exam_status_idexam_status === 3" type="button" class="btn btn-success float-right"
             (click)="validateRes(selectedReservation[0].idReservation)">Validar <i class="fas fa-check"></i></button></h4>
         <div class="card-body">
           <h5 class="card-title font-weight-light">Informaçoes</h5>
@@ -118,9 +118,13 @@
               <th scope="row">Tipo de exame:</th>
               <td>{{ selectedReservation[0].Exam_type_name }}</td>
             </tr>
+             <tr>
+              <th scope="row">Hora de início / hora de fim:</th>
+              <td>{{ selectedReservation[0].Begin_time}} / {{ selectedReservation[0].End_time}}</td>
+            </tr>
             <tr>
-              <th scope="row">Duração:</th>
-              <td>{{ selectedReservation[0].Duration }}</td>
+              <th scope="row">Status:</th>
+              <td>{{ resStatus[0].Status}} </td>
             </tr>
           </table>
         </div>
