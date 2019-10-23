@@ -27,7 +27,7 @@ export class ReservationsComponent implements OnInit {
   searchForm: FormGroup;
   advancedSearch: FormGroup;
   public exams = [];
-  public selectedReservation;
+  public selectedReservation = [];
   public result;
   param1;
   param2;
@@ -42,6 +42,7 @@ export class ReservationsComponent implements OnInit {
   examTypes;
   searchParams:boolean = false;
   idReservation;
+  resStatus;
   //////////////////////////////////////////////
 
   subject;
@@ -169,6 +170,7 @@ getHorario(){
       res=> { 
         if (res) {
           this.selectedReservation = Object.values(res);
+          this.resStatus= this.status.filter(item => item.idexam_status === res[0].T_exam_status_idexam_status);
       console.log(this.selectedReservation)}
       else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') }
         })
