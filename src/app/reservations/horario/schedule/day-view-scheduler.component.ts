@@ -46,6 +46,7 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
       .cal-day-view .cal-event {
         color: black !important;
         font-weight: bold !important;
+        opacity: 0.8;
       }
 
       .cal-day-view .cal-hour-segment {
