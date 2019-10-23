@@ -14,7 +14,7 @@ export const colors: any = {
   },
   white: { // Interdito a marcações
     // primary: '#777777',
-    primary: '#aaa',
+    primary: '#eee',
     // secondary: '#FFFFFF'
     secondary: '#DDD'
   },
