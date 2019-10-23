@@ -68,6 +68,11 @@
         >
         
         </mwl-calendar-day-view-event>
+        <div style="position: absolute; z-index: 9; top: 8px; right: 16px;" id="deleteX">
+            <button type="button" class="close" (click)="chooseTimeslot(dayEvent.event)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         <div id="background" style="position: absolute; z-index: 9; top:0;left:0;bottom:0;right:0;overflow:show;top:50%;text-align:center;transform:translateY(-35%);pointer-events:none;">
           <h4 class="font-weight-bold ml-auto">{{dayEvent.event.meta.pauta?.Pauta_num}}</h4>
         </div>
