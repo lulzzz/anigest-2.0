@@ -14,7 +14,7 @@ export class AddOperatorComponent implements OnInit {
   public centers = [];
   selectedRole = {};
   selectedValue: any;
-
+  schools = []
   registerForm: FormGroup;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, private os: OperatorService, private toastr:ToastrService) { 
