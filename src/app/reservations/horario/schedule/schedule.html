@@ -407,7 +407,7 @@
           <div class="col">
             <div class="form-group">
               <label for="Examiner_name">Número de identificação*:</label>
-              <input type="number" class="form-control" formControlName="ID_num"
+              <input type="text" class="form-control" formControlName="ID_num"
                 [ngClass]="{'is-invalid': reservationForm.get('ID_num').touched && reservationForm.get('ID_num').invalid || reservationForm.get('ID_num').required, 'is-valid':reservationForm.get('ID_num').touched && reservationForm.get('ID_num').valid}">
               <div class="invalid-feedback">
                 <div *ngIf="reservationForm.get('ID_num').hasError('required')">
