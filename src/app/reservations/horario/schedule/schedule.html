@@ -342,6 +342,29 @@
     <div class="modal-body">
       <h4>Tipo de exame: {{this.chosenExamType.Exam_type_name}}</h4><br>
       <form #resForm="ngForm" [formGroup]="reservationForm">
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <div *ngIf="userIdSchool === 'null'">
+                <label for="License_num">Alvará*:</label>
+                <select id="CategorySelect" class="form-control custom-select input-group-text"
+                  formControlName="School_Permit"
+                  [ngClass]="{'is-invalid': reservationForm.get('School_Permit').touched && reservationForm.get('School_Permit').invalid || reservationForm.get('School_Permit').required, 'is-valid':reservationForm.get('School_Permit').touched && reservationForm.get('School_Permit').valid}">
+                  <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Alvará</option>
+                  <option *ngFor="let school of schools" [ngValue]="school.Permit">{{school.Permit}} - {{school.School_name}}</option>
+                </select>
+                <div class="invalid-feedback">
+                    <div *ngIf="reservationForm.get('School_Permit').hasError('required')">
+                      Selecione uma opção.</div>
+                  </div>
+                <!-- <p-dropdown [options]="schools" [(ngModel)]="school"></p-dropdown> -->
+              </div>
+              <div *ngIf="userIdSchool !== 'null'">
+                <input type="hidden" value="userSchoolPermit" class="form-control" formControlName="School_Permit">
+              </div>
+            </div>
+          </div>
+         </div>
          <div class="row">
           <div class="col">
             <div class="form-group">
@@ -415,30 +438,6 @@
               <div class="invalid-feedback">
                 <div *ngIf="reservationForm.get('Birth_date').hasError('required')">
                   A data de nascimento é obrigatória.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-  
-        <div class="row">
-          <div class="col">
-            <div class="form-group">
-              <div *ngIf="userIdSchool === 'null'">
-                <label for="License_num">Alvará*:</label>
-                <select id="CategorySelect" class="form-control custom-select input-group-text"
-                  formControlName="School_Permit"
-                  [ngClass]="{'is-invalid': reservationForm.get('School_Permit').touched && reservationForm.get('School_Permit').invalid || reservationForm.get('School_Permit').required, 'is-valid':reservationForm.get('School_Permit').touched && reservationForm.get('School_Permit').valid}">
-                  <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Alvará</option>
-                  <option *ngFor="let school of schools" [ngValue]="school.Permit">{{school.Permit}} - {{school.School_name}}</option>
-                </select>
-                <div class="invalid-feedback">
-                    <div *ngIf="reservationForm.get('School_Permit').hasError('required')">
-                      Selecione uma opção.</div>
-                  </div>
-                <!-- <p-dropdown [options]="schools" [(ngModel)]="school"></p-dropdown> -->
-              </div>
-              <div *ngIf="userIdSchool !== 'null'">
-                <input type="hidden" value="userSchoolPermit" class="form-control" formControlName="School_Permit">
               </div>
             </div>
           </div>
