@@ -1801,8 +1801,10 @@ export class ScheduleComponent {
       this.reservationForm.patchValue({School_Permit: this.userSchoolPermit})
     }
     let formValues = this.reservationForm.getRawValue()
-    if (!formValues.exam_expiration_date.length) {
-      this.reservationForm.patchValue({exam_expiration_date: null})
+    if (!formValues.exam_expiration_date) {
+      if (!formValues.exam_expiration_date.length) {
+        this.reservationForm.patchValue({exam_expiration_date: null})
+      }
     }
     // if (formValues.Student_license.toString().substr(16,1) == '_') {
     //   formValues.Student_license.toString().splice(16,1)
