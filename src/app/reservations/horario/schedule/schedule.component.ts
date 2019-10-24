@@ -133,6 +133,9 @@ export class ScheduleComponent {
         let weekDay = this.viewDate.getDay()
         if (this.events.length > 0) {
           let curDate = new Date(this.currentDate)
+          if (curDate.toString().includes('GMT+0100')) {
+            curDate.setHours(curDate.getHours()+1)
+          }
           let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
           let groupsInDate = this.timeslots.filter((obj) => {
             return new Date(obj[0].Group_day).toISOString() == comparisonDate
