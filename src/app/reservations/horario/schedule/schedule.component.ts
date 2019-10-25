@@ -30,6 +30,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { PautaService } from '../services/pauta.service'
 import { ExamService } from '../services/exam.service'
 import { Router } from '@angular/router'
+import { ReservationsService } from '../../reservations.service'
 
 @Component({
   selector: 'schedule-component',
@@ -270,6 +271,7 @@ export class ScheduleComponent {
   fileToUpload: File = null;
   navigationDisabled: boolean = false;
   todayFormatted: any;
+  user: any
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -312,6 +314,7 @@ export class ScheduleComponent {
     private timeslotService: TimeslotService,
     private dailyGroupService: DailyGroupService,
     private reservationService: ReservationService,
+    private reservationPatchService: ReservationsService,
     private dataFetchService: DataFetchService,
     private cRef: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -323,12 +326,23 @@ export class ScheduleComponent {
     ) {}
 
   async ngOnInit() {
+    this.parseJwt(localStorage.getItem('token'))  
     this.userIdSchool = localStorage.getItem('idSchool')
     this.today = new Date()
     this.todayFormatted = `${this.today.getFullYear()}-${this.today.getMonth()+1}-${this.today.getDate()}`
     this.minimumReservationDate = new Date()
-    this.minimumReservationDate.setUTCDate(this.minimumReservationDate.getUTCDate() + 6)
+    let dayAmount = 9
+    for (let i = 1; i < 10; i++) {
+      let tempDate = new Date()
+      tempDate.setUTCDate((tempDate.getUTCDate() + i))
+      if (tempDate.getUTCDay() === 6 || tempDate.getUTCDay() === 0) {
+        dayAmount++
+      }
+    }
+    console.log(dayAmount)
+    this.minimumReservationDate.setUTCDate(this.minimumReservationDate.getUTCDate() + dayAmount)
     this.minimumReservationDate.setUTCHours(0,0,0,0)
+    console.log(this.minimumReservationDate)
     
     this.setFormValidators()
     this.auth.currentUserSubject.subscribe(message => this.subject = message)
@@ -338,6 +352,9 @@ export class ScheduleComponent {
     else {
       if (!this.subject.includes('ALL_School')) {
         this.router.navigate(["/"])
+        document.querySelectorAll('deleteX').forEach((el) => {
+          el.setAttribute('display', 'none')
+        })
       }
       this.route = "results"
       this.dataFetchService.getExaminers().subscribe(res => this.examiners = res)
@@ -398,14 +415,16 @@ export class ScheduleComponent {
     }) 
   }
 
-  // parseJwt (token) {
-  //   var base64Url = token.split('.')[1];
-  //   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  //   var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-  //       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  //   }).join(''));
-  //   return JSON.parse(jsonPayload);
-  // };
+  parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    let parsed = JSON.parse(jsonPayload)
+    this.user = parsed.user
+    console.log(this.user)
+  };
 
   ngOnDestroy(){
     // this.dataShareService.undefineShareService()
@@ -800,7 +819,7 @@ export class ScheduleComponent {
             return reservation.idTimeslot == eventsToAdd[i].idTimeslot
           })
           filterByStatus = filterReservations.filter((reservation) => {
-            return reservation.T_exam_status_idexam_status !== 1
+            return ((reservation.T_exam_status_idexam_status !== 1 && reservation.Lock_expiration_date === null) || (reservation.Lock_expiration_date !== null && reservation.Account_User !== this.user))
           })
         }
         let startDate = new Date(date.setHours(hourStart,minStart))
@@ -1377,113 +1396,123 @@ export class ScheduleComponent {
           this.timeslotExists = false
         }
         this.event = chosenEvent[0]
-        this.chosenExamType = this.event.meta.examType
-       /* if (this.chosenExamType !== null) {
-          let character = ''
-          if (this.chosenExamType.Short.substr(6,1) !== ',' && this.chosenExamType.Short.substr(6,1) !== '+') {
-            // if (this.chosenExamType.Short.substr(5,1) == 'A') {
-            //   this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', this.chosenExamType.Short.substr(5,1)];
-            // }
-            if (this.chosenExamType.Short !== 'TEÓRICA') {
-              character = this.chosenExamType.Short.substr(5,1)
-              if (character.includes('+')) {
-                character.replace('+', '')
+        this.reservationService.getReservationByTimeslot(this.event.id).subscribe(res => this.timeslotReservations = res,
+        () => {
+          
+        },
+        () => {
+          if (this.timeslotReservations) {
+            this.timeslotReservations = [...this.timeslotReservations]
+          }
+          this.chosenExamType = this.event.meta.examType
+        /* if (this.chosenExamType !== null) {
+            let character = ''
+            if (this.chosenExamType.Short.substr(6,1) !== ',' && this.chosenExamType.Short.substr(6,1) !== '+') {
+              // if (this.chosenExamType.Short.substr(5,1) == 'A') {
+              //   this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', this.chosenExamType.Short.substr(5,1)];
+              // }
+              if (this.chosenExamType.Short !== 'TEÓRICA') {
+                character = this.chosenExamType.Short.substr(5,1)
+                if (character.includes('+')) {
+                  character.replace('+', '')
+                }
+              }
+              else {
+                character = 'T'
               }
             }
             else {
-              character = 'T'
+              character = this.chosenExamType.Short.substr(5)
             }
-          }
-          else {
-            character = this.chosenExamType.Short.substr(5)
-          }
-          this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', character];
-        }*/
-        if (this.event.meta.pauta) {
-          let chosenType = this.examTypes.filter((type) => {
-            return type.idExam_type === this.event.meta.pauta.Exam_type_idExam_type
-          })
-          this.chosenExamType = chosenType[0]
-          if (this.route == "results") {
-            this.dataFetchService.getExaminerQualificationsForce(this.event.id).subscribe(res => this.examinersExamType = res,
-              () => {
+            this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', character];
+          }*/
+          if (this.event.meta.pauta) {
+            let chosenType = this.examTypes.filter((type) => {
+              return type.idExam_type === this.event.meta.pauta.Exam_type_idExam_type
+            })
+            this.chosenExamType = chosenType[0]
+            if (this.route == "results") {
+              this.dataFetchService.getExaminerQualificationsForce(this.event.id).subscribe(res => this.examinersExamType = res,
+                () => {
 
-              }, () => {
-                if (typeof(this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications) !== 'undefined') {
-                  let filteredExaminer = this.examiners.filter((examiner) => {
-                    for (let i = 0; i < this.examinersExamType.length; i++) {
-                      let examinerIWant
-                      if (examiner.Examiner_name === this.examinersExamType[i].Examiner_name && examiner.License_num === this.examinersExamType[i].License_num) {
+                }, () => {
+                  if (typeof(this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications) !== 'undefined') {
+                    let filteredExaminer = this.examiners.filter((examiner) => {
+                      for (let i = 0; i < this.examinersExamType.length; i++) {
+                        let examinerIWant
+                        if (examiner.Examiner_name === this.examinersExamType[i].Examiner_name && examiner.License_num === this.examinersExamType[i].License_num) {
 
+                        }
                       }
-                    }
-                  })
-                }
-              })
-            // this.dataFetchService.getExaminerQualifications(this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications)
-            //let filteredExaminers = this
-            console.log(this.examiners)
-            // let filteredExams = this.exams.filter((exam) => {
-            //   return exam.idPauta == this.event.meta.pauta.Pauta_num
-            // })
-            // this.examsInPauta = filteredExams
-            // let filteredExaminerQualifications = this.examinerQualifications.filter((examQual) => {
-            //   return examQual.Exam_type_idExam_type == this.event.meta.pauta.Exam_type_idExam_type
-            // })
-            // this.examinerQualificationsExamType = filteredExaminerQualifications
-            // for (let i = 0; i < this.examinerQualificationsExamType.length; i++) {
-            //   let examinerToAdd = this.examiners.filter((examiner) => {
-            //     return examiner.idExaminer == this.examinerQualificationsExamType[i].Examiner_idExaminer
-            //   })
-            //   this.examinersExamType[i] = examinerToAdd[0]
-            // }
-            // let c = this.examinerQualificationsExamType.filter((qual) => {
-            //   return qual.idExaminer_qualifications === this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications
-            // })
-            // if (c.length) {
-            //   let examiner = this.examiners.filter((examiner) => {
-            //     return examiner.idExaminer == c[0].Examiner_idExaminer
-            //   })
-            //   this.examiner = examiner[0]
-            // }
-          }
-        }
-        this.oldStart = this.event.start
-        this.oldEnd = this.event.end
-        this.oldGroup = this.event.meta.group
-        if (this.route == "results" && !this.scheduleLocked && this.event.meta.currentNumStudents > 0) {
-          // this.examTypeExaminers = this.examiners.filter((examiner) => {
-          //   return examiner.
-          // })
-        }
-        this.openModal(modal)
-        if (this.userIdSchool === 'null') {
-          this.timeslotReservations = this.reservations.filter((reservation) => {
-            return reservation.idTimeslot == this.event.id
-          })
-        }
-        else {
-          this.timeslotReservations = this.reservations.filter((reservation) => {
-            return (reservation.idTimeslot == this.event.id && reservation.School_Permit == this.userSchoolPermit)
-          })
-        }
-
-        try {
-          if (typeof(this.timeslotReservations) !== 'undefined' && this.timeslotReservations.length) {
-            for (let i = 0; i < this.timeslotReservations.length; i++) {
-              this.hasReservations = true
-              this.reservation = this.timeslotReservations[i]
+                    })
+                  }
+                })
+              // this.dataFetchService.getExaminerQualifications(this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications)
+              //let filteredExaminers = this
+              console.log(this.examiners)
+              // let filteredExams = this.exams.filter((exam) => {
+              //   return exam.idPauta == this.event.meta.pauta.Pauta_num
+              // })
+              // this.examsInPauta = filteredExams
+              // let filteredExaminerQualifications = this.examinerQualifications.filter((examQual) => {
+              //   return examQual.Exam_type_idExam_type == this.event.meta.pauta.Exam_type_idExam_type
+              // })
+              // this.examinerQualificationsExamType = filteredExaminerQualifications
+              // for (let i = 0; i < this.examinerQualificationsExamType.length; i++) {
+              //   let examinerToAdd = this.examiners.filter((examiner) => {
+              //     return examiner.idExaminer == this.examinerQualificationsExamType[i].Examiner_idExaminer
+              //   })
+              //   this.examinersExamType[i] = examinerToAdd[0]
+              // }
+              // let c = this.examinerQualificationsExamType.filter((qual) => {
+              //   return qual.idExaminer_qualifications === this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications
+              // })
+              // if (c.length) {
+              //   let examiner = this.examiners.filter((examiner) => {
+              //     return examiner.idExaminer == c[0].Examiner_idExaminer
+              //   })
+              //   this.examiner = examiner[0]
+              // }
             }
           }
+          this.oldStart = this.event.start
+          this.oldEnd = this.event.end
+          this.oldGroup = this.event.meta.group
+          if (this.route == "results" && !this.scheduleLocked && this.event.meta.currentNumStudents > 0) {
+            // this.examTypeExaminers = this.examiners.filter((examiner) => {
+            //   return examiner.
+            // })
+          }
+          this.openModal(modal)
+          if (this.userIdSchool === 'null') {
+            // this.timeslotReservations = this.reservations.filter((reservation) => {
+            //   return reservation.idTimeslot == this.event.id
+            // })
+          }
           else {
+            this.timeslotReservations = this.timeslotReservations.filter((reservation) => {
+              return (reservation.School_Permit == this.userSchoolPermit)
+            })
+          }
+
+          try {
+            console.log(this.timeslotReservations)
+            if (typeof(this.timeslotReservations) !== 'undefined' && this.timeslotReservations.length) {
+              for (let i = 0; i < this.timeslotReservations.length; i++) {
+                this.hasReservations = true
+                this.reservation = this.timeslotReservations[i]
+              }
+            }
+            else {
+              this.hasReservations = false
+            }
+          }
+          catch {
+            this.reservation = {}
+            this.timeslotReservations = []
             this.hasReservations = false
           }
-        }
-        catch {
-          this.reservation = {}
-          this.timeslotReservations = []
-          this.hasReservations = false
-        }
+        })
       }
     }
   }
@@ -1672,7 +1701,14 @@ export class ScheduleComponent {
       }
       this.refreshTimeslots(this.groups, this.events)
     }, 100)
-    this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}})
+    this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}},
+    () => {
+
+    }, () => {
+      if (this.reservations){
+        this.reservations = [...this.reservations]
+      }
+    })
     this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
   }
 
@@ -1775,10 +1811,10 @@ export class ScheduleComponent {
     }
     else if (this.reservationAmount == 2 && this.createdReservations == 0) {
       this.reservationService.unlockReservation(this.lockedReservationId).subscribe()
-      this.reservationService.unlockReservation(this.lockedReservationId+1).subscribe()
+      // this.reservationService.unlockReservation(this.lockedReservationId+1).subscribe()
     }
     else {
-      this.reservationService.unlockReservation(this.lockedReservationId+1).subscribe()
+      // this.reservationService.unlockReservation(this.lockedReservationId+1).subscribe()
     }
     this.createdReservations = 0
   }
@@ -1804,15 +1840,17 @@ export class ScheduleComponent {
       this.reservationForm.patchValue({School_Permit: this.userSchoolPermit})
     }
     let formValues = this.reservationForm.getRawValue()
-    if (!formValues.exam_expiration_date) {
-      if (!formValues.exam_expiration_date.length) {
+    console.log(typeof(formValues.exam_expiration_date))
+    if (typeof(formValues.exam_expiration_date) == 'string') {
+      if (formValues.exam_expiration_date === "" ) {
         this.reservationForm.patchValue({exam_expiration_date: null})
       }
     }
-    // if (formValues.Student_license.toString().substr(16,1) == '_') {
-    //   formValues.Student_license.toString().splice(16,1)
-    //   this.reservationForm.patchValue({Student_license: formValues.Student_license})
-    // }
+  
+    if (formValues.Student_license.toString().substr(16,1) == '_') {
+      let val = formValues.Student_license.toString().slice(0,formValues.Student_license.toString().length-1)
+      this.reservationForm.patchValue({Student_license: val})
+    }
 
     this.createReservation(this.reservationForm.getRawValue())
     this.createdReservations++
@@ -1827,16 +1865,56 @@ export class ScheduleComponent {
         
       })
   }
+  checkTimeslotLock() {
+    let reservationsInTimeslot = this.reservations.filter((reservation) => {
+      return reservation.idTimeslot === this.event.id
+    })
+    console.log(reservationsInTimeslot)
+  }
 
   async lockReservation() {
-    await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
-      this.lockedReservationId = data.insertId
-    },
-      error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')
-    },
-    () => {
-      this.openModal(this.timeslotForm)
-    })
+    let alreadyLocked = false
+    let amountLocked = 0
+    if (this.timeslotReservations){
+      for (let i = 0; i < this.timeslotReservations.length; i++) {
+        if (this.timeslotReservations[i].Lock_expiration_date !== null) {
+          alreadyLocked = true
+          amountLocked++
+        }
+      }
+      if (alreadyLocked === false) {
+        await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
+          this.lockedReservationId = data.insertId
+        },
+          error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')
+        },
+        () => {
+          this.openModal(this.timeslotForm)
+        })
+      }
+      else {
+        if (amountLocked === 1 && this.reservationAmount === 2) {
+          await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
+            error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')}
+            , () => {
+              this.openModal(this.timeslotForm)
+            })
+        }
+        else {
+          this.openModal(this.timeslotForm)
+        }
+      }
+    }
+    else {
+      await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
+        this.lockedReservationId = data.insertId
+      },
+        error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')
+      },
+      () => {
+        this.openModal(this.timeslotForm)
+      })
+    }
   }
 
   unbookReservation(reservation) {
@@ -1852,6 +1930,7 @@ export class ScheduleComponent {
         () => {
           let index = this.reservations.indexOf(reservation)
           this.reservations[index] = reservation
+          // this.reservationService.getReservationByTimeslot(reservation.idTimeslot).subscribe(res => this.timeslotReservations = res)
           this.timeslotReservations = this.reservations.filter((reservation) => {
             return reservation.idTimeslot == this.event.id
           })
@@ -1881,11 +1960,31 @@ export class ScheduleComponent {
     this.dayLockIcon = this.scheduleLocked
   }
   
-  editReservation() {
-    let reservation = this.reservationForm.getRawValue()
-    this.reservationService.updateReservation(this.reservation.idReservation, reservation).subscribe(res => console.log(res))
-/*     this.reservationService.sendFile(this.fileToUpload, this.reservation.idReservation)
-    this.fileToUpload = {} */
+  editReservation(reservationForm) {
+    let dirtyValues = {};
+
+    Object.keys(reservationForm.controls)
+      .forEach(key => {
+        let currentControl = reservationForm.controls[key];
+        if (currentControl.dirty) {
+          if (currentControl.controls)
+            dirtyValues[key] = this.editReservation(currentControl);
+          else{
+            dirtyValues[key] = currentControl.value;
+            this.reservation[key] = currentControl.value
+          }
+        }
+      });
+
+    this.reservationPatchService.patchReservation(dirtyValues, this.reservation.idReservation, this.reservation.idTemp_Student)
+      .subscribe(res => { this.toastr.success('A reserva foi atualizada com sucesso.', 'Notificação'); },
+      error=> this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'), 
+      () => {
+        let i = this.reservations.indexOf(this.reservation)
+        this.reservations[i] = this.reservation
+        this.reservations = [...this.reservations]
+      })
+    this.reservationPatchService.sendEvent()
   }
 
   lockSchedule() {
@@ -1947,26 +2046,31 @@ export class ScheduleComponent {
     this.checkIfLocked()
     this.endValue = this.viewDate
     if (this.groups.length === 0) {
-      setTimeout(() => {
-        this.groupsInDate = this.groups.filter((group) => {
-          return group.date == currentDate
-        })
-        let weekDay = this.viewDate.getDay()
-        if (this.userIdSchool == 'null') {
-          if(!this.groupsInDate.length && this.viewDate > new Date()) {
-            if (this.weekendDays.includes(weekDay)) {
-              this.openModal(this.dayIsWeekend)
-            }
-            else {
-              this.openModal(this.chooseToGenerate)
+      if (this.viewDate.getTime() > new Date().getTime()) {
+        setTimeout(() => {
+          this.groupsInDate = this.groups.filter((group) => {
+            return group.date == currentDate
+          })
+          let weekDay = this.viewDate.getDay()
+          if (this.userIdSchool == 'null') {
+            if(!this.groupsInDate.length && this.viewDate > new Date()) {
+              if (this.weekendDays.includes(weekDay)) {
+                this.openModal(this.dayIsWeekend)
+              }
+              else {
+                this.openModal(this.chooseToGenerate)
+              }
             }
           }
-        }
+          this.navigationDisabled = false
+          setTimeout(() => {
+            document.getElementById('hid').click()
+          }, 100)
+        }, 1000)
+      }
+      else {
         this.navigationDisabled = false
-        setTimeout(() => {
-          document.getElementById('hid').click()
-        }, 100)
-      }, 1000)
+      }
     }
     else {
       this.groupsInDate = this.groups.filter((group) => {
