@@ -9,7 +9,7 @@
     <div class="form-group">
       <label for="user">Nome de operador</label>
       <input formControlName="user" type="text" class="form-control"
-      [ngClass]="{'is-invalid': registerForm.get('user').touched && registerForm.get('user').invalid || registerForm.get('user'), 'is-valid':registerForm.get('user').touched && registerForm.get('user').valid}">
+      [ngClass]="{'is-invalid': registerForm.get('user').touched && registerForm.get('user').invalid, 'is-valid':registerForm.get('user').touched && registerForm.get('user').valid}">
       <div class="invalid-feedback">
         <div *ngIf="registerForm.get('user').hasError('required')">
           Nome é obrigatório.</div>
@@ -17,7 +17,7 @@
     </div>
     <div class="form-group">
       <label for="password">Palavra-passe</label>
-      <input formControlName="password" type="password" class="form-control" [ngClass]="{'is-invalid': registerForm.get('password').touched && registerForm.get('password').invalid || registerForm.get('password'), 'is-valid':registerForm.get('password').touched && registerForm.get('password').valid}">     
+      <input formControlName="password" type="password" class="form-control" [ngClass]="{'is-invalid': registerForm.get('password').touched && registerForm.get('password').invalid, 'is-valid':registerForm.get('password').touched && registerForm.get('password').valid}">     
       <div class="invalid-feedback">
         <div *ngIf="registerForm.get('password').hasError('required')">
           Palavra-passe e obrigatoria.</div>
@@ -25,7 +25,7 @@
     </div>
     <div class="form-group">
       <label for="email">Email</label>
-      <input formControlName="Email" type="email" class="form-control" [ngClass]="{'is-invalid': registerForm.get('Email').touched && registerForm.get('Email').invalid || registerForm.get('Email'), 'is-valid':registerForm.get('Email').touched && registerForm.get('Email').valid}">
+      <input formControlName="Email" type="email" class="form-control" [ngClass]="{'is-invalid': registerForm.get('Email').touched && registerForm.get('Email').invalid, 'is-valid':registerForm.get('Email').touched && registerForm.get('Email').valid}">
       <div class="invalid-feedback">
         <div *ngIf="registerForm.get('Email').hasError('required')">
           Email e obrigatorio.</div>
@@ -34,7 +34,7 @@
     <div class="form-group">
       <label for="school">Centro do exame</label>
       <select class="form-control" formControlName="Exam_center_idExam_center" #school
-        (focusout)="getExamCenter(school.value)" #examcenter [ngClass]="{'is-invalid': registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').invalid || registerForm.get('Exam_center_idExam_center'), 'is-valid':registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').valid}">
+        (focusout)="getExamCenter(school.value)" #examcenter [ngClass]="{'is-invalid': registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').invalid, 'is-valid':registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').valid}">
         <option *ngFor="let center of centers" [ngValue]="center.idExam_center">{{center.Exam_center_name}}</option>
       </select>
       <div class="invalid-feedback">
