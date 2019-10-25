@@ -39,7 +39,7 @@ export class ReservationService {
   }
 
   getReservation() {
-    return this.http.get<any>(this.url)
+    return this.http.get<any>(`${this.url}?schedule=true`)
   }
 
   getReservationByTimeslot(timeslotId: string | number) {
