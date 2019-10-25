@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 export class AddOperatorComponent implements OnInit {
   public roles = [];
   public centers = [];
-  selectedRole = {};
+  selectedRole:any = {};
   selectedValue: any;
   schools = []
   registerForm: FormGroup;
