@@ -120,7 +120,7 @@
     </div>
     <div class="modal-body">
       Data:<br>
-      <input type="date" class="form-control" #data>
+      <input type="date" max="2030-01-01" class="form-control" #data>
     </div>
     <div class="modal-footer">
       <button class="btn btn-dark" (click)="goToDate(data.value); dismiss()">Escolher</button>
@@ -265,17 +265,17 @@
             </div>
           </tr>
           <tr *ngFor="let reservation of timeslotReservations">
-            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{reservation.Student_name}}</td>
-            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{reservation.School_Permit}}</td>
+            <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')) && !reservation.Lock_expiration_date">{{reservation.Student_name}}</td>
+            <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')) && !reservation.Lock_expiration_date">{{reservation.School_Permit}}</td>
             <!-- <td>{{reservation.Exam_type_name}}</td> -->
-            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')">{{examStatuses[reservation.T_exam_status_idexam_status-1]?.Status}}</td>
-            <td *ngIf="reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')"><button class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'view')"><i class="fas fa-book-open"></i> Visualizar</button></td>
+            <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')) && !reservation.Lock_expiration_date">{{examStatuses[reservation.T_exam_status_idexam_status-1]?.Status}}</td>
+            <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')) && !reservation.Lock_expiration_date"><button class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'view')"><i class="fas fa-book-open"></i> Visualizar</button></td>
             <div *ngIf="route == 'reservations'">
-              <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && !subject.includes('ALL_School')"><button [disabled]="this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9 || scheduleLocked" class="btn btn-white" (click)="dismiss();askForBooking(reservation);"><i class="fas fa-check"></i><br>Validar Reserva</button></td>
-              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School')))"><button [disabled]="scheduleLocked || this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9" class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'edit')"><i class="fas fa-edit"></i> Editar</button></td>
-              <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || (reservation.T_exam_status_idexam_status !== 9 && reservation.T_exam_status_idexam_status !== 3)) && !subject.includes('ALL_School') && !subject.includes('DELETE_Reservation') || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="unbookReservation(reservation); dismiss();"><i class="fas fa-times"></i> Desmarcar</button></td>
+              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && !subject.includes('ALL_School')) && !reservation.Lock_expiration_date"><button [disabled]="this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9 || scheduleLocked" class="btn btn-white" (click)="dismiss();askForBooking(reservation);"><i class="fas fa-check"></i><br>Validar Reserva</button></td>
+              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')) && !reservation.Lock_expiration_date"><button [disabled]="scheduleLocked || this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9" class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'edit')"><i class="fas fa-edit"></i> Editar</button></td>
+              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))) && !reservation.Lock_expiration_date"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || (reservation.T_exam_status_idexam_status !== 9 && reservation.T_exam_status_idexam_status !== 3)) && !subject.includes('ALL_School') && !subject.includes('DELETE_Reservation') || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="unbookReservation(reservation); dismiss();"><i class="fas fa-times"></i> Desmarcar</button></td>
               <!-- <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')"><p-fileUpload mode="basic" auto="true" accept="application/pdf, text/*, image/*" customUpload="true" (uploadHandler)="checkFile($event, reservation.idReservation)" name="fileUpload[]" fileLimit="1" chooseLabel="Escolher Ficheiro" uploadLabel="Enviar Ficheiro" cancelLabel="Cancelar"></p-fileUpload></td> -->
-              <td *ngIf="reservation.T_exam_status_idexam_status !== 1"> <button type="button" class="btn btn-success" (click)="fileInput.click(reservation.idReservation)"><i class="fas fa-upload"></i>
+              <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && !reservation.Lock_expiration_date"> <button type="button" class="btn btn-success" (click)="fileInput.click(reservation.idReservation)"><i class="fas fa-upload"></i>
                 Escolher Ficheiro
                 <input #fileInput type="file" (change)="handleFileInput($event.target.files)" style="display:none;"/>
               </button></td>
