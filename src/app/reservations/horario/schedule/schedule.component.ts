@@ -272,6 +272,7 @@ export class ScheduleComponent {
   navigationDisabled: boolean = false;
   todayFormatted: any;
   user: any
+  groupValue: number = 3
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -590,6 +591,7 @@ export class ScheduleComponent {
   }
 
   generateNewSchedule(groupAmount) {
+    this.groupValue = 3
     if (this.events.length > 0) {
       let curDate = new Date(this.currentDate)
       let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
@@ -1475,6 +1477,17 @@ export class ScheduleComponent {
               // }
             }
           }
+          if (this.chosenExamType != null){
+            if (this.chosenExamType.Category.length === 1) {
+              this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+            }
+            else if (this.chosenExamType.Category.length === 2) {
+              this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+            }
+            else if (this.chosenExamType.Category.length >= 3) {
+              this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+            }
+          }
           this.oldStart = this.event.start
           this.oldEnd = this.event.end
           this.oldGroup = this.event.meta.group
@@ -1821,6 +1834,7 @@ export class ScheduleComponent {
 
   setReservationAmount(amount) {
     this.reservationAmount = amount
+    this.startValue = 1
     this.createdReservations = 0
     this.lockReservation()
     if (amount == 1) {
