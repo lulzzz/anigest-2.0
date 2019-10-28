@@ -1322,7 +1322,7 @@ export class ScheduleComponent {
           this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
           let groupPosition = this.groups.indexOf(eventGroup)
           this.groups.splice(groupPosition, 1)
-          this.checkIfGroupDecrease()
+          this.checkIfGroupDecrease(eventToDelete)
         }
         this.toastr.success('Timeslot eliminado', 'Sucesso')
         this.refreshTimeslots(this.groups, this.events)
@@ -1330,40 +1330,41 @@ export class ScheduleComponent {
     }
   }
 
-  checkIfGroupDecrease() {
+  checkIfGroupDecrease(deletedEvent) {
     let curDate = new Date(this.currentDate)
     let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
     let groupsInDate = this.timeslots.filter((obj) => {
       return new Date(obj[0].Group_day).toISOString() == comparisonDate
     })
+    let deletedGroupNumber = parseInt(deletedEvent.meta.group.title.substr(6,3))
     let maxGroups = groupsInDate[0][0].Max-1
     let viewDateDate = this.viewDate.getFullYear() + '/' + (this.viewDate.getMonth()+1) + '/' + this.viewDate.getDate()
     let eventsInDate: any[] = []
     let eventId = 0
-    let sameGroupNumber = []
+    let changeGroupNumber = []
+    let updateNumbers: boolean = false
     for (let i = 0; i < this.events.length; i++) {
       if(this.events[i] != undefined) {
         let eventDate = this.events[i].start.getFullYear() + '/' + (this.events[i].start.getMonth()+1) + '/' + this.events[i].start.getDate()
         if (eventDate == viewDateDate) {
-          if (parseInt(this.events[i].meta.group.title.substr(6,3)) == maxGroups) {
-            sameGroupNumber.push(this.events[i])
+          if (parseInt(this.events[i].meta.group.title.substr(6,3)) > deletedGroupNumber) {
+            changeGroupNumber.push(this.events[i])
           }
           if (parseInt(this.events[i].meta.group.title.substr(6,3)) > maxGroups) {
-            let objectToSend = {
-              Exam_group: parseInt(this.events[i].meta.group.title.substr(6,3)) - 1,
-            }
-            this.timeslotService.updateTimeslot(this.events[i].id, objectToSend).subscribe()
+            updateNumbers = true
           }
           eventsInDate[eventId] = this.events[i]
           eventId++
         }
       }
     }
-    for (let i = 0; i < sameGroupNumber.length; i++) {
-      let objectToSend = {
-        Exam_group: parseInt(sameGroupNumber[i].meta.group.title.substr(6,3)) - 1,
+    if (updateNumbers){
+      for (let i = 0; i < changeGroupNumber.length; i++) {
+        let objectToSend = {
+          Exam_group: parseInt(changeGroupNumber[i].meta.group.title.substr(6,3)) - 1,
+        }
+        this.timeslotService.updateTimeslot(changeGroupNumber[i].id, objectToSend).subscribe()
       }
-      this.timeslotService.updateTimeslot(sameGroupNumber[i].id, objectToSend).subscribe()
     }
     this.getSchedule()
   }
@@ -1545,13 +1546,47 @@ export class ScheduleComponent {
        })
   }
 
-    checkValue(val) {
-    const stringy = val.substring(15, 16);
-     if (stringy === this.chosenExamType.Category.substring(0,1)) {
+checkValue(val) {
+    let stringy = val.substring(15)
+    if (stringy.substr(2,1) === '_') {
+      stringy = stringy.slice(0, stringy.length-1)
+    }
+    if (stringy.substr(1,1) === '_') {
+      if (stringy.substr(2,1) !== '_') {
+        let [a, b] = stringy.split('_')
+        stringy = a+b
+      }
+      else {
+        stringy = stringy.slice(0, stringy.length-1)
+      }
+    }
+    if (this.chosenExamType.Category.includes(',')) {
+      let [a, b, c] = this.chosenExamType.Category.split(',')
+      if (a.includes('E')) {
+        a = a + 'E'
+      }
+      if (b.includes('E')) {
+        b = b + 'E'
+      }
+      if (c !== null && c.includes('E')) {
+        c = c + 'E'
+      }
+      if (stringy === a || stringy === b || stringy === c) {}
+      else {
+        this.reservationForm.controls['Student_license'].setErrors({'formatError': true})
+      }
     }
     else {
-      this.reservationForm.controls['Student_license'].setErrors({'formatError': true});
-    } 
+      let cat = this.chosenExamType.Category
+      if (cat.includes('+')) {
+        let [a, b] = cat.split('+')
+        cat = a + b
+      }
+      if (stringy === cat) {}
+      else {
+        this.reservationForm.controls['Student_license'].setErrors({'formatError': true})
+      }
+    }
   }
   
   openReservation(reservation, modal, option) {
@@ -1889,11 +1924,13 @@ export class ScheduleComponent {
   async lockReservation() {
     let alreadyLocked = false
     let amountLocked = 0
+    let lockedRes = null
     if (this.timeslotReservations){
       for (let i = 0; i < this.timeslotReservations.length; i++) {
         if (this.timeslotReservations[i].Lock_expiration_date !== null) {
           alreadyLocked = true
           amountLocked++
+          lockedRes = this.timeslotReservations[i]
         }
       }
       if (alreadyLocked === false) {
@@ -1907,7 +1944,19 @@ export class ScheduleComponent {
         })
       }
       else {
-        if (amountLocked === 1 && this.reservationAmount === 2) {
+        if (lockedRes != null && this.reservationAmount !== 2) {
+          if (amountLocked === 1 && this.reservationAmount === 1 && lockedRes.Account_User !== this.user) {
+            await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
+              error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')}
+              , () => {
+                this.openModal(this.timeslotForm)
+              })
+          }
+          else if (amountLocked === 1 && this.reservationAmount === 1 && lockedRes.Account_User === this.user) {
+            this.openModal(this.timeslotForm)
+          }
+        }
+        else if (amountLocked === 1 && this.reservationAmount === 2) {
           await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
             error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')}
             , () => {
