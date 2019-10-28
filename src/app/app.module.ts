@@ -156,7 +156,7 @@ registerLocaleData(localePt, 'pt-PT');
     ScheduleModule,
     TreeModule
   ],
-  providers: [SharedService, ConfigurationsService, ReservationsService, ParametersService, PaymentsService, ServerService, SchoolService, AuthService, OperatorService, ExaminerServiceService, ExamService, BookingService, ResultsService, NgbActiveModal, AuthGuard, SharedService, { provide: LOCALE_ID, useValue: 'pt-PT' }, { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true} ],
+  providers: [DatePipe, SharedService, ConfigurationsService, ReservationsService, ParametersService, PaymentsService, ServerService, SchoolService, AuthService, OperatorService, ExaminerServiceService, ExamService, BookingService, ResultsService, NgbActiveModal, AuthGuard, SharedService, { provide: LOCALE_ID, useValue: 'pt-PT' }, { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true} ],
   bootstrap: [AppComponent]
 })
 
