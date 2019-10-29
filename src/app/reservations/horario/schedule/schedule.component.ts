@@ -272,7 +272,10 @@ export class ScheduleComponent {
   navigationDisabled: boolean = false;
   todayFormatted: any;
   user: any
-  groupValue: number = 3
+  groupValue: number = 3;
+  minBirthDate:string;
+  maxBirthDate:string;
+  minExpDate:string;
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -323,7 +326,8 @@ export class ScheduleComponent {
     private toastr: ToastrService,
     private auth: AuthService,
     private pautaService: PautaService,
-    private examService: ExamService
+    private examService: ExamService,
+    public datepipe: DatePipe
     ) {}
 
   async ngOnInit() {
@@ -414,6 +418,9 @@ export class ScheduleComponent {
       this.checkIfLocked()
       this.refreshTimeslots(this.groups, this.events)
     }) 
+    
+    this.setMinMaxBirthDate();
+    this.setMinExpDate();
   }
 
   parseJwt (token) {
@@ -2476,4 +2483,45 @@ checkValue(val) {
     invalidDate.setDate(today.getDate() - 1);
     this.invalidDates = [today,invalidDate];
   }
+  
+  //////////////////////////////////////DATE LIMITATIONS//////////////////////////////////////////////////
+
+setMinMaxBirthDate() {
+  let date = new Date().getFullYear();
+  this.maxBirthDate = '' + (date - 14) + '-12-31';
+  this.minBirthDate = '' + (date - 100) + '-12-31';
+}
+
+setMinExpDate() {
+  this.minExpDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
+}
+
+validateDate(dateVal, type) {
+  console.log(dateVal, type, new Date().setHours(0,0,0,0))
+  if (type === 'birthdate') {
+    if ((new Date(dateVal).getFullYear()) > (new Date().getFullYear() - 14)) {
+      this.reservationForm.controls['Birth_date'].setErrors({ 'invalid_date': true });
+    }
+    else if ((new Date(dateVal).getFullYear()) < (new Date().getFullYear() - 100)){
+      this.reservationForm.controls['Birth_date'].setErrors({ 'invalid_date': true });
+    }
+    else { return null}
+  }
+  else if (type === 'idexp') {
+    if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0)) || (new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 20)){
+      this.reservationForm.controls['ID_expire_date'].setErrors({ 'invalid_date': true });
+    }
+    else {return null}
+  }
+  else if (type === 'licexp'){
+    if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0))){
+      this.reservationForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
+    }
+    else if((new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 2)){
+      this.reservationForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
+    }
+    else {return null}
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
