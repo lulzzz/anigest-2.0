@@ -168,7 +168,7 @@ export class ScheduleComponent {
     tax_num: ['', [Validators.required, Validators.minLength(9), this.ValidateTax]],
     Drive_license_num: [''],
     Obs: [''],
-    School_Permit: [''],
+    School_Permit: ['', [Validators.required]],
     Student_license: ['', [Validators.required]],
     Expiration_date: ['', [Validators.required]],
     Type_category_idType_category: ['', [Validators.required]],
