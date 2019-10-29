@@ -35,4 +35,8 @@ export class DailyGroupService {
   updateDailyGroup(idGroup, data) {
     return this.http.patch<any>(`${this.url}?idGroup=${idGroup}`, data)
   }
+  
+  deleteDailyGroup(idGroup) {
+    return this.http.delete<any>(`${this.url}?idGroup=${idGroup}`)
+  }
 }
