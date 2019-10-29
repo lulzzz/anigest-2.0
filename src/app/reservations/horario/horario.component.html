@@ -21,7 +21,7 @@
       </li>
 
       <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
-        <button type="button" class="btn btn-light"><i
+        <button [disabled]="isDisabled" (click)="isDisabled=true;disable()" type="button" class="btn btn-light"><i
             class="fas fa-calendar-week"></i>
           Novo grupo</button>
       </li>
