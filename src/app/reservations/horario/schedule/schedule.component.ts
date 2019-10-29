@@ -743,9 +743,33 @@ export class ScheduleComponent {
   }
 
   generateNewEvent(startDate: string, endDate: string, group: Group) {
+    let currentDate = this.getCurrentDateFormatted()
     this.groupsInDate = this.groups.filter((group)=> {
-      return group.date == this.currentDate
+      return group.date == currentDate
     })
+    let eventsInGroup = this.events.filter((event) => {
+      return event.meta.group === group
+    })
+    let sD = new Date(currentDate)
+    let eD = new Date(currentDate)
+    sD.setHours(parseInt(startDate.substr(0,2)), parseInt(startDate.substr(3,2)))
+    eD.setHours(parseInt(endDate.substr(0,2)), parseInt(endDate.substr(3,2)))
+    if (eventsInGroup){
+      for(let i = 0; i < eventsInGroup.length; i++)  {
+        if (eventsInGroup[i].start <= sD && eventsInGroup[i].end >= eD) {
+          this.toastr.error('Não pode sobrepor timeslots')
+          return 0
+        }
+        if (eventsInGroup[i].start > sD && eventsInGroup[i].start < eD) {
+          this.toastr.error('Não pode sobrepor timeslots')
+          return 0
+        }
+        else if (eventsInGroup[i].end > sD && eventsInGroup[i].end < eD) {
+          this.toastr.error('Não pode sobrepor timeslots')
+          return 0
+        }
+      }
+    }
     let startFormatted
     let endFormatted
     try {
