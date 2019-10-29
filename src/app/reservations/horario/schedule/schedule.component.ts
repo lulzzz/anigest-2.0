@@ -1311,18 +1311,26 @@ export class ScheduleComponent {
           })
           let maxGroups = groupsInDate[0][0].Max
           let dayLock = groupsInDate[0][0].Day_lock
-        
-          let updateObject = {
-            Max: maxGroups-1,
-            Day_lock: dayLock
+          if (maxGroups - 1 === 0) {
+            this.dailyGroupService.deleteDailyGroup(groupsInDate[0][0].idGroups).subscribe(res => window.alert(res))
+            let groupPosition = this.groups.indexOf(eventGroup)
+            this.groups.splice(groupPosition, 1)
+            this.groupsInDate = null
+            this.getSchedule()
           }
-          if (updateObject.Max < 0) {
-            updateObject.Max = 0
+          else {
+            let updateObject = {
+              Max: maxGroups-1,
+              Day_lock: dayLock
+            }
+            if (updateObject.Max < 0) {
+              updateObject.Max = 0
+            }
+            this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
+            let groupPosition = this.groups.indexOf(eventGroup)
+            this.groups.splice(groupPosition, 1)
+            this.checkIfGroupDecrease(eventToDelete)
           }
-          this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
-          let groupPosition = this.groups.indexOf(eventGroup)
-          this.groups.splice(groupPosition, 1)
-          this.checkIfGroupDecrease(eventToDelete)
         }
         this.toastr.success('Timeslot eliminado', 'Sucesso')
         this.refreshTimeslots(this.groups, this.events)
