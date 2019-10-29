@@ -235,9 +235,6 @@
           <label *ngIf="(((this.event.color.secondary === '#c0ffff' || this.event.meta.currentNumStudents == this.event.meta.maxStudents) || scheduleLocked) && !subject.includes('ALL_School')) || viewDate.getTime() < this.today.getTime()">Sem operações disponíveis</label>
           <br><label *ngIf="scheduleLocked && !subject.includes('ALL_School')">Calendário bloqueado</label>
         </div>
-        <div *ngIf="!timeslotExists || subject.includes('ALL_School')">
-          <button  *ngIf="viewDate.getTime() > today.getTime()" [disabled]="this.event.meta.currentNumStudents !== 0" class="btn btn-white" (click)="dismiss();deleteEvent()"><i class="fas fa-minus-square"></i> Eliminar Timeslot</button>&nbsp;
-        </div>
       </div>
       <div *ngIf="route == 'results'" class="btn-group">
         <button [disabled]="event.meta.currentNumStudents == 0" class="btn btn-white" (click)="printData()"><i class="fas fa-print"></i> Imprimir</button>&nbsp;
