@@ -33,6 +33,7 @@ export class HorarioComponent implements OnInit {
   maxDate: Date;
   invalidDates: Array<Date>
   groupValue: number = 3
+  isDisabled: boolean = false
 
   messages: Message[] = []
   workHours: any
@@ -84,6 +85,7 @@ export class HorarioComponent implements OnInit {
   }
 
   createNewSchedule(groupAmount) {
+    this.groupValue = 3
     this.dataShareService.defineDate(this.date)
     this.dataShareService.defineWorkHours(this.workHours)
     this.dataShareService.defineGroupAmount(groupAmount)
@@ -116,6 +118,13 @@ export class HorarioComponent implements OnInit {
 
   openModal(modal) {
     this.modalService.open(modal, {windowClass: 'modal-animation', centered: false, backdrop: 'static', keyboard: false })
+  }
+
+  disable() {
+    this.isDisabled = true
+    setTimeout(() => {
+      this.isDisabled = false
+    }, 2000)
   }
 
   async setConfig(date) {
