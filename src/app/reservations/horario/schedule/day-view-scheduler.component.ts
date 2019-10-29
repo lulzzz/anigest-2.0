@@ -95,7 +95,19 @@ export class DayViewSchedulerComponent extends CalendarDayViewComponent {
   @Output() userChanged = new EventEmitter();
 
   eventDragged(dayEvent: DayViewEvent, xPixels: number, yPixels: number): void {
-    super.dragEnded(dayEvent, { y: yPixels, x: 0 } as any); // original behaviour
+    let y = 0
+    let negativeValue = false
+    if (yPixels < 0) {
+      negativeValue = true
+      yPixels *= -1
+    }
+    while (y < yPixels) {
+      y += 7.5
+    }
+    if (negativeValue) {
+      y *= -1
+    }
+    super.dragEnded(dayEvent, { y: y, x: 0 } as any);
   }
   hourSegmentHeight = 45
 
