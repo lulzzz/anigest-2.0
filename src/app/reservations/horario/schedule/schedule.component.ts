@@ -2086,7 +2086,6 @@ checkValue(val) {
         this.reservations[i] = this.reservation
         this.reservations = [...this.reservations]
       })
-    this.reservationPatchService.sendEvent()
   }
 
   lockSchedule() {
