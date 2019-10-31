@@ -335,6 +335,9 @@
     </div>
     <div class="modal-body">
       <h4>Tipo de exame: {{this.chosenExamType.Exam_type_name}}</h4><br>
+      <div *ngIf="reservationAmount === 2">
+        <h5>Formulário {{createdReservations+1}} de 2</h5>
+      </div>
       <form #resForm="ngForm" [formGroup]="reservationForm">
 
           <div class="row">
@@ -450,14 +453,19 @@
           <div class="col">
             <div class="form-group">
               <label for="License_num">Número da licença do candidato*:</label>
-              <input oninput="let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);" [textMask]="{mask:mask}" type="text" class="form-control" formControlName="Student_license" #Student_license
-                (focusout)="checkValue(Student_license.value)"
-                [ngClass]="{'is-invalid': reservationForm.get('Student_license').touched && reservationForm.get('Student_license').invalid || reservationForm.get('Student_license').required, 'is-valid':reservationForm.get('Student_license').touched && reservationForm.get('Student_license').valid}">
-              <div class="invalid-feedback">
-                <div *ngIf="reservationForm.get('Student_license').hasError('required')">
-                  Número da licença é obrigatório.</div>
-                <div *ngIf="reservationForm.get('Student_license').hasError('formatError')">
-                  O número da licença deve corresponder à categoria.</div>
+              <div *ngIf="formIsEditable">
+                <input oninput="let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);" [textMask]="{mask:mask}" type="text" class="form-control" formControlName="Student_license" #Student_license
+                  (focusout)="checkValue(Student_license.value)"
+                  [ngClass]="{'is-invalid': reservationForm.get('Student_license').touched && reservationForm.get('Student_license').invalid || reservationForm.get('Student_license').required, 'is-valid':reservationForm.get('Student_license').touched && reservationForm.get('Student_license').valid}">
+                <div class="invalid-feedback">
+                  <div *ngIf="reservationForm.get('Student_license').hasError('required')">
+                    Número da licença é obrigatório.</div>
+                  <div *ngIf="reservationForm.get('Student_license').hasError('formatError')">
+                    O número da licença deve corresponder à categoria.</div>
+                </div>
+              </div>
+              <div *ngIf="!formIsEditable>
+                <input type="text" class="form-control" formControlName="Student_license" #Student_license>
               </div>
             </div>
           </div>
