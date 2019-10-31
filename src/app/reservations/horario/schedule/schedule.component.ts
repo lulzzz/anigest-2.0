@@ -275,6 +275,7 @@ export class ScheduleComponent {
   minBirthDate:string;
   maxBirthDate:string;
   minExpDate:string;
+  maxExpDate:string;
   hasValidReservations: boolean = false
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
@@ -2522,7 +2523,9 @@ setMinMaxBirthDate() {
 }
 
 setMinExpDate() {
-  this.minExpDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
+  let date = new Date().getFullYear();
+  this.minExpDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+  this.maxExpDate = '' + (date + 20) + '-12-31';
 }
 
 validateDate(dateVal, type) {
