@@ -1524,7 +1524,7 @@ export class ScheduleComponent {
               // }
             }
           }
-          if (this.chosenExamType != null){
+          if (this.chosenExamType != null) {
             if (this.chosenExamType.Category.length === 1) {
               this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
             }
@@ -1532,7 +1532,38 @@ export class ScheduleComponent {
               this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
             }
             else if (this.chosenExamType.Category.length >= 3) {
-              this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+              if (this.chosenExamType.Category.includes(',')) {
+                let [a, b, c] = this.chosenExamType.Category.split(',')
+                if (a.length >= 3 || b.length >= 3) {
+                  this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+                }
+                else {
+                  if (typeof(c) !== "undefined") {
+                    if (c.length >= 3) {
+                      this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+                    }
+                    else {
+                      if (a.length === 2 || b.length === 2 || c.length === 2) {
+                        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+                      }
+                      else {
+                        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+                      }
+                    }
+                  }
+                  else {
+                    if (a.length === 2 || b.length === 2) {
+                      this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+                    }
+                    else {
+                      this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+                    }
+                  }
+                }
+              }
+              else {
+                this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+              }
             }
           }
           this.oldStart = this.event.start
@@ -1943,8 +1974,14 @@ checkValue(val) {
     }
   
     if (formValues.Student_license.toString().substr(16,1) == '_') {
-      let val = formValues.Student_license.toString().slice(0,formValues.Student_license.toString().length-1)
-      this.reservationForm.patchValue({Student_license: val})
+      if (formValues.Student_license.toString().substr(16, 2) == '__') {
+        let val = formValues.Student_license.toString().slice(0,formValues.Student_license.toString().length-2)
+        this.reservationForm.patchValue({Student_license: val})
+      }
+      else {
+        let val = formValues.Student_license.toString().slice(0,formValues.Student_license.toString().length-1)
+        this.reservationForm.patchValue({Student_license: val})
+      }
     }
 
     this.createReservation(this.reservationForm.getRawValue())
