@@ -15,7 +15,6 @@ import { ConfirmationService, Message } from 'primeng/api';
 import { WorkHours } from '../classes/work-hours'
 import { WorkHoursService } from '../services/work-hours.service'
 import { TempStudent } from '../classes/temp-student'
-import { Timeslot } from '../classes/timeslot'
 import { TimeslotService } from '../services/timeslot.service'
 import { DailyGroup } from '../classes/daily-group'
 import { DailyGroupService } from '../services/daily-group.service'
@@ -276,6 +275,7 @@ export class ScheduleComponent {
   minBirthDate:string;
   maxBirthDate:string;
   minExpDate:string;
+  hasValidReservations: boolean = false
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -1416,7 +1416,7 @@ export class ScheduleComponent {
   }
 
   async chooseTimeslot(checkIfEvent, modal) {
-    // this.timeslotService.
+    this.hasValidReservations = false
     this.examiner = {}
     this.examsInPauta = []
     if (!this.timesChanged) {
@@ -1445,6 +1445,12 @@ export class ScheduleComponent {
         () => {
           if (this.timeslotReservations) {
             this.timeslotReservations = [...this.timeslotReservations]
+            let validReservations = this.timeslotReservations.filter((reservation) => {
+              return reservation.Lock_expiration_date === null
+            })
+            if (validReservations.length) {
+              this.hasValidReservations = true
+            }
           }
           this.chosenExamType = this.event.meta.examType
         /* if (this.chosenExamType !== null) {
