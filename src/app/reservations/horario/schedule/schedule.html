@@ -422,7 +422,7 @@
             <label for="License_num">Validade do documento de identificação*:</label>
             <input type="date" class="form-control" formControlName="ID_expire_date"
               [ngClass]="{'is-invalid': reservationForm.get('ID_expire_date').touched && reservationForm.get('ID_expire_date').invalid || reservationForm.get('ID_expire_date').required, 'is-valid':reservationForm.get('ID_expire_date').touched && reservationForm.get('ID_expire_date').valid}"
-              (focusout)="validateDate(ID_expire_date.value, 'idexp')" [min]="minExpDate" #ID_expire_date>
+              (focusout)="validateDate(ID_expire_date.value, 'idexp')" [min]="minExpDate" [max]="maxExpDate" #ID_expire_date>
             <div class="invalid-feedback">
               <div *ngIf="reservationForm.get('ID_expire_date').hasError('required')">
                 A data de validação é obrigatória</div>
@@ -476,7 +476,7 @@
             <label for="License_expiration">Validade da licença*:</label>
             <input type="date" class="form-control" formControlName="Expiration_date"
               [ngClass]="{'is-invalid': reservationForm.get('Expiration_date').touched && reservationForm.get('Expiration_date').invalid || reservationForm.get('Expiration_date').required, 'is-valid':reservationForm.get('Expiration_date').touched && reservationForm.get('Expiration_date').valid}"
-              (focusout)="validateDate(license_expiration.value, 'licexp')" [min]="minExpDate" #license_expiration>
+              (focusout)="validateDate(license_expiration.value, 'licexp')" [min]="minExpDate" [max]="maxExpDate" #license_expiration>
             <div class="invalid-feedback">
               <div *ngIf="reservationForm.get('Expiration_date').hasError('required')">
                 Validade da licença é obrigatória.</div>
