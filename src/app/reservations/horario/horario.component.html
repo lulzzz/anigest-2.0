@@ -52,7 +52,7 @@
     </div>
     <div class="modal-body">
       Data:<br>
-      <input type="date" max="2030-01-01" class="form-control" #data>
+      <input (keyup.enter)="setConfig(data.value); dismiss()" type="date" max="2030-01-01" class="form-control" #data>
     </div>
     <div class="modal-footer">
       <button class="btn btn-dark" (click)="setConfig(data.value); dismiss()">Escolher</button>
