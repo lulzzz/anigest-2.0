@@ -70,16 +70,10 @@
     <div class="modal-body">
       <div>Hora de início:</div>
       <div>
-        <!-- <p-calendar [showTime]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="viewDate" [locale]="pt" #startHour></p-calendar> -->
-        <!-- <input type="time" #startHour> -->
-        <!-- <p-calendar [timeOnly]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="viewDate" [locale]="pt" #startHour></p-calendar> -->
         <input type="text" class="form-control" style="width: 30%" [textMask]="{mask: hourMask}" #startHour>
       </div><br>
       <div>Hora de fim:</div>
       <div>
-        <!-- <p-calendar [showTime]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="endValue" [locale]="pt" #endHour></p-calendar> -->
-        <!-- <input type="time" #endHour> -->
-        <!-- <p-calendar [timeOnly]="true" [disabledDays]="[0,1,2,3,4,5,6]" [stepMinute]="5" [(ngModel)]="endValue" [locale]="pt" #endHour></p-calendar> -->
         <input type="text" class="form-control" style="width: 30%" [textMask]="{mask: hourMask}" #endHour>
       </div><br>
       <div>Grupo</div>
@@ -120,7 +114,7 @@
     </div>
     <div class="modal-body">
       Data:<br>
-      <input type="date" max="2030-01-01" class="form-control" #data>
+      <input (keyup.enter)="goToDate(data.value); dismiss();" type="date" max="2030-01-01" class="form-control" #data>
     </div>
     <div class="modal-footer">
       <button class="btn btn-dark" (click)="goToDate(data.value); dismiss()">Escolher</button>
@@ -247,7 +241,7 @@
     </div>
     <div *ngIf="hasReservations && event.meta.exists && ( subject.includes('ALL_School') || event.meta.currentNumStudents > 0)">
       <div>
-        <table class="table table-responsive" *ngIf="reservation.Student_name != null">
+        <table class="table table-responsive" *ngIf="hasValidReservations">
           <tr>
             <th>Nome do Candidato</th>
             <th>Alvará</th>
