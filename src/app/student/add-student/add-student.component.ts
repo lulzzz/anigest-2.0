@@ -16,7 +16,7 @@ export class AddStudentComponent implements OnInit {
 
   pipe = new DatePipe('pt-PT');
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
-  public contribuente = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/];
+  public contribuinte = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/];
   public students: Array<any> = [];
   public schools = [];
   public idTypes = [];
@@ -49,7 +49,7 @@ export class AddStudentComponent implements OnInit {
       category: [null, Validators.required],
       license: [null, { validators: [Validators.required], updateOn: 'blur' }],
       license_expiration: [null, Validators.required],
-      fiscal_number: [null, [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
+      fiscal_number: [null, [Validators.required, this.ValidateTax]],
       existing_license: [null],
       observations: [null]
     });
