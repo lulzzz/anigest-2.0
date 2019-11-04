@@ -74,17 +74,26 @@ export class ScheduleComponent {
             this.deleteEvent()
           }
           else {
-            this.toastr.warning('Não pode eliminar um timeslot com reservas criadas.', 'Aviso')
+            this.toastr.warning('Não pode eliminar um timeslot com reservas criadas.', 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
           }
         }
         else {
-          this.toastr.warning('Não tem permissão para realizar essa operação.', 'Aviso')
+          this.toastr.warning('Não tem permissão para realizar essa operação.', 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
         }
       }
     }
     if (eventText == 'numerar') {
       if (this.viewDate.getTime() < new Date().getTime()) {
-        this.toastr.warning(toastrMessage, 'Aviso')
+        this.toastr.warning(toastrMessage, 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       else{
         this.createPauta()
@@ -92,7 +101,10 @@ export class ScheduleComponent {
     }
     else if (eventText == 'novo timeslot') {
       if (this.viewDate.getTime() < new Date().getTime()) {
-        this.toastr.warning(toastrMessage, 'Aviso')
+        this.toastr.warning(toastrMessage, 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       else{
         this.openModal(this.newTimeslotModal)
@@ -100,7 +112,10 @@ export class ScheduleComponent {
     }
     else if (eventText == 'novo grupo') {
       if (this.viewDate.getTime() < new Date().getTime()) {
-        this.toastr.warning(toastrMessage, 'Aviso')
+        this.toastr.warning(toastrMessage, 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       else{
         this.generateNewGroup('navbar')
@@ -108,7 +123,10 @@ export class ScheduleComponent {
     }
     else if (eventText == 'eliminar último grupo') {
       if (this.viewDate.getTime() < new Date().getTime()) {
-        this.toastr.warning(toastrMessage, 'Aviso')
+        this.toastr.warning(toastrMessage, 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       else{
         let curDate = new Date(this.currentDate)
@@ -120,13 +138,19 @@ export class ScheduleComponent {
           this.openModal(this.confirmGroupDelete)
         }
         else {
-          this.toastr.warning('Não pode eliminar todos os grupos de um calendário', 'Aviso')
+          this.toastr.warning('Não pode eliminar todos os grupos de um calendário', 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
         }
       }
     }
     else if (eventText == 'gerar calendário') {
       if (this.viewDate.getTime() < new Date().getTime()) {
-        this.toastr.warning(toastrMessage, 'Aviso')
+        this.toastr.warning(toastrMessage, 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       else
       {
@@ -141,7 +165,10 @@ export class ScheduleComponent {
             return new Date(obj[0].Group_day).toISOString() == comparisonDate
           })
           if(groupsInDate.length){
-            this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro')
+            this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
             return
           }
           else {
@@ -474,11 +501,17 @@ export class ScheduleComponent {
   uploadFileToActivity(resID) {
     this.reservationService.sendFile(this.fileToUpload, resID).subscribe(data => {
       if (data) {
-        this.toastr.success('Modelo 2 enviado com sucesso.','Notificação')
+        this.toastr.success('Modelo 2 enviado com sucesso.','Notificação',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       console.log(Object.values(data))
     }, error => {
-      this.toastr.error('Ocorreu um erro.', 'Erro')
+      this.toastr.error('Ocorreu um erro.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     });
 
 
@@ -503,12 +536,18 @@ export class ScheduleComponent {
   defineExaminer() {
     this.pautaService.definePautaExaminer(this.event.meta.pauta.idPauta, this.examiner.idExaminer).subscribe(() => {},
     () => {
-      this.toastr.error('Erro ao definir examinador', 'Erro')
+      this.toastr.error('Erro ao definir examinador', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     },
     () => {
       // this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications = 
       this.getSchedule()
-      this.toastr.success('Examinador definido', 'Sucesso')
+      this.toastr.success('Examinador definido', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
     })
   }
 
@@ -582,10 +621,16 @@ export class ScheduleComponent {
     let date = this.getCurrentDateFormatted(this.viewDate)
     this.pautaService.createPauta(date).subscribe(() => {},
     () => {
-      this.toastr.error('Ocorreu um erro ao numerar as pautas. Verifique se existem pautas por numerar nesta data.', 'Erro')
+      this.toastr.error('Ocorreu um erro ao numerar as pautas. Verifique se existem pautas por numerar nesta data.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     },
     () => {
-      this.toastr.success('Pautas numeradas', 'Sucesso')
+      this.toastr.success('Pautas numeradas', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       this.getSchedule().then(() => {
         this.pautas = []
         this.pautaService.getPautas().subscribe(res => this.pautas = res,
@@ -610,7 +655,10 @@ export class ScheduleComponent {
         return new Date(obj[0].Group_day).toISOString() == comparisonDate
       })
       if(groupsInDate.length){
-        this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro')
+        this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
         return
       }
     }
@@ -673,7 +721,10 @@ export class ScheduleComponent {
   goToDate(date) {
     if (date !== '') {
       if (new Date(date).getDay() === 0) {
-        this.toastr.warning('Selecionou um domingo. Por favor selecione outro dia.', 'Aviso')
+        this.toastr.warning('Selecionou um domingo. Por favor selecione outro dia.', 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       else {
         this.viewDate = new Date(date)
@@ -761,15 +812,24 @@ export class ScheduleComponent {
     if (eventsInGroup){
       for(let i = 0; i < eventsInGroup.length; i++)  {
         if (eventsInGroup[i].start <= sD && eventsInGroup[i].end >= eD) {
-          this.toastr.error('Não pode sobrepor timeslots')
+          this.toastr.error('Não pode sobrepor timeslots', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
           return 0
         }
         if (eventsInGroup[i].start > sD && eventsInGroup[i].start < eD) {
-          this.toastr.error('Não pode sobrepor timeslots')
+          this.toastr.error('Não pode sobrepor timeslots', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
           return 0
         }
         else if (eventsInGroup[i].end > sD && eventsInGroup[i].end < eD) {
-          this.toastr.error('Não pode sobrepor timeslots')
+          this.toastr.error('Não pode sobrepor timeslots', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
           return 0
         }
       }
@@ -783,16 +843,28 @@ export class ScheduleComponent {
     catch {
     }
     if (!startDate || !endDate || !group) {
-      this.toastr.error('Dados em falta','Erro')
+      this.toastr.error('Dados em falta','Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }
     else if (startFormatted < 8 || startFormatted > 19 || endFormatted < 8 || endFormatted > 20) {
-      this.toastr.error('Insira uma hora válida', 'Erro')
+      this.toastr.error('Insira uma hora válida', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }
     else if ((startFormatted >= 13 && startFormatted < 14 || endFormatted <= 14 && endFormatted > 13) || (endFormatted > 13 && startFormatted <= 13) || (endFormatted >= 14 && startFormatted < 14)) {
-      this.toastr.error('Um timeslot não pode ocupar a hora de almoço', 'Erro')
+      this.toastr.error('Um timeslot não pode ocupar a hora de almoço', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }
     else if (startDate >= endDate) {
-      this.toastr.error('Um exame não pode acabar antes de começar','Erro')
+      this.toastr.error('Um exame não pode acabar antes de começar','Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }
     else {
       let groupNumber = group.title.substr(6,2)
@@ -809,10 +881,16 @@ export class ScheduleComponent {
       }
       this.timeslotService.addTimeslot(timeslot).subscribe(() => {},
       () => {
-        this.toastr.error('Erro ao criar timeslot', 'Erro')
+        this.toastr.error('Erro ao criar timeslot', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       },
       () => {
-        this.toastr.success('Timeslot criado', 'Sucesso')
+        this.toastr.success('Timeslot criado', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
         this.getSchedule()
       })
       this.events = [...this.events]
@@ -1020,7 +1098,10 @@ export class ScheduleComponent {
         maxGroups = groupsInDate[0][0].Max
       }
       catch {
-        this.toastr.error('Gere o calendário primeiro', 'Erro')
+        this.toastr.error('Gere o calendário primeiro', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
         return
       }
       let dayLock = groupsInDate[0][0].Day_lock
@@ -1183,7 +1264,10 @@ export class ScheduleComponent {
     if (option !== 'scheduleGen') {
       setTimeout(() => {
         this.getSchedule()
-        this.toastr.success('Grupo criado', 'Sucesso')
+        this.toastr.success('Grupo criado', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
       },1000)      
     }
   }
@@ -1238,7 +1322,10 @@ export class ScheduleComponent {
         for (let i = 0; i < eventsToDelete.length; i++) {
           if (typeof(eventsToDelete[i].meta.currentNumStudents) !== 'undefined') {
             if (eventsToDelete[i].meta.currentNumStudents > 0) {
-              this.toastr.error('Não é possível eliminar o grupo. Existem exames marcados no mesmo.', 'Erro')
+              this.toastr.error('Não é possível eliminar o grupo. Existem exames marcados no mesmo.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
               safeToDelete = false
               break ;
             }
@@ -1256,7 +1343,10 @@ export class ScheduleComponent {
             }
           }
           this.getSchedule()
-          this.toastr.success('Grupo eliminado', 'Notificação')
+          this.toastr.success('Grupo eliminado', 'Notificação',{
+          timeOut: 10000,
+          closeButton: true
+        })
           let curDate = new Date(this.currentDate)
           let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
           let groupsInDate = this.timeslots.filter((obj) => {
@@ -1288,11 +1378,17 @@ export class ScheduleComponent {
     if (eventToDelete.meta.pauta) {
       this.pautaService.deletePauta(eventToDelete.meta.pauta.idPauta).subscribe(() => {},
       () => {
-        this.toastr.error('Erro ao eliminar a pauta', 'Erro')
+        this.toastr.error('Erro ao eliminar a pauta', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }, () => {
         this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
         (err) => {
-          this.toastr.error('Erro ao eliminar o timeslot', 'Erro')
+          this.toastr.error('Erro ao eliminar o timeslot', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
         },
         () => {
           
@@ -1321,7 +1417,10 @@ export class ScheduleComponent {
             }
             this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
           }
-          this.toastr.success('Timeslot eliminado', 'Sucesso')
+          this.toastr.success('Timeslot eliminado', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
           this.refreshTimeslots(this.groups, this.events)
         })
       })
@@ -1329,7 +1428,10 @@ export class ScheduleComponent {
     else {
       this.timeslotService.deleteTimeslot(eventToDelete.id).subscribe(() => {},
       (err) => {
-        this.toastr.error('Erro ao eliminar o timeslot', 'Erro')
+        this.toastr.error('Erro ao eliminar o timeslot', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       },
       () => {
         
@@ -1367,7 +1469,10 @@ export class ScheduleComponent {
             this.checkIfGroupDecrease(eventToDelete)
           }
         }
-        this.toastr.success('Timeslot eliminado', 'Sucesso')
+        this.toastr.success('Timeslot eliminado', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
         this.refreshTimeslots(this.groups, this.events)
       })
     }
@@ -1417,7 +1522,10 @@ export class ScheduleComponent {
   
   warnInvalid() {
     this.submitted = true
-    this.toastr.error('Formulário inválido', 'Erro')
+    this.toastr.error('Formulário inválido', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
   }
 
   goToTop() {
@@ -1819,7 +1927,10 @@ checkValue(val) {
 
     this.timeslotService.updateTimeslot(this.event.id, objectToSend).subscribe(() => {},
     () => {
-      this.toastr.error('Erro ao definir o tipo de exame', 'Erro')
+      this.toastr.error('Erro ao definir o tipo de exame', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       this.getSchedule()
     },
     () => {
@@ -1920,11 +2031,17 @@ checkValue(val) {
   async createReservation(reservation) {
     this.reservationService.addReservation(reservation).subscribe((res) => {
       if (res) {
-        this.toastr.success('Reserva criada com sucesso', 'Notificação')
+        this.toastr.success('Reserva criada com sucesso', 'Notificação',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
     },
     (e) => {
-      this.toastr.error('A reserva não foi criada', 'Erro')
+      this.toastr.error('A reserva não foi criada', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       this.cancelLockReservation()
     }, 
     () => {
@@ -2038,7 +2155,10 @@ checkValue(val) {
         await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
           this.lockedReservationId = data.insertId
         },
-          error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')
+          error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
         },
         () => {
           this.openModal(this.timeslotForm)
@@ -2048,7 +2168,10 @@ checkValue(val) {
         if (lockedRes != null && this.reservationAmount !== 2) {
           if (amountLocked === 1 && this.reservationAmount === 1 && lockedRes.Account_User !== this.user) {
             await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
-              error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')}
+              error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })}
               , () => {
                 this.openModal(this.timeslotForm)
               })
@@ -2059,7 +2182,10 @@ checkValue(val) {
         }
         else if (amountLocked === 1 && this.reservationAmount === 2) {
           await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
-            error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')}
+            error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })}
             , () => {
               this.openModal(this.timeslotForm)
             })
@@ -2073,7 +2199,10 @@ checkValue(val) {
       await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
         this.lockedReservationId = data.insertId
       },
-        error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro')
+        error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       },
       () => {
         this.openModal(this.timeslotForm)
@@ -2084,7 +2213,10 @@ checkValue(val) {
   unbookReservation(reservation) {
     this.reservationService.unbookReservation(reservation.idReservation).subscribe(() => {},
     () => {
-      this.toastr.error('Ocorreu um erro. A reserva não foi cancelada.', 'Erro')
+      this.toastr.error('Ocorreu um erro. A reserva não foi cancelada.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }, 
     () => {
       this.reservationService.getReservation().subscribe(res => this.reservations = res,
@@ -2103,7 +2235,10 @@ checkValue(val) {
             this.getSchedule().then(() => {
               this.refreshTimeslots(this.groups, this.events)
               this.reservations = [...this.reservations]
-              this.toastr.success('Reserva cancelada', 'Sucesso')
+              this.toastr.success('Reserva cancelada', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
             })
           },250)    
         }
@@ -2141,8 +2276,14 @@ checkValue(val) {
       });
 
     this.reservationPatchService.patchReservation(dirtyValues, this.reservation.idReservation, this.reservation.idTemp_Student)
-      .subscribe(res => { this.toastr.success('A reserva foi atualizada com sucesso.', 'Notificação'); },
-      error=> this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro'), 
+      .subscribe(res => { this.toastr.success('A reserva foi atualizada com sucesso.', 'Notificação',{
+          timeOut: 10000,
+          closeButton: true
+        }); },
+      error=> this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro',{
+          timeOut: 10000,
+          closeButton: true
+        }), 
       () => {
         let i = this.reservations.indexOf(this.reservation)
         this.reservations[i] = this.reservation
@@ -2174,7 +2315,10 @@ checkValue(val) {
       this.dailyGroupService.changeLock(thisDay[0]).subscribe()
     }
     else {
-      this.toastr.warning('Não existe um calendário nesta data.', 'Aviso')
+      this.toastr.warning('Não existe um calendário nesta data.', 'Aviso',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }
   }
 
@@ -2289,11 +2433,17 @@ checkValue(val) {
     }
     catch {}
     if ((startFormatted >= 13 && startFormatted < 14 || endFormatted <= 14 && endFormatted > 13) || (endFormatted > 13 && startFormatted <= 13) || (endFormatted >= 14 && startFormatted < 14)) {
-      this.toastr.error('Um timeslot não pode ocupar a hora de almoço.', 'Erro')
+      this.toastr.error('Um timeslot não pode ocupar a hora de almoço.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }
     else {
       if (newStart >= newEnd) {
-        this.toastr.error('Um timeslot não pode acabar antes de começar ou no mesmo momento.', 'Erro')
+        this.toastr.error('Um timeslot não pode acabar antes de começar ou no mesmo momento.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
       else {
         if ((newStart.getTime() == event.start.getTime() && newEnd.getTime() > event.end.getTime() && examTypeDefined) || (newStart.getTime() < event.start.getTime() && newEnd.getTime() == event.end.getTime() && examTypeDefined)) {
@@ -2309,7 +2459,10 @@ checkValue(val) {
           let maxDuration = (compare.getTime() - event.start.getTime())
           let newDuration = (newEnd.getTime() - newStart.getTime())
           if (newDuration > maxDuration ){
-            this.toastr.error('Não pode aumentar a duração de um exame para além da sua duração máxima.', 'Erro')
+            this.toastr.error('Não pode aumentar a duração de um exame para além da sua duração máxima.', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
             return
           }
         }
@@ -2376,7 +2529,10 @@ checkValue(val) {
           event.start = oldStart
           event.end = oldEnd
           event.title = oldEventTitle
-          this.toastr.error('Não pode sobrepor timeslots', 'Erro')
+          this.toastr.error('Não pode sobrepor timeslots', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
           resizeElement = []
         }
         else {
@@ -2459,7 +2615,10 @@ checkValue(val) {
   askForBooking(reservation) {
     this.reservationService.askForBooking(reservation.idReservation).subscribe(() => {},
     () => {
-      this.toastr.error('Ocorreu um erro. Pedido não enviado', 'Erro')
+      this.toastr.error('Ocorreu um erro. Pedido não enviado', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
     }, () => {
       let index = this.reservations.indexOf(reservation)
       this.reservations[index] = reservation
@@ -2476,7 +2635,10 @@ checkValue(val) {
           }
         )
       })
-      this.toastr.success('Pedido enviado', 'Sucesso')
+      this.toastr.success('Pedido enviado', 'Sucesso',{
+          timeOut: 10000,
+          closeButton: true
+        })
     })
   }
 
@@ -2517,7 +2679,10 @@ checkValue(val) {
         this.modalService.open(modal, {windowClass: 'modal-animation', centered: false , backdrop: 'static', keyboard: false})
       }
       else {
-        this.toastr.error('Crie um grupo primeiro', 'Erro')
+        this.toastr.error('Crie um grupo primeiro', 'Erro',{
+          timeOut: 10000,
+          closeButton: true
+        })
       }
     }
     else {
