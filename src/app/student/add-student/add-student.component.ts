@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from './server.service';
-import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { ReturnStatement } from '@angular/compiler';
 
 @Component({
   selector: 'app-add-student',
@@ -14,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 export class AddStudentComponent implements OnInit {
 
   pipe = new DatePipe('pt-PT');
-  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /[A-Z]/];
+  public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public contribuente = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/];
   public students: Array<any> = [];
   public schools = [];
@@ -22,9 +23,16 @@ export class AddStudentComponent implements OnInit {
   public categories = [];
   categoryName;
   errorMessage: any;
-
+  date;
+  maxBirthDate: String;
+  minBirthDate: String;
+  minExpDate:String;
+  maxExpDate:String;
+  submitted = false;
   angForm: FormGroup;
-  constructor(private fb: FormBuilder, private bs: ServerService, private route: ActivatedRoute, public activeModal: NgbActiveModal, private toastr: ToastrService) {
+  licenseInput:string;
+
+  constructor(public datepipe: DatePipe, private fb: FormBuilder, private bs: ServerService, private route: ActivatedRoute, public activeModal: NgbActiveModal, private toastr: ToastrService, private datePipe: DatePipe) {
     this.createForm();
   }
 
@@ -32,28 +40,40 @@ export class AddStudentComponent implements OnInit {
   createForm() {
     this.angForm = this.fb.group({
       number: [null, Validators.required],
-      name: ['', Validators.required],
+      name: [null, [Validators.required, this.ValidateString]],
       id_type: [null, Validators.required],
-      birth_date: [null, Validators.required],
-      id: [null, Validators.required],
-      id_expiration: [null, Validators.required],
+      birth_date: [null, [Validators.required]],
+      id: [null, [Validators.required]],
+      id_expiration: [null, [Validators.required]],
       school: [null, Validators.required],
       category: [null, Validators.required],
       license: [null, { validators: [Validators.required], updateOn: 'blur' }],
       license_expiration: [null, Validators.required],
-      fiscal_number: [null, [Validators.required]],
+      fiscal_number: [null, [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
       existing_license: [null],
       observations: [null]
-
     });
   }
 
-  addStudent(number, name, type, birth_date, id, id_expiration, school, category, license, license_expiration, fiscal_number, existing_license, observations) {
-    this.bs.addStudent(number, name, type, birth_date, id, id_expiration, school, category, license, license_expiration, fiscal_number, existing_license, observations)
+  addStudent() {
+    const form = this.angForm.value;
+    this.submitted = true;
+   
+    if (!this.angForm.valid) {
+      this.toastr.warning('Os campos obrigatórios não estão preenchidos ou não estão preenchidos corretamente.','Atenção',  {
+        timeOut: 10000,
+        closeButton: true
+      })
+      return;
+  }
+
+    this.bs.addStudent(form)
       .subscribe(res => {
-        this.toastr.success('Candidato foi criado com sucesso.', 'Notificação');
+        this.toastr.success('Candidato foi criado com sucesso.', 'Notificação',  {
+          timeOut: 10000,
+          closeButton: true
+        });
         if (this.students == null) {
-          console.log('Nothing here')
         }
         else {
           this.bs.sendSomething()
@@ -71,29 +91,155 @@ export class AddStudentComponent implements OnInit {
 
     this.bs.getCategory()
       .subscribe(category => {
-      this.categories = Object.values(category)
+        this.categories = Object.values(category)
         console.log(this.categories)
       });
+
+    this.setMinMaxBirthDate();
+    this.setMinExpDate() 
   }
+
 
   sendValue(id) {
     const category = this.categories.filter(item => item.idType_category === +id);
+    console.log(category)
+    console.log(category[0].Category)
+    this.categoryName = category[0].Category;
+    if (this.categoryName != null){
+      if (this.categoryName.length === 1) {
+        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+      }
+      else if (this.categoryName === 2) {
+        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+      }
+      else if (this.categoryName.length >= 3) {
+        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+      }
+    }
 
-    console.log(category[0].Category.substring(0, 1))
-    this.categoryName = category[0].Category.substring(0, 1)
+  if(this.licenseInput != null) {
+    this.checkValue(this.licenseInput)
+  }
+    
   }
 
-  checkValue(val) {
+  checkkValue(val) {
     const stringy = val.substring(15, 16);
     console.log(stringy)
     if (stringy === this.categoryName) {
-      console.log('SUCCEESS')
     }
     else {
-      
-        this.angForm.controls['license'].setErrors({'invalid': true});
-        this.errorMessage = 'O número da licença deve corresponder à categoria.' 
+
+      this.angForm.controls['license'].setErrors({ 'invalid': true });
+      this.errorMessage = 'O número da licença deve corresponder à categoria.'
     }
   }
+
+  checkValue(val) {
+    let stringy = val.substring(15);
+    this.licenseInput = val;
+
+    if (stringy.substr(2,1) === '_') {
+      stringy = stringy.slice(0, stringy.length-1)
+    }
+    if (stringy.substr(1,1) === '_') {
+      if (stringy.substr(2,1) !== '_') {
+        let [a, b] = stringy.split('_')
+        stringy = a+b
+      }
+      else {
+        stringy = stringy.slice(0, stringy.length-1)
+      }
+    }
+    if (this.categoryName.includes(',')) {
+      let [a, b, c] = this.categoryName.split(',')
+      if (a.includes('E')) {
+        a = a + 'E'
+      }
+      if (b.includes('E')) {
+        b = b + 'E'
+      }
+      if (c !== null && c.includes('E')) {
+        c = c + 'E'
+      }
+      if (stringy === a || stringy === b || stringy === c) {}
+      else {
+        this.angForm.controls['license'].setErrors({'formatError': true})
+      }
+    }
+    else {
+      let cat = this.categoryName
+      if (cat.includes('+')) {
+        let [a, b] = cat.split('+')
+        cat = a + b
+      }
+      if (stringy === cat) {}
+      else {
+        this.angForm.controls['license'].setErrors({'formatError': true})
+      }
+    }
+  }
+
+
+  ValidateString(control: FormControl) {
+    let pattern = /[*\\/|":?><0-9\-_;ºª.,!~]/gi; // can change regex with your requirement
+    //if validation fails, return error name & value of true
+    if (pattern.test(control.value)) {
+        return { validString: true };
+    }
+    //otherwise, if the validation passes, we simply return null
+    return null;
+  }
+
+  ValidateTax(control: FormControl) {
+    let pattern = /[0-9]{9}/
+    if (pattern.test(control.value)) {
+      return null
+    }
+    return { validTax: true }
+  }
+
+  //////////////////////////////////////DATE LIMITATIONS//////////////////////////////////////////////////
+
+  setMinMaxBirthDate() {
+    let date = new Date().getFullYear();
+    this.maxBirthDate = '' + (date - 14) + '-12-31';
+    this.minBirthDate = '' + (date - 100) + '-12-31';
+  }
+
+  setMinExpDate() {
+    let date = new Date().getFullYear();
+    this.minExpDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
+    this.maxExpDate = '' + (date + 5) + '-12-31';
+  }
+
+  validateDate(dateVal, type) {
+    console.log(dateVal, type, new Date().setHours(0,0,0,0))
+    if (type === 'birthdate') {
+      if ((new Date(dateVal).getFullYear()) > (new Date().getFullYear() - 14)) {
+        this.angForm.controls['birth_date'].setErrors({ 'invalid_date': true });
+      }
+      else if ((new Date(dateVal).getFullYear()) < (new Date().getFullYear() - 100)){
+        this.angForm.controls['birth_date'].setErrors({ 'invalid_date': true });
+      }
+      else { return null}
+    }
+    else if (type === 'idexp') {
+      if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0)) || (new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 20)){
+        this.angForm.controls['id_expiration'].setErrors({ 'invalid_date': true });
+      }
+      else {return null}
+    }
+    else if (type === 'licexp'){
+      if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0))){
+        this.angForm.controls['license_expiration'].setErrors({ 'invalid_date': true });
+      }
+      else if((new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 2)){
+        this.angForm.controls['license_expiration'].setErrors({ 'invalid_date': true });
+      }
+      else {return null}
+    }
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
