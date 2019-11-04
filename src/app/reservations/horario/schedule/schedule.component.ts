@@ -170,9 +170,9 @@ export class ScheduleComponent {
     School_Permit: ['', [Validators.required]],
     Student_license: ['', [Validators.required]],
     Expiration_date: ['', [Validators.required]],
-    Type_category_idType_category: ['', [Validators.required]],
+    Type_category_idType_category: [''],
     T_ID_type_idT_ID_type: ['', [Validators.required]],
-    Exam_type_idExam_type: ['', [Validators.required]],
+    Exam_type_idExam_type: [''],
     Car_plate: [''],
     idTimeslot: [''],
     exam_expiration_date: ['']
