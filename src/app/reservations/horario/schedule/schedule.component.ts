@@ -277,6 +277,9 @@ export class ScheduleComponent {
   minExpDate:string;
   maxExpDate:string;
   hasValidReservations: boolean = false
+  previousExamExpirationDate: any = null
+  submitted: boolean = false
+  isChecked: boolean = false
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -1411,7 +1414,20 @@ export class ScheduleComponent {
 
 
   //=======================TIMESLOT OPERATIONS=======================\\
-  isChecked: boolean = false
+  
+  warnInvalid() {
+    this.submitted = true
+    this.toastr.error('Formulário inválido', 'Erro')
+  }
+
+  goToTop() {
+    let top = document.getElementById('top')
+    if (top !== null) {
+      top.scrollIntoView()
+      top = null
+    }
+  }
+  
   checkBoxChecked() {
     this.isChecked = !this.isChecked
   }
@@ -1928,6 +1944,8 @@ checkValue(val) {
     this.formIsEditable = true
     this.reservationForm.reset()
     this.isChecked = false
+    this.previousExamExpirationDate = null
+    this.submitted = false
   }
 
   cancelLockReservation() {
