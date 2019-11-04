@@ -21,24 +21,8 @@ export class ServerService {
   }
 
   //eliminate unary operator
-  addStudent(number, name, id_type, birth_date, id, id_expiration, school, category, license, license_expiration, fiscal_number, existing_license, observations) {
-    const obj = {
-      Student_num: number,
-      Student_name: name,
-      T_ID_type_idT_ID_type: +id_type,
-      Birth_date: birth_date,
-      ID_num: id,
-      ID_expire_date: id_expiration,
-      School_idSchool: +school,
-      Type_category_idType_category: +category,
-      Student_license: license,
-      Expiration_date: license_expiration,
-      Tax_num: +fiscal_number,
-      Drive_license_num: existing_license,
-      Obs: observations
-    };
-
-    return this.http.post( this.url + 'alunos', obj)
+  addStudent(form) {
+    return this.http.post( this.url + 'alunos', form)
   
   }
 
