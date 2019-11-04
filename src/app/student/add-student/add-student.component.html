@@ -162,13 +162,12 @@
       <div class="col">
         <div class="form-group">
           <label for="fiscal_number">Número contribuinte</label>
-          <input type="text" class="form-control" formControlName="fiscal_number"
+          <input type="text" [textMask]="{mask:contribuinte}" class="form-control" formControlName="fiscal_number"
             #fiscal_number
             [ngClass]="{'is-invalid': angForm.get('fiscal_number').touched && angForm.get('fiscal_number').invalid || submitted && angForm.get('fiscal_number').hasError('required'), 'is-valid':angForm.get('fiscal_number').touched && angForm.get('fiscal_number').valid}">
           <div class="invalid-feedback">
             <div *ngIf="angForm.get('fiscal_number').hasError('required') || submitted && angForm.get('fiscal_number').hasError('required')">Número contribuinte e obrigatório.</div>
-            <div *ngIf="angForm.get('fiscal_number').hasError('minlength')" >O número contribuinte precisa ter 9 dígitos.</div>
-            <div *ngIf="angForm.get('fiscal_number').hasError('maxlength')" >O número contribuinte precisa ter 9 dígitos.</div>
+            <div *ngIf="angForm.get('fiscal_number').hasError('validTax')" >O número contribuinte precisa ter 9 dígitos.</div>
           </div>
         </div>
       </div>
