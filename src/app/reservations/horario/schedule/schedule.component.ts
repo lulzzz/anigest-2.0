@@ -311,6 +311,7 @@ export class ScheduleComponent {
   previousExamExpirationDate: any = null
   submitted: boolean = false
   isChecked: boolean = false
+  lockTimeslotSelection: boolean = false
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -1480,7 +1481,8 @@ export class ScheduleComponent {
     this.examsInPauta = []
     if (!this.timesChanged) {
       this.chosenExamType = {}
-      if (checkIfEvent.target.className.includes('cal-event')) {
+      if (checkIfEvent.target.className.includes('cal-event') && !this.lockTimeslotSelection) {
+        this.lockTimeslotSelection = true
         let chosenEventId = this.dataShareService.getChosenTimeslotId()
         let chosenEvent = this.events.filter((event) => {
           return event.id == chosenEventId
@@ -2616,6 +2618,9 @@ checkValue(val) {
   }
 
   openModal(modal) {
+    if (this.lockTimeslotSelection) {
+      this.lockTimeslotSelection = false
+    }
     let currentDate = this.getCurrentDateFormatted()
     if ('newTimeslotModal' in modal._def.references) {
       let tempDate = new Date(currentDate)
