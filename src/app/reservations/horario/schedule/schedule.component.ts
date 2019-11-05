@@ -130,9 +130,12 @@ export class ScheduleComponent {
       }
       else{
         let curDate = new Date(this.currentDate)
-        let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+        let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+        if (comparisonDate.toISOString().includes('23:00:00')) {
+          comparisonDate.setHours(comparisonDate.getHours()+1)
+        }
         let groupsInDate = this.timeslots.filter((obj) => {
-          return new Date(obj[0].Group_day).toISOString() == comparisonDate
+          return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
         })
         if (groupsInDate[0][0].Max > 1) {
           this.openModal(this.confirmGroupDelete)
@@ -160,9 +163,12 @@ export class ScheduleComponent {
           if (curDate.toString().includes('GMT+0100')) {
             curDate.setHours(curDate.getHours()+1)
           }
-          let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+          let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+          if (comparisonDate.toISOString().includes('23:00:00')) {
+            comparisonDate.setHours(comparisonDate.getHours()+1)
+          }
           let groupsInDate = this.timeslots.filter((obj) => {
-            return new Date(obj[0].Group_day).toISOString() == comparisonDate
+            return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
           })
           if(groupsInDate.length){
             this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro',{
@@ -572,9 +578,12 @@ export class ScheduleComponent {
     this.groupValue = 3
     if (this.events.length > 0) {
       let curDate = new Date(this.currentDate)
-      let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+      let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+      if (comparisonDate.toISOString().includes('23:00:00')) {
+        comparisonDate.setHours(comparisonDate.getHours()+1)
+      }
       let groupsInDate = this.timeslots.filter((obj) => {
-        return new Date(obj[0].Group_day).toISOString() == comparisonDate
+        return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
       })
       if(groupsInDate.length){
         this.toastr.error('Já foi gerado um calendário neste dia.', 'Erro',{
@@ -1012,9 +1021,12 @@ export class ScheduleComponent {
     let maxGroups = 0
     if (option !== 'scheduleGen') {
       let curDate = new Date(this.currentDate)
-      let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+      let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+      if (comparisonDate.toISOString().includes('23:00:00')) {
+        comparisonDate.setHours(comparisonDate.getHours()+1)
+      }
       let groupsInDate = this.timeslots.filter((obj) => {
-        return new Date(obj[0].Group_day).toISOString() == comparisonDate
+        return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
       })
       try {
         maxGroups = groupsInDate[0][0].Max
@@ -1270,9 +1282,12 @@ export class ScheduleComponent {
           closeButton: true
         })
           let curDate = new Date(this.currentDate)
-          let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+          let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+          if (comparisonDate.toISOString().includes('23:00:00')) {
+            comparisonDate.setHours(comparisonDate.getHours()+1)
+          }
           let groupsInDate = this.timeslots.filter((obj) => {
-            return new Date(obj[0].Group_day).toISOString() == comparisonDate
+            return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
           })
           let maxGroups = groupsInDate[0][0].Max
           let dayLock = groupsInDate[0][0].Day_lock
@@ -1323,9 +1338,12 @@ export class ScheduleComponent {
             let groupPosition = this.groups.indexOf(eventGroup)
             this.groups.splice(groupPosition, 1)
             let curDate = new Date(this.currentDate)
-            let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+            let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+            if (comparisonDate.toISOString().includes('23:00:00')) {
+              comparisonDate.setHours(comparisonDate.getHours()+1)
+            }
             let groupsInDate = this.timeslots.filter((obj) => {
-              return new Date(obj[0].Group_day).toISOString() == comparisonDate
+              return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
             })
             let maxGroups = groupsInDate[0][0].Max
             let dayLock = groupsInDate[0][0].Day_lock
@@ -1364,9 +1382,12 @@ export class ScheduleComponent {
         })
         if (eventsInGroup.length == 0) {
           let curDate = new Date(this.currentDate)
-          let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+          let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+          if (comparisonDate.toISOString().includes('23:00:00')) {
+            comparisonDate.setHours(comparisonDate.getHours()+1)
+          }
           let groupsInDate = this.timeslots.filter((obj) => {
-            return new Date(obj[0].Group_day).toISOString() == comparisonDate
+            return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
           })
           let maxGroups = groupsInDate[0][0].Max
           let dayLock = groupsInDate[0][0].Day_lock
@@ -1402,9 +1423,12 @@ export class ScheduleComponent {
 
   checkIfGroupDecrease(deletedEvent) {
     let curDate = new Date(this.currentDate)
-    let comparisonDate = new Date(curDate.setDate(curDate.getDate())).toISOString()
+    let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
+    if (comparisonDate.toISOString().includes('23:00:00')) {
+      comparisonDate.setHours(comparisonDate.getHours()+1)
+    }
     let groupsInDate = this.timeslots.filter((obj) => {
-      return new Date(obj[0].Group_day).toISOString() == comparisonDate
+      return new Date(obj[0].Group_day).toISOString() == comparisonDate.toISOString()
     })
     let deletedGroupNumber = parseInt(deletedEvent.meta.group.title.substr(6,3))
     let maxGroups = groupsInDate[0][0].Max-1
