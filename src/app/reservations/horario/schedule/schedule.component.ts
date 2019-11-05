@@ -379,12 +379,9 @@ export class ScheduleComponent {
         dayAmount++
       }
     }
-    console.log(dayAmount)
     this.minimumReservationDate.setUTCDate(this.minimumReservationDate.getUTCDate() + dayAmount)
     this.minimumReservationDate.setUTCHours(0,0,0,0)
-    console.log(this.minimumReservationDate)
     
-    this.setFormValidators()
     this.auth.currentUserSubject.subscribe(message => this.subject = message)
     if (this.router.url.includes("reservations")) {
       this.route = "reservations"
@@ -471,29 +468,6 @@ export class ScheduleComponent {
     this.groupAmount = null
   }
 
-/*   checkFile(event, id) {
-    this.fileToUpload = event.files[0]
-    if (this.fileToUpload.name.length) {
-      const format = /^(Modelo2{1}_[0-9]{9})$/gi
-      let validated = format.test(this.fileToUpload.name.split(".",1))
-      console.log(this.fileToUpload)
-      if (validated)  {
-         this.reservationService.sendFile(this.fileToUpload, id).subscribe(() => {
-        }, (e) => {
-          this.toastr.error('Erro ao enviar ficheiro', 'Erro')
-          console.log(e)
-        },
-        () => {
-          this.toastr.success('Ficheiro enviado.', 'Sucesso')
-        }) 
-        this.toastr.error('Erro ao enviar ficheiro', 'Erro')
-      }
-      else {
-        this.toastr.error('Nome com formato errado', 'Erro')
-      }
-    }
-  } */
-
   handleFileInput(files: FileList, resID) {
     this.fileToUpload = files.item(0);
     this.uploadFileToActivity(resID)
@@ -514,25 +488,7 @@ export class ScheduleComponent {
           closeButton: true
         })
     });
-
-
   }
-  // formIsValid: boolean = false
-  // validateForm() {
-  //   // this.formIsValid = true
-  //   let form = this.reservationForm.getRawValue() 
-  //   let studentLicense = form.Student_license
-  //   if (studentLicense.substr(16) === '_') {
-  //     studentLicense = studentLicense.slice(0,-1)
-  //   }
-  //   console.log(studentLicense)
-  //   let expirationDate = form.Expiration_date
-  //   let expirationDateMax = `${this.viewDate.getFullYear()}-${this.viewDate.getMonth()+1}-${this.viewDate.getDate()}`
-  //   if (form.Expiration_date) {
-
-  //   }
-  //   console.log(form)
-  // }
 
   defineExaminer() {
     this.pautaService.definePautaExaminer(this.event.meta.pauta.idPauta, this.examiner.idExaminer).subscribe(() => {},
@@ -564,34 +520,6 @@ export class ScheduleComponent {
     // console.log(this.selectedOption)
   }
   
-  setFormValidators() {
-    // let carPlateFormat: RegExp = /^([A-Z]{2}-[0-9]{2}-[0-9]{2})|([0-9]{2}-[A-Z]{2}-[0-9]{2})|([0-9]{2}-[0-9]{2}-[A-Z]{2})/g
- /*   this.reservationForm.controls["Student_name"].setValidators([Validators.required, Validators.minLength(2)])
-    this.reservationForm.controls["Student_name"].updateValueAndValidity()
-    this.reservationForm.controls["Birth_date"].setValidators(Validators.required)
-    this.reservationForm.controls["Birth_date"].updateValueAndValidity()
-    this.reservationForm.controls["ID_num"].setValidators([Validators.required, Validators.pattern('^[0-9]*')])
-    this.reservationForm.controls["ID_num"].updateValueAndValidity()
-    this.reservationForm.controls["ID_expire_date"].setValidators(Validators.required)
-    this.reservationForm.controls["ID_expire_date"].updateValueAndValidity()
-    this.reservationForm.controls["tax_num"].setValidators([Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]*')])
-    this.reservationForm.controls["tax_num"].updateValueAndValidity()
-    this.reservationForm.controls["Drive_license_num"].setValidators(Validators.pattern('^[0-9]*'))
-    this.reservationForm.controls["Drive_license_num"].updateValueAndValidity()
-    if (this.userIdSchool === 'null') {
-      this.reservationForm.controls["School_Permit"].setValidators(Validators.required)
-      this.reservationForm.controls["School_Permit"].updateValueAndValidity()
-    }
-    this.reservationForm.controls["Student_license"].setValidators(Validators.required)
-    this.reservationForm.controls["Student_license"].updateValueAndValidity()
-    this.reservationForm.controls["Expiration_date"].setValidators(Validators.required)
-    this.reservationForm.controls["Expiration_date"].updateValueAndValidity()
-    this.reservationForm.controls["T_ID_type_idT_ID_type"].setValidators(Validators.required)
-    this.reservationForm.controls["T_ID_type_idT_ID_type"].updateValueAndValidity()
-    this.reservationForm.controls["Car_plate"].setValidators([Validators.minLength(8), Validators.maxLength(8), Validators.pattern(carPlateFormat)])
-    this.reservationForm.controls["Car_plate"].updateValueAndValidity()*/
-  }
-  
   ValidateString(control: FormControl) {
     let pattern = /[*\\/|":?><0-9\-_;ºª.,!~]/gi; // can change regex with your requirement
     //if validation fails, return error name & value of true
@@ -609,14 +537,6 @@ export class ScheduleComponent {
     }
     return { validString: true }
   }
-
-  // ValidateBirthDate(control: FormControl) {
-  //   if (control.value) {
-  //     // console.log(this.viewDate)
-  //     console.log(control)
-  //     console.log(control.value)
-  //   }
-  // }
 
   createPauta() {
     let date = this.getCurrentDateFormatted(this.viewDate)
