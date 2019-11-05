@@ -250,8 +250,9 @@
             <th>Visualizar</th>
             <div *ngIf="route == 'reservations'">
               <th *ngIf="!subject.includes('ALL_School')">Validar Reserva</th>
-              <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School'))">Editar</th>
-              <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))">Desmarcar</th>
+              <th *ngIf="reservation.T_exam_status_idexam_status !== 1">Editar</th>
+              <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School'))">Desmarcar</th>
+              <!-- <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))">Desmarcar</th> -->
               <th *ngIf="reservation.T_exam_status_idexam_status !== 1">Enviar Modelo 2</th>
             </div>
           </tr>
@@ -263,8 +264,9 @@
             <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 || subject.includes('ALL_School')) && !reservation.Lock_expiration_date"><button class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'view')"><i class="fas fa-book-open"></i> Visualizar</button></td>
             <div *ngIf="route == 'reservations'">
               <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && !subject.includes('ALL_School')) && !reservation.Lock_expiration_date"><button [disabled]="this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9 || scheduleLocked" class="btn btn-white" (click)="dismiss();askForBooking(reservation);"><i class="fas fa-check"></i><br>Validar Reserva</button></td>
-              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')) && !reservation.Lock_expiration_date"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9) && !subject.includes('ALL_School')" class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'edit')"><i class="fas fa-edit"></i> Editar</button></td>
-              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))) && !reservation.Lock_expiration_date"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || (reservation.T_exam_status_idexam_status !== 9 && reservation.T_exam_status_idexam_status !== 3)) && !subject.includes('ALL_School') && !subject.includes('DELETE_Reservation') || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="unbookReservation(reservation); dismiss();"><i class="fas fa-times"></i> Desmarcar</button></td>
+              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1) && !reservation.Lock_expiration_date"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || reservation.T_exam_status_idexam_status !== 9) && !subject.includes('ALL_School')" class="btn btn-white" (click)="openReservation(reservation, timeslotForm, 'edit')"><i class="fas fa-edit"></i> Editar</button></td>
+              <!-- <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))) && !reservation.Lock_expiration_date"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || (reservation.T_exam_status_idexam_status !== 9 && reservation.T_exam_status_idexam_status !== 3)) && !subject.includes('ALL_School') && !subject.includes('DELETE_Reservation') || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="unbookReservation(reservation); dismiss();"><i class="fas fa-times"></i> Desmarcar</button></td> -->
+              <td *ngIf="(reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School'))) && !reservation.Lock_expiration_date"><button [disabled]="(scheduleLocked || this.event.color.secondary == '#c0ffff' || (reservation.T_exam_status_idexam_status !== 9 && reservation.T_exam_status_idexam_status !== 3)) && !subject.includes('ALL_School') && !subject.includes('DELETE_Reservation') || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="unbookReservation(reservation); dismiss();"><i class="fas fa-times"></i> Desmarcar</button></td>
               <!-- <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && subject.includes('ALL_School')"><p-fileUpload mode="basic" auto="true" accept="application/pdf, text/*, image/*" customUpload="true" (uploadHandler)="checkFile($event, reservation.idReservation)" name="fileUpload[]" fileLimit="1" chooseLabel="Escolher Ficheiro" uploadLabel="Enviar Ficheiro" cancelLabel="Cancelar"></p-fileUpload></td> -->
               <td *ngIf="reservation.T_exam_status_idexam_status !== 1 && !reservation.Lock_expiration_date"> <button type="button" class="btn btn-success" (click)="fileInput.click(reservation.idReservation)"><i class="fas fa-upload"></i>
                 Escolher Ficheiro
@@ -353,13 +355,16 @@
                     <option *ngFor="let school of schools" [ngValue]="school.Permit">{{school.Permit}} - {{school.School_name}}</option>
                   </select>
                   <div class="invalid-feedback">
-                      <div *ngIf="reservationForm.get('School_Permit').hasError('required')">
-                        Selecione uma opção.</div>
+                    <div *ngIf="reservationForm.get('School_Permit').hasError('required')">
+                      Selecione uma opção.</div>
                     </div>
                   <!-- <p-dropdown [options]="schools" [(ngModel)]="school"></p-dropdown> -->
                 </div>
                 <div *ngIf="userIdSchool !== 'null'">
-                  <input type="hidden" value="userSchoolPermit" class="form-control" formControlName="School_Permit">
+                  <select style="display:none" id="CategorySelect" class="form-control custom-select input-group-text"
+                    formControlName="School_Permit">
+                    <option [selected]="true" [ngValue]="userSchoolPermit">{{userSchoolPermit}}</option>
+                  </select>
                 </div>
               </div>
             </div>
