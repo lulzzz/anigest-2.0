@@ -173,10 +173,14 @@ export class ScheduleComponent {
           }
           else {
             if (this.weekendDays.includes(weekDay)) {
-              this.openModal(this.dayIsWeekend)
+              if (this.route === 'reservations') {
+                this.openModal(this.dayIsWeekend)
+              }
             }
             else {
-              this.openModal(this.generateDay)
+              if (this.route === 'reservations') {
+                this.openModal(this.generateDay)
+              }
             }
           }
         }
@@ -388,9 +392,6 @@ export class ScheduleComponent {
     else {
       if (!this.subject.includes('ALL_School')) {
         this.router.navigate(["/"])
-        document.querySelectorAll('deleteX').forEach((el) => {
-          el.setAttribute('display', 'none')
-        })
       }
       this.route = "results"
       this.dataFetchService.getExaminers().subscribe(res => this.examiners = res)
@@ -1537,7 +1538,20 @@ export class ScheduleComponent {
   }
   
   checkBoxChecked() {
+    if (this.reservationForm.get('exam_expiration_date').value !== null) {
+      this.previousExamExpirationDate = this.reservationForm.get('exam_expiration_date').value
+    }
     this.isChecked = !this.isChecked
+    if (!this.isChecked) {
+      this.reservationForm.patchValue({ exam_expiration_date: null })
+      this.reservation.exam_expiration_date = null
+      this.reservationForm.controls['exam_expiration_date'].markAsDirty()
+    }
+    if (this.isChecked) {
+      this.reservation.exam_expiration_date = this.previousExamExpirationDate
+      this.reservationForm.patchValue({ exam_expiration_date: this.datePipe.transform(this.reservation.exam_expiration_date, 'yyyy-MM-dd')})
+      this.reservationForm.controls['exam_expiration_date'].markAsDirty()
+    }
   }
 
   async chooseTimeslot(checkIfEvent, modal) {
@@ -1577,28 +1591,12 @@ export class ScheduleComponent {
               this.hasValidReservations = true
             }
           }
-          this.chosenExamType = this.event.meta.examType
-        /* if (this.chosenExamType !== null) {
-            let character = ''
-            if (this.chosenExamType.Short.substr(6,1) !== ',' && this.chosenExamType.Short.substr(6,1) !== '+') {
-              // if (this.chosenExamType.Short.substr(5,1) == 'A') {
-              //   this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', this.chosenExamType.Short.substr(5,1)];
-              // }
-              if (this.chosenExamType.Short !== 'TEÓRICA') {
-                character = this.chosenExamType.Short.substr(5,1)
-                if (character.includes('+')) {
-                  character.replace('+', '')
-                }
-              }
-              else {
-                character = 'T'
-              }
-            }
-            else {
-              character = this.chosenExamType.Short.substr(5)
-            }
-            this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', character];
-          }*/
+          try {
+            this.chosenExamType = this.event.meta.examType
+          }
+          catch {
+            this.chosenExamType = null
+          }
           if (this.event.meta.pauta) {
             let chosenType = this.examTypes.filter((type) => {
               return type.idExam_type === this.event.meta.pauta.Exam_type_idExam_type
@@ -1705,9 +1703,11 @@ export class ScheduleComponent {
             // })
           }
           else {
-            this.timeslotReservations = this.timeslotReservations.filter((reservation) => {
-              return (reservation.School_Permit == this.userSchoolPermit)
-            })
+            if (this.timeslotReservations !== null) {
+              this.timeslotReservations = this.timeslotReservations.filter((reservation) => {
+                return (reservation.School_Permit == this.userSchoolPermit)
+              })
+            }
           }
 
           try {
@@ -1811,9 +1811,15 @@ checkValue(val) {
       exam_expiration_date: this.datePipe.transform(reservation.exam_expiration_date, 'yyyy-MM-dd')
     })
     if (this.userIdSchool !== 'null') {
+      this.reservationForm.controls['School_Permit'].clearValidators()
+      this.reservationForm.controls['School_Permit'].updateValueAndValidity()
       this.reservationForm.patchValue( {
         School_Permit: this.userSchoolPermit
       })
+    }
+    else {
+      this.reservationForm.controls['School_Permit'].setValidators(Validators.required)
+      this.reservationForm.controls['School_Permit'].updateValueAndValidity()
     }
     this.reservationIdType = parseInt(reservation.T_ID_type_idT_ID_type)
     if (option === 'view') {
@@ -2143,6 +2149,14 @@ checkValue(val) {
     let alreadyLocked = false
     let amountLocked = 0
     let lockedRes = null
+    if (this.userIdSchool !== 'null') {
+      this.reservationForm.controls['School_Permit'].clearValidators()
+      this.reservationForm.controls['School_Permit'].updateValueAndValidity()
+    }
+    else {
+      this.reservationForm.controls['School_Permit'].setValidators(Validators.required)
+      this.reservationForm.controls['School_Permit'].updateValueAndValidity()
+    }
     if (this.timeslotReservations){
       for (let i = 0; i < this.timeslotReservations.length; i++) {
         if (this.timeslotReservations[i].Lock_expiration_date !== null) {
@@ -2296,8 +2310,14 @@ checkValue(val) {
     for (let i = 0; i < this.timeslots.length; i++) {
       timeslotGroupsFiltered.push(this.timeslots[i][0])
     }
+    let viewDate = this.viewDate
+    if (viewDate.toUTCString().includes('23:00:00')) {
+      viewDate.setHours(viewDate.getHours() + 1)
+    }
     let thisDay = timeslotGroupsFiltered.filter((day) => {
-      return new Date(day.Group_day).toUTCString() == this.viewDate.toUTCString()
+      console.log(new Date(day.Group_day).toUTCString())
+      console.log(viewDate.toUTCString())
+      return new Date(day.Group_day).toUTCString() == viewDate.toUTCString()
     })
     if (thisDay.length) {
       this.scheduleLocked = !this.scheduleLocked
@@ -2305,20 +2325,20 @@ checkValue(val) {
       if (thisDay[0].Day_lock == 1) {
         thisDay[0].Day_lock = 0
         this.lockedDates = this.lockedDates.filter((date) => {
-          return date != this.viewDate.getDate()
+          return date != viewDate.getDate()
         })
       }
       else {
         thisDay[0].Day_lock = 1
-        this.lockedDates.push(this.viewDate.getDate())
+        this.lockedDates.push(viewDate.getDate())
       }
       this.dailyGroupService.changeLock(thisDay[0]).subscribe()
     }
     else {
       this.toastr.warning('Não existe um calendário nesta data.', 'Aviso',{
-          timeOut: 10000,
-          closeButton: true
-        })
+        timeOut: 10000,
+        closeButton: true
+      })
     }
   }
 
@@ -2362,10 +2382,14 @@ checkValue(val) {
           if (this.userIdSchool == 'null') {
             if(!this.groupsInDate.length && this.viewDate > new Date()) {
               if (this.weekendDays.includes(weekDay)) {
-                this.openModal(this.dayIsWeekend)
+                if (this.route === 'reservations') {
+                  this.openModal(this.dayIsWeekend)
+                }
               }
               else {
-                this.openModal(this.chooseToGenerate)
+                if (this.route === 'reservations') {
+                  this.openModal(this.chooseToGenerate)
+                }
               }
             }
           }
@@ -2387,10 +2411,14 @@ checkValue(val) {
       if (this.userIdSchool == 'null') {
         if(!this.groupsInDate.length && this.viewDate > new Date()) {
           if (this.weekendDays.includes(weekDay)) {
-            this.openModal(this.dayIsWeekend)
+            if (this.route === 'reservations') {
+              this.openModal(this.dayIsWeekend)
+            }
           }
           else {
-            this.openModal(this.chooseToGenerate)
+            if (this.route === 'reservations') {
+              this.openModal(this.chooseToGenerate)
+            }
           }
         }
       }
