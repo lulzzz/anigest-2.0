@@ -1,6 +1,6 @@
-<div class="modal-header bg-secondary">
-   <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='edit'">EDITAR ESCOLA</h2>
-    <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='new'">NOVA ESCOLA</h2> 
+<div class="modal-header">
+  <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='edit'">EDITAR ESCOLA</h2>
+  <h2 class="font-weight-light text-light ml-auto" *ngIf="action==='new'">NOVA ESCOLA</h2>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -13,13 +13,20 @@
       <div class="col">
         <div class="form-group">
           <label for="Permit">Alvará*</label>
-          <input type="text" class="form-control" formControlName="Permit">
+          <input type="number" class="form-control" formControlName="Permit"
+            [ngClass]="{'is-invalid': addSchool.get('Permit').touched && addSchool.get('Permit').invalid || submitted && addSchool.get('Permit').hasError('required'), 'is-valid':addSchool.get('Permit').touched && addSchool.get('Permit').valid}"
+            #permit>
+          <div class="invalid-feedback">
+            <div
+              *ngIf="addSchool.get('Permit').hasError('required') || submitted && addSchool.get('Permit').hasError('required')">
+              Campo obrigatório.</div>
+          </div>
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="Associate_num">Nº Associado</label>
-          <input type="text" class="form-control" formControlName="Associate_num">
+          <input type="text" class="form-control" formControlName="Associate_num" [ngClass]="{'is-valid':addSchool.get('Associate_num').touched && addSchool.get('Associate_num').valid}">
         </div>
       </div>
     </div>
@@ -28,7 +35,13 @@
       <div class="col">
         <div class="form-group">
           <label for="School_name">Escola*</label>
-          <input type="text" class="form-control" formControlName="School_name">
+          <input type="text" class="form-control" formControlName="School_name"
+            [ngClass]="{'is-invalid': addSchool.get('School_name').touched && addSchool.get('School_name').invalid || submitted && addSchool.get('School_name').hasError('required'), 'is-valid':addSchool.get('School_name').touched && addSchool.get('School_name').valid}">
+          <div class="invalid-feedback">
+            <div
+              *ngIf="addSchool.get('School_name').hasError('required') || submitted && addSchool.get('School_name').hasError('required')">
+              Campo obrigatório.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -37,28 +50,46 @@
       <div class="col">
         <div class="form-group">
           <label for="Tax_num">Nº Contribuinte*</label>
-          <input type="text" class="form-control" formControlName="Tax_num">
+          <input type="text" class="form-control" formControlName="Tax_num"
+            [ngClass]="{'is-invalid': addSchool.get('Tax_num').touched && addSchool.get('Tax_num').invalid || submitted && addSchool.get('Tax_num').hasError('required'), 'is-valid':addSchool.get('Tax_num').touched && addSchool.get('Tax_num').valid}">
+          <div class="invalid-feedback">
+            <div
+              *ngIf="addSchool.get('Tax_num').hasError('required') || submitted && addSchool.get('Tax_num').hasError('required')">
+              Campo obrigatório.</div>
+          </div>
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="Address">Morada*</label>
-          <input type="text" class="form-control" formControlName="Address">
+          <input type="text" class="form-control" formControlName="Address"
+            [ngClass]="{'is-invalid': addSchool.get('Address').touched && addSchool.get('Address').invalid || submitted && addSchool.get('Address').hasError('required'), 'is-valid':addSchool.get('Address').touched && addSchool.get('Address').valid}">
+          <div class="invalid-feedback">
+            <div
+              *ngIf="addSchool.get('Address').hasError('required') || submitted && addSchool.get('Address').hasError('required')">
+              Campo obrigatório.</div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="row">
-        <div class="col">
-            <div class="form-group">
-              <label for="Zip_code">Codigo postal*</label>
-              <input type="text" class="form-control" (focusout)="doThis()" formControlName="Zip_code">
-            </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="Zip_code">Codigo postal*</label>
+          <input type="text" class="form-control" (focusout)="doThis()" formControlName="Zip_code"
+            [ngClass]="{'is-invalid': addSchool.get('Zip_code').touched && addSchool.get('Zip_code').invalid || submitted && addSchool.get('Zip_code').hasError('required'), 'is-valid':addSchool.get('Zip_code').touched && addSchool.get('Zip_code').valid}">
+          <div class="invalid-feedback">
+            <div
+              *ngIf="addSchool.get('Zip_code').hasError('required') || submitted && addSchool.get('Zip_code').hasError('required')">
+              Campo obrigatório.</div>
           </div>
+        </div>
+      </div>
       <div class="col">
         <div class="form-group">
           <label for="Location">Localidade</label>
-          <input type="text" readonly class="form-control-plaintext" formControlName="Location">
+          <input type="text" readonly class="form-control-plaintext" formControlName="Location"  [ngClass]="{'is-valid':addSchool.get('Location').touched && addSchool.get('Location').valid}">
         </div>
       </div>
     </div>
@@ -67,13 +98,13 @@
       <div class="col">
         <div class="form-group">
           <label for="Telephone1">Telefones</label>
-          <input type="text" class="form-control" formControlName="Telephone1">
+          <input type="text" class="form-control" formControlName="Telephone1" [ngClass]="{'is-valid':addSchool.get('Telephone1').touched && addSchool.get('Telephone1').valid}">
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="Email1">Email</label>
-          <input type="email" class="form-control" formControlName="Email1">
+          <input type="email" class="form-control" formControlName="Email1" [ngClass]="{'is-valid':addSchool.get('Email1').touched && addSchool.get('Email1').valid}">
         </div>
       </div>
     </div>
@@ -84,8 +115,8 @@
     <div class="row">
       <div class="col">
         <div class="form-group">
-          <label for="Invoice_name">Nome</label>
-          <input type="text" class="form-control" formControlName="Invoice_name">
+          <label for="Invoice_name">Fatura em nome de</label>
+          <input type="text" class="form-control" formControlName="Invoice_name" [ngClass]="{'is-valid':addSchool.get('Invoice_name').touched && addSchool.get('Invoice_name').valid}">
         </div>
       </div>
     </div>
@@ -94,34 +125,40 @@
       <div class="col">
         <div class="form-group">
           <label for="Invoice_address">Morada</label>
-          <input type="text" class="form-control" formControlName="Invoice_address">
+          <input type="text" class="form-control" formControlName="Invoice_address" [ngClass]="{'is-valid':addSchool.get('Invoice_address').touched && addSchool.get('Invoice_address').valid}">
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="Invoice_zip_code">Codigo postal</label>
-          <input type="text" class="form-control" (focusout)="doThis2()" formControlName="Invoice_zip_code">
+          <input type="text" class="form-control" (focusout)="doThis2()" formControlName="Invoice_zip_code"  [ngClass]="{'is-valid':addSchool.get('Invoice_zip_code').touched && addSchool.get('Invoice_zip_code').valid}">
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="Invoice_location">Localidade</label>
-          <input type="text"  readonly class="form-control-plaintext" formControlName="Invoice_location">
+          <input type="text" readonly class="form-control-plaintext" formControlName="Invoice_location"  [ngClass]="{'is-valid':addSchool.get('Invoice_location').touched && addSchool.get('Invoice_location').valid}">
         </div>
-      </div>   
+      </div>
     </div>
 
     <div class="row">
       <div class="col">
         <div class="form-group">
-          <label for="Invoice_tax_number">Nº Contribuinte</label>
-          <input type="text" class="form-control" formControlName="Invoice_tax_number">
+          <label for="Invoice_tax_number">Nº Contribuinte*</label>
+          <input type="text" class="form-control" formControlName="Invoice_tax_number"
+            [ngClass]="{'is-invalid': addSchool.get('Invoice_tax_number').touched && addSchool.get('Invoice_tax_number').invalid || submitted && addSchool.get('Invoice_tax_number').hasError('required'), 'is-valid':addSchool.get('Invoice_tax_number').touched && addSchool.get('Invoice_tax_number').valid}">
+          <div class="invalid-feedback">
+            <div
+              *ngIf="addSchool.get('Invoice_tax_number').hasError('required') || submitted && addSchool.get('Invoice_tax_number').hasError('required')">
+              Campo obrigatório.</div>
+          </div>
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="Invoice_email">Email</label>
-          <input type="email" class="form-control" formControlName="Invoice_email">
+          <input type="email" class="form-control" formControlName="Invoice_email" [ngClass]="{'is-valid':addSchool.get('Invoice_email').touched && addSchool.get('Invoice_email').valid}">
         </div>
       </div>
     </div>
@@ -129,28 +166,35 @@
     <div class="row">
       <div class="col-md-6">
         <div class="form-group">
-          <label for="Invoice">Direção de Serviços de Viação</label>
-          <select class="form-control" formControlName="Delegation_idDelegation">
-              <option *ngFor="let item of dsv" value={{item.idDelegation}}>{{item.Delegation_name}}</option>
-            </select>
+          <label for="Invoice">Direcção de Serviços de Viação*</label>
+          <select class="form-control" formControlName="Delegation_idDelegation"
+            [ngClass]="{'is-invalid': addSchool.get('Delegation_idDelegation').touched && addSchool.get('Delegation_idDelegation').invalid || submitted && addSchool.get('Delegation_idDelegation').hasError('required'), 'is-valid':addSchool.get('Delegation_idDelegation').touched && addSchool.get('Delegation_idDelegation').valid}">
+            <option *ngFor="let item of dsv" value={{item.idDelegation}}>{{item.Delegation_name}}</option>
+          </select>
+          <div class="invalid-feedback">
+            <div
+              *ngIf="addSchool.get('Delegation_idDelegation').hasError('required') || submitted && addSchool.get('Delegation_idDelegation').hasError('required')">
+              Campo obrigatório.</div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="custom-control custom-checkbox form-group">
-      <input type="checkbox" class="custom-control-input form-control" formControlName="Send_Invoice_email" id="Send_Invoice_email">
-        <label class="custom-control-label" for="Send_Invoice_email">Eviar Fatura-Recibo por email</label>
+      <input type="checkbox" class="custom-control-input form-control" formControlName="Send_Invoice_email" [ngClass]="{'is-valid':addSchool.get('Send_Invoice_email').touched && addSchool.get('Send_Invoice_email').valid}">
+      <label class="custom-control-label" for="Send_Invoice_email">Eviar Fatura-Recibo por email</label>
     </div>
 
     <div class="form-group">
       <label for="Obs">Observações</label>
-      <textarea class="form-control" rows="3" formControlName="Obs" #Obs></textarea>
+      <textarea class="form-control" rows="3" formControlName="Obs" #Obs [ngClass]="{'is-valid':addSchool.get('Obs').touched && addSchool.get('Obs').valid}"></textarea>
     </div>
 
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary btn-lg mr-auto"
         (click)="activeModal.close('Close click')">Fechar</button>
-      <button class="btn btn-outline-success btn-lg"  *ngIf="action==='edit'" (click)="onEdit(addSchool); activeModal.close('Save click')">Editar escola</button>
+      <button class="btn btn-outline-success btn-lg" *ngIf="action==='edit'"
+        (click)="onEdit(addSchool); activeModal.close('Save click')">Editar escola</button>
       <button class="btn btn-outline-success btn-lg" *ngIf="action==='new'" (click)="onSubmit()">Criar escola</button>
     </div>
   </form>
