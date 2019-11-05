@@ -2734,43 +2734,52 @@ checkValue(val) {
     this.invalidDates = [today,invalidDate];
   }
   
-  //////////////////////////////////////DATE LIMITATIONS//////////////////////////////////////////////////
+ //////////////////////////////////////DATE LIMITATIONS//////////////////////////////////////////////////
 
 setMinMaxBirthDate() {
-  let date = new Date().getFullYear();
+  let date = new Date(this.currentDate).getFullYear();
   this.maxBirthDate = '' + (date - 14) + '-12-31';
   this.minBirthDate = '' + (date - 100) + '-12-31';
 }
 
 setMinExpDate() {
   let date = new Date().getFullYear();
-  this.minExpDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+  this.minExpDate = this.datepipe.transform(this.currentDate, 'yyyy-MM-dd');
   this.maxExpDate = '' + (date + 20) + '-12-31';
 }
 
 validateDate(dateVal, type) {
-  console.log(dateVal, type, new Date().setHours(0,0,0,0))
   if (type === 'birthdate') {
-    if ((new Date(dateVal).getFullYear()) > (new Date().getFullYear() - 14)) {
+    if ((new Date(dateVal).getFullYear()) > (new Date(this.currentDate).getFullYear() - 14)) {
       this.reservationForm.controls['Birth_date'].setErrors({ 'invalid_date': true });
     }
-    else if ((new Date(dateVal).getFullYear()) < (new Date().getFullYear() - 100)){
+    else if ((new Date(dateVal).getFullYear()) < (new Date(this.currentDate).getFullYear() - 100)){
       this.reservationForm.controls['Birth_date'].setErrors({ 'invalid_date': true });
     }
     else { return null}
   }
   else if (type === 'idexp') {
-    if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0)) || (new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 20)){
+    if ((new Date(dateVal).setHours(0,0,0,0) < new Date(this.currentDate).setHours(0,0,0,0)) || (new Date(dateVal).getFullYear()) > (new Date(this.currentDate).getFullYear() + 20)){
       this.reservationForm.controls['ID_expire_date'].setErrors({ 'invalid_date': true });
     }
     else {return null}
   }
   else if (type === 'licexp'){
-    if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0))){
+    if ((new Date(dateVal).setHours(0,0,0,0) < new Date(this.currentDate).setHours(0,0,0,0))){
       this.reservationForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
     }
-    else if((new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 2)){
+    else if((new Date(dateVal).getFullYear()) > (new Date(this.currentDate).getFullYear() + 2)){
       this.reservationForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
+    }
+    else {return null}
+  }
+
+  else if (type === 'teoexp'){
+    if ((new Date(dateVal).setHours(0,0,0,0) < new Date(this.currentDate).setHours(0,0,0,0))){
+      this.reservationForm.controls['exam_expiration_date'].setErrors({ 'invalid_date': true });
+    }
+    else if((new Date(dateVal).getFullYear()) > (new Date(this.currentDate).getFullYear() + 20)){
+      this.reservationForm.controls['exam_expiration_date'].setErrors({ 'invalid_date': true });
     }
     else {return null}
   }
