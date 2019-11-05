@@ -16,7 +16,9 @@ export class AddSchoolComponent implements OnInit {
   @Input() action:any;
   addSchool: FormGroup;
   location:any;
-  dsv=[]
+  dsv=[];
+  submitted = false;
+
 
   constructor(private fb: FormBuilder, private bs: SchoolService, private route:ActivatedRoute, public activeModal: NgbActiveModal, private toastr: ToastrService) { 
     this.createForm();
@@ -24,23 +26,23 @@ export class AddSchoolComponent implements OnInit {
 
   createForm() {
     this.addSchool = this.fb.group({
-      Permit: [null],
+      Permit: [null, [Validators.required]],
       Associate_num: [null],
-      School_name:[null],
-      Address:[null],
-      Tax_num:[null],
+      School_name:[null, [Validators.required]],
+      Address:[null, [Validators.required]],
+      Tax_num:[null, [Validators.required]],
       Location:[null],
-      Zip_code:[null],
+      Zip_code:[null, [Validators.required]],
       Telephone1:[null],
       Email1:[null], 
       Invoice_name:[null], 
       Invoice_address:[null], 
       Invoice_location:[null], 
       Invoice_zip_code:[null], 
-      Invoice_tax_number:[null],
+      Invoice_tax_number:[null, [Validators.required]],
       Invoice_email:[null],
       Invoice_email2:[null],
-      Delegation_idDelegation:[null], 
+      Delegation_idDelegation:[null, [Validators.required]], 
       Send_Invoice_email:[null],
       Obs:[null],
       Exam_center_idExam_center:1
@@ -89,7 +91,16 @@ export class AddSchoolComponent implements OnInit {
 
   }
 
-  onSubmit() { 
+  onSubmit() {
+    this.submitted = true;
+   
+    if (!this.addSchool.valid) {
+      this.toastr.warning('Os campos obrigatórios não estão preenchidos ou não estão preenchidos corretamente.','Atenção',  {
+        timeOut: 10000,
+        closeButton: true
+      })
+      return;
+  } 
       const forms = this.addSchool.value;
       this.bs.addSchool(forms);
       console.log(forms)
