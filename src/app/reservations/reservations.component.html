@@ -77,7 +77,7 @@
         <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Reserva<button
             type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
               aria-hidden="true">&times;</span></button>
-          <button *ngIf="selectedReservation[0].T_exam_status_idexam_status === 3" type="button" class="btn btn-success float-right"
+          <button *ngIf="selectedReservation[0].T_exam_status_idexam_status === 3 && userIdSchool === 'null'" type="button" class="btn btn-success float-right"
             (click)="validateRes(selectedReservation[0].idReservation)">Validar <i class="fas fa-check"></i></button></h4>
         <div class="card-body">
           <h5 class="card-title font-weight-light">Informaçoes</h5>
