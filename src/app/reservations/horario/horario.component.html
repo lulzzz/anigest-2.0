@@ -15,7 +15,7 @@
       </li>
 
       <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
-        <button type="button" class="btn btn-light"><i
+        <button [disabled]="isDisabled" type="button" class="btn btn-light"><i
             class="fas fa-calendar-day"></i>
           Novo timeslot</button>
       </li>
@@ -27,13 +27,13 @@
       </li>
 
       <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
-        <button type="button" class="btn btn-light"><i
+        <button [disabled]="isDisabled" type="button" class="btn btn-light"><i
             class="fas fa-calendar-minus"></i>
           Eliminar último grupo</button>
       </li>
 
       <li class="nav-item" *ngIf="route == 'reservations' && subject.includes('ALL_School')">
-        <button type="button" class="btn btn-light"><i
+        <button [disabled]="isDisabled" type="button" class="btn btn-light"><i
             class="fas fa-calendar-plus"></i>
           Gerar Calendário</button>
       </li>
