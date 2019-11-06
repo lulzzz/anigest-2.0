@@ -40,13 +40,15 @@ export class ReservationsComponent implements OnInit {
   status = [];
   schools;
   examTypes;
-  searchParams:boolean = false;
+  searchParams: boolean = false;
   idReservation;
   resStatus;
+  userIdSchool;
+  permit;
   //////////////////////////////////////////////
 
   subject;
-  
+
 
   constructor(
     private modalService: NgbModal,
@@ -55,21 +57,21 @@ export class ReservationsComponent implements OnInit {
     private service: ReservationsService,
     private auth: AuthService,
     private router: Router
-        ) {
+  ) {
     this.createForm();
 
     this.service.invokeEvent.subscribe(value => {
       if (value) {
-        
+
         setTimeout(() => {
           this.onGetReservation(this.param1, this.param2);
-          this.openCard( this.idReservation);
+          this.openCard(this.idReservation);
         }, 300);
-      
-    
+
+
         console.log('ENDDDDDDD')
       }
-    }); 
+    });
 
   }
 
@@ -94,33 +96,36 @@ export class ReservationsComponent implements OnInit {
 
   ngOnInit() {
     this.service.getExamType().subscribe(res => {
-    this.examTypes = Object.values(res),
-      console.log(this.examTypes)
+      this.examTypes = Object.values(res),
+        console.log(this.examTypes)
     });
     this.service.getSchools().subscribe(res => {
-    this.schools = Object.values(res),
-      console.log(this.schools)
+      this.schools = Object.values(res),
+        console.log(this.schools)
     });
     this.auth.currentUserSubject.subscribe(message => {
-    this.subject = message,
-      console.log(this.subject)
+      this.subject = message,
+        console.log(this.subject)
     });
     this.service.getStatus().subscribe(res => {
-    this.status = Object.values(res),
-      console.log(this.status)
+      this.status = Object.values(res),
+        console.log(this.status)
     });
 
-  
+    this.userIdSchool = localStorage.getItem('idSchool');
+   
+
     ////////////////////////////////////////////////////////////////////////
-    
+
   }
 
   onShow() {
     setTimeout(() => {
       this.show = true;
     },
-   200)}
-    
+      200)
+  }
+
 
   onHide() {
     this.show = false;
@@ -134,46 +139,67 @@ export class ReservationsComponent implements OnInit {
     this.itemsPerPage = this.pageSize + num;
   }
 
-getHorario(){
-  this.router.navigate(['/reservations/schedule'])
-}
-
+  getHorario() {
+    this.router.navigate(['/reservations/schedule'])
+  }
 
 
   onGetReservation(param1, param2) {
-    this.searchParams = true;
-    console.log('HEEEEEEEY')
-    this.param1 = param1;
+  //  this.searchParams = true;
+    console.log(this.userIdSchool)
+ /*   this.param1 = param1;
     this.param2 = param2;
-    if (param1 == 'getAllReservations') {
+     if (param1 == 'getAllReservations') {
       this.service.getAllReservations().subscribe(
-        res=> {this.exams = Object.values(res) }
+        res => { this.exams = Object.values(res) }
       )
-    }
-    else{
-    this.service.getReservationbyParam(this.param1, this.param2)
-      .subscribe(
-        data1 => {
-          if (data1) {
-          this.exams = Object.values(data1),
-            this.count = this.exams.length;
-          }
-          else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
+    } */
 
-        },
-        error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro') });
-  }}
+      if (this.userIdSchool == 'null') {
+        console.log(this.userIdSchool)
+        console.log('EBERREREERREE')
+        this.service.getAllReservationsbyParam(this.param1, this.param2)
+        .subscribe(
+          data1 => {
+            if (data1) {
+              this.exams = Object.values(data1),
+                this.count = this.exams.length;
+            }
+            else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
+          },
+          error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') });
+
+      }
+
+      else {
+            console.log('Y U ENTER HERE')
+            let chosenAlvara = this.schools.filter(item => item.idSchool === (+this.userIdSchool))
+            this.permit = chosenAlvara[0].Permit
+             this.service.getSchoolReservationsbyParam(this.permit, this.param1, this.param2)
+              .subscribe(
+                data1 => {
+                  if (data1) {
+                    this.exams = Object.values(data1),
+                      this.count = this.exams.length;
+                  }
+                  else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
+                },
+                error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') }); 
+      }
+    
+  }
 
   openCard(id) {
     this.idReservation = id;
     this.service.getReservation(id).subscribe(
-      res=> { 
+      res => {
         if (res) {
           this.selectedReservation = Object.values(res);
-          this.resStatus= this.status.filter(item => item.idexam_status === res[0].T_exam_status_idexam_status);
-      console.log(this.selectedReservation)}
-      else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') }
-        })
+          this.resStatus = this.status.filter(item => item.idexam_status === res[0].T_exam_status_idexam_status);
+          console.log(this.selectedReservation)
+        }
+        else { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') }
+      })
   }
 
 
@@ -224,7 +250,7 @@ getHorario(){
         if (Object.values(res).length <= 100) {
           this.exams = Object.values(res),
             this.count = this.exams.length;
-            this.searchParams = false;
+          this.searchParams = false;
         }
         else { this.toastr.info('A pesquisa retornou muitos resultados. Por favor execute uma pesquisa mais especifica.', 'Notificação') }
         console.log(this.exams)
@@ -237,19 +263,19 @@ getHorario(){
   }
   /////////////////////////////////////////////////////////////////////////////////////
 
-  
+
 
 
   pendingRes() {
     this.service.getPendingReservations().subscribe(data1 => {
       if (data1) {
-      this.exams = Object.values(data1),
-        this.count = this.exams.length;
+        this.exams = Object.values(data1),
+          this.count = this.exams.length;
       }
       else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
 
     },
-      error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro') });
+      error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') });
   }
 }
 
