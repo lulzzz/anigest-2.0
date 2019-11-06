@@ -1724,8 +1724,10 @@ checkValue(val) {
       if (b.includes('E')) {
         b = b + 'E'
       }
-      if (c !== null && c.includes('E')) {
-        c = c + 'E'
+      if(typeof(c) !== 'undefined') {
+        if (c !== null && c.includes('E')) {
+          c = c + 'E'
+        }
       }
       if (stringy === a || stringy === b || stringy === c) {}
       else {
