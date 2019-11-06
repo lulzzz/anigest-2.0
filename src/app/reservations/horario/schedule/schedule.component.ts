@@ -1283,7 +1283,7 @@ export class ScheduleComponent {
               }
             }
           }
-          this.getSchedule()
+          // this.getSchedule()
           this.toastr.success('Grupo eliminado', 'Notificação',{
           timeOut: 10000,
           closeButton: true
@@ -1308,6 +1308,9 @@ export class ScheduleComponent {
             updateObject.Max = 0
           }
           this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe(() => {
+            let i = this.timeslots.indexOf(groupsInDate[0])
+            this.timeslots[i][0].Max =( maxGroups-1)
+            this.timeslots = [...this.timeslots]
             this.refreshTimeslots(this.groups, this.events)
           })
         }
