@@ -2627,6 +2627,23 @@ checkValue(val) {
         })
     })
   }
+  
+  bookReservation(reservation) {
+    this.reservationService.askForBooking(reservation.idReservation).subscribe(() => {},
+    () => {},
+    () => {
+      this.reservationPatchService.validateReservation(reservation.idReservation).subscribe(() => {
+
+      }, () => {
+
+      }, () => {
+        this.toastr.success('Reserva validada.', 'Sucesso', {
+          timeOut: 10000,
+          closeButton: true
+        })
+      })
+    })
+  }
 
   getCurrentDateFormatted(date?) {
     if (typeof(date) !== 'undefined') {
