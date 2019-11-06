@@ -24,17 +24,29 @@
       </div>
     </div>
     <div class="form-group">
+      <label for="password">Confirmar palavra-passe</label>
+      <input formControlName="confirmPassword" type="password" class="form-control" [ngClass]="{'is-invalid': registerForm.get('confirmPassword').touched && registerForm.get('confirmPassword').invalid, 'is-valid':registerForm.get('confirmPassword').touched && registerForm.get('confirmPassword').valid}">     
+      <div class="invalid-feedback">
+        <div *ngIf="registerForm.get('confirmPassword').hasError('required')">
+          Palavra-passe e obrigatoria.</div>
+          <div *ngIf="registerForm.get('confirmPassword').hasError('mustMatch')">
+            As palavra-passes não coincidem.</div>
+      </div>
+    </div>
+    <div class="form-group">
       <label for="email">Email</label>
       <input formControlName="Email" type="email" class="form-control" [ngClass]="{'is-invalid': registerForm.get('Email').touched && registerForm.get('Email').invalid, 'is-valid':registerForm.get('Email').touched && registerForm.get('Email').valid}">
       <div class="invalid-feedback">
         <div *ngIf="registerForm.get('Email').hasError('required')">
           Email e obrigatorio.</div>
+          <div *ngIf="registerForm.get('Email').hasError('email')">
+          Por favor insira um email válido.</div>
       </div>
     </div>
     <div class="form-group">
       <label for="school">Centro do exame</label>
-      <select class="form-control" formControlName="Exam_center_idExam_center" #school
-        (focusout)="getExamCenter(school.value)" #examcenter [ngClass]="{'is-invalid': registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').invalid, 'is-valid':registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').valid}">
+      <select class="form-control" formControlName="Exam_center_idExam_center" 
+        (focusout)="getExamCenter(examcenter.value)" #examcenter [ngClass]="{'is-invalid': registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').invalid, 'is-valid':registerForm.get('Exam_center_idExam_center').touched && registerForm.get('Exam_center_idExam_center').valid}">
         <option *ngFor="let center of centers" [ngValue]="center.idExam_center">{{center.Exam_center_name}}</option>
       </select>
       <div class="invalid-feedback">
@@ -45,14 +57,20 @@
     <div class="form-group">
       <label for="role">Tipo de operador</label>
       <select class="form-control" (ngModelChange)="setNewUser($event)" [ngModel]="roles" name="roles"
-        formControlName="role">
+        formControlName="role" #operator>
         <option *ngFor="let role of roles" [ngValue]="role">{{role.Role_name}} </option>
       </select>
+      <div class="invalid-feedback">
+        <div *ngIf="registerForm.get('role').hasError('required')">
+          Centro do exame e obrigatorio.</div>
+          <div *ngIf="selectedRole.idRole === 2 && examcenter === null">
+            Select an exam center first</div>
+      </div>
     </div>
     <div>
       <p *ngIf="selectedRole">{{ selectedRole.Obs }}</p>
     </div>
-    <div *ngIf="selectedRole === 2 && examcenter.value" class="form-group">
+    <div *ngIf="selectedRole.idRole === 2 && examcenter.value" class="form-group">
       <label for="role">Escola</label>
       <select class="form-control" formControlName="School_idSchool" #school>
         <option *ngFor="let school of schools" [ngValue]="school.idSchool">{{school.School_name}} </option>
