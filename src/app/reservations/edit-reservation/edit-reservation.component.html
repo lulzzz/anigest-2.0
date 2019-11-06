@@ -10,106 +10,215 @@
       <div class="row">
         <div class="col">
           <div class="form-group">
-            <label for="Num">Candidato</label>
-            <input type="text" class="form-control" formControlName="Student_name">
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="form-group">
-            <label for="Examiner_name">Número do BI</label>
-            <input type="text" class="form-control" formControlName="ID_num">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <label for="License_num">Validade do BI</label>
-            <input type="date" class="form-control" formControlName="ID_expire_date">
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="form-group">
-            <label for="License_expiration">Data do nascimento</label>
-            <input type="date" class="form-control" formControlName="Birth_date">
+            <div *ngIf="userIdSchool === 'null'">
+              <label for="License_num">Alvará*:</label>
+              <select id="CategorySelect" class="form-control custom-select input-group-text"
+                formControlName="School_Permit"
+                [ngClass]="{'is-invalid': (editReservation.get('School_Permit').touched || submitted) && editReservation.get('School_Permit').invalid, 'is-valid':editReservation.get('School_Permit').touched && editReservation.get('School_Permit').valid}">
+                <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Alvará</option>
+                <option *ngFor="let school of schools" [ngValue]="school.Permit">{{school.Permit}} - {{school.School_name}}</option>
+              </select>
+              <div class="invalid-feedback">
+                <div *ngIf="editReservation.get('School_Permit').hasError('required')">
+                  Selecione uma opção.</div>
+                </div>
+            </div>
+            <div *ngIf="userIdSchool !== 'null'">
+              <select style="display:none" id="CategorySelect" class="form-control custom-select input-group-text"
+                formControlName="School_Permit">
+                <option [selected]="true" [ngValue]="userSchoolPermit">{{userSchoolPermit}}</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <label for="License_num">Alvará</label>
-            <input type="text" class="form-control" formControlName="School_Permit">
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="form-group">
-            <label for="License_expiration">Escola</label>
-            <input type="text" class="form-control" formControlName="School_name">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <label for="License_num">Número da licença:</label>
-            <input type="text" class="form-control" formControlName="Student_license">
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="form-group">
-            <label for="License_expiration">Validade da licença:</label>
-            <input type="datetime-local" class="form-control" formControlName="Student_license_Expiration_date">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <label for="License_num">Contribuinte:</label>
-            <input type="text" class="form-control" formControlName="Tax_num">
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="form-group">
-            <label for="License_expiration">Tipo de exame:</label>
-            <select class="form-control" formControlName="Exam_type_idExam_type" #id_type>
-              <option *ngFor="let item of examTypes" value={{item.idExam_type}}>{{item.Exam_type_name}}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <label for="License_num">Status</label>
-            <select class="form-control" formControlName="T_exam_status_idexam_status" #id_type>
-              <option *ngFor="let item of status" value={{item.idexam_status}}>{{item.Status}}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-
-    
+   <div class="row">
+    <div class="col">
       <div class="form-group">
-        <label for="Obs">Observações</label>
-        <textarea class="form-control" rows="3" formControlName="Obs" #Obs></textarea>
-        <small id="helpText" class="form-text text-muted">
-            Os campos marcados com * são obrigatórios.
-          </small>
-      </div>
+        <label for="Num">Nome do candidato*:</label>
+        <input type="text" class="form-control" formControlName="Student_name"
+        [ngClass]="{'is-invalid': (editReservation.get('Student_name').touched || submitted) && editReservation.get('Student_name').invalid, 'is-valid':editReservation.get('Student_name').touched && editReservation.get('Student_name').valid}">
+        <div class="invalid-feedback">
+          <div *ngIf="editReservation.get('Student_name').hasError('minlength')">
+            O comprimento do nome terá no minimo 4 caracteres.</div>
 
+          <div *ngIf="editReservation.get('Student_name').hasError('required')">
+            Nome é obrigatório.</div>
+          <div *ngIf="editReservation.get('Student_name').hasError('validString')">
+            Não são permitidos caracteres especiais ou números.</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <label>Número do candidato:</label>
+        <input type="number" class="form-control" formControlName="Student_num"
+        [ngClass]="{'is-valid':(editReservation.get('Student_num').touched || submitted) && editReservation.get('Student_num').valid}">
+      </div>
+    </div>
+   </div>
+  <div class="row">
+    <div class="col">
+      <label>Tipo de documento*:</label>
+      <select id="IDTypeSelect" class="form-control custom-select input-group-text"
+        formControlName="T_ID_type_idT_ID_type"
+        [ngClass]="{'is-invalid': (editReservation.get('T_ID_type_idT_ID_type').touched || submitted) && editReservation.get('T_ID_type_idT_ID_type').invalid, 'is-valid':editReservation.get('T_ID_type_idT_ID_type').touched && editReservation.get('T_ID_type_idT_ID_type').valid}">
+        <option [ngValue]="null" [selected]="true" disabled>Tipo de ID</option>
+        <option *ngFor="let idType of idTypes" [ngValue]="idType.idT_ID_type">{{idType.ID_name}}</option>
+      </select>
+      <div class="invalid-feedback">
+        <div *ngIf="editReservation.get('T_ID_type_idT_ID_type').hasError('required')">
+          Selecione uma opção.</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <label for="Examiner_name">Número de identificação*:</label>
+        <input type="text" class="form-control" formControlName="ID_num"
+          [ngClass]="{'is-invalid': (editReservation.get('ID_num').touched || submitted) && editReservation.get('ID_num').invalid, 'is-valid':editReservation.get('ID_num').touched && editReservation.get('ID_num').valid}">
+        <div class="invalid-feedback">
+          <div *ngIf="editReservation.get('ID_num').hasError('required')">
+            Número de identificação é obrigatório.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+   <div class="col">
+    <div class="form-group">
+      <label for="License_num">Validade do documento de identificação*:</label>
+      <input type="date" class="form-control" formControlName="ID_expire_date"
+        [ngClass]="{'is-invalid': (editReservation.get('ID_expire_date').touched || submitted) && editReservation.get('ID_expire_date').invalid, 'is-valid':editReservation.get('ID_expire_date').touched && editReservation.get('ID_expire_date').valid}"
+        (focusout)="validateDate(ID_expire_date.value, 'idexp')" [min]="minExpDate" [max]="maxExpDate" #ID_expire_date>
+      <div class="invalid-feedback">
+        <div *ngIf="editReservation.get('ID_expire_date').hasError('required')">
+          A data de validação é obrigatória</div>
+        <div *ngIf="editReservation.get('ID_expire_date').hasError('invalid_date')">
+          A data não está correta.</div>
+      </div>
+    </div>
+  </div>
+
+ <div class="col">
+    <div class="form-group">
+      <label for="License_expiration">Data de nascimento*:</label>
+      <input type="date" class="form-control" formControlName="Birth_date"
+        [ngClass]="{'is-invalid': (editReservation.get('Birth_date').touched || submitted) && editReservation.get('Birth_date').invalid, 'is-valid':editReservation.get('Birth_date').touched && editReservation.get('Birth_date').valid}"
+        (focusout)="validateDate(birthdate.value, 'birthdate')" [max]="maxBirthDate" [min]="minBirthDate"
+        #birthdate>
+      <div class="invalid-feedback">
+        <div *ngIf="editReservation.get('Birth_date').hasError('required')">
+          A data de nascimento é obrigatória.</div>
+        <div *ngIf="editReservation.get('Birth_date').hasError('invalid_date')">
+          A data não está correta.</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <label for="License_num">Número da licença do candidato*:</label>     
+          <input [textMask]="{mask:mask}" type="text" class="form-control" formControlName="Student_license" #Studentlicense
+            (focusout)="checkValue(Studentlicense.value)"
+            [ngClass]="{'is-invalid': (editReservation.get('Student_license').touched || submitted) && editReservation.get('Student_license').invalid, 'is-valid':editReservation.get('Student_license').touched && editReservation.get('Student_license').valid}">
+          <div class="invalid-feedback">
+            <div *ngIf="editReservation.get('Student_license').hasError('required')">
+              Número da licença é obrigatório.</div>
+            <div *ngIf="editReservation.get('Student_license').hasError('formatError')">
+              O número da licença deve corresponder à categoria.</div>
+          </div>
+      </div>
+    </div>
+
+  <div class="col">
+    <div class="form-group">
+      <label for="License_expiration">Validade da licença*:</label>
+      <input type="date" class="form-control" formControlName="Expiration_date"
+        [ngClass]="{'is-invalid': (editReservation.get('Expiration_date').touched || submitted) && editReservation.get('Expiration_date').invalid, 'is-valid':editReservation.get('Expiration_date').touched && editReservation.get('Expiration_date').valid}"
+        (focusout)="validateDate(license_expiration.value, 'licexp')" [min]="minExpDate" [max]="maxExpDate" #license_expiration>
+      <div class="invalid-feedback">
+        <div *ngIf="editReservation.get('Expiration_date').hasError('required')">
+          Validade da licença é obrigatória.</div>
+        <div *ngIf="editReservation.get('Expiration_date').hasError('invalid_date')">
+          A data não está correta.</div>
+        <!-- <div *ng -->
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <label for="License_num">Número de contribuinte*:</label>
+        <input [textMask]="{mask:contribuinte}" type="text" class="form-control" formControlName="Tax_num"
+          [ngClass]="{'is-invalid': (editReservation.get('Tax_num').touched || submitted) && editReservation.get('Tax_num').invalid, 'is-valid':editReservation.get('Tax_num').touched && editReservation.get('Tax_num').valid}">
+        <div class="invalid-feedback">
+          <div *ngIf="editReservation.get('Tax_num').hasError('required')">
+            Número de contribuinte é obrigatório.</div>
+          <div *ngIf="editReservation.get('Tax_num').hasError('validString')">
+            Preencha o número de contribuinte até ao fim.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="form-group">
+        <label>Número da carta de condução:</label>
+        <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1"
+          formControlName="Drive_license_num"
+          [ngClass]="{'is-valid':editReservation.get('Drive_license_num').touched && editReservation.get('Drive_license_num').valid}">
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+  <div class="form-group">
+    <label>Matrícula</label>
+    <input [textMask]="{mask:plateMask}" type="text" class="form-control" formControlName="Car_plate">
+  </div>
+</div>
+<div *ngIf="userIdSchool === 'null'" class="col">
+    <div class="form-group">
+      <label for="Status">Status</label>
+      <select class="form-control" formControlName="T_exam_status_idexam_status" #id_type>
+        <option *ngFor="let item of status" value={{item.idexam_status}}>{{item.Status}}</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+
+  <div class="form-group">
+      <button type="button" class="btn btn-primary btn-sm" id="schoolTransfer" (click)="checkBoxChecked()" #checkedOrNot> Transferência de escola</button><br>  
+    <br>
+    <div *ngIf="isChecked">
+      <label for="License_expiration">Validade da prova teórica:</label>
+      <input type="date" class="form-control" formControlName="exam_expiration_date"  [min]="minExpDate" [max]="maxExpDate"
+        (focusout)="validateDate(examexpiration.value, 'teoexp')"
+        [ngClass]="{'is-invalid': editReservation.get('exam_expiration_date').touched && editReservation.get('exam_expiration_date').invalid, 'is-valid':editReservation.get('exam_expiration_date').touched && editReservation.get('exam_expiration_date').valid}"
+        #examexpiration>
+         <div class="invalid-feedback">
+          <div *ngIf="editReservation.get('exam_expiration_date').hasError('invalid_date')">
+            A data não está correta.
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Obs">Observações:</label>
+    <textarea class="form-control" rows="3" formControlName="Obs" #Obs></textarea>
+    <small id="helpText" class="form-text text-muted">
+      Os campos marcados com * são obrigatórios.
+    </small>
+  </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-lg mr-auto"
           (click)="activeModal.close('Close click');">Fechar</button>
