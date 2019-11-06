@@ -779,6 +779,12 @@ export class ScheduleComponent {
           closeButton: true
         })
     }
+    else if (startDate.includes('_') || endDate.includes('_')) {
+      this.toastr.error('Dados incompletos','Erro',{
+        timeOut: 10000,
+        closeButton: true
+      })
+    }
     else if (startFormatted < 8 || startFormatted > 19 || endFormatted < 8 || endFormatted > 20) {
       this.toastr.error('Insira uma hora válida', 'Erro',{
           timeOut: 10000,
@@ -1175,15 +1181,19 @@ export class ScheduleComponent {
           }, () => {
 
           }, () => {
-            setTimeout(() => {
-              this.getSchedule()
-              setTimeout(() => {
-                this.getSchedule()
+            // setTimeout(() => {
+            //   setTimeout(() => {
+                this.getSchedule().then(() => {
+                  this.toastr.success('Grupo criado', 'Sucesso',{
+                    timeOut: 10000,
+                    closeButton: true
+                  })
+                })
                 // setTimeout(() => {
                 //   this.getSchedule()
                 // }, 1000)
-              }, 1000)
-            }, 500)
+            //   }, 1000)
+            // }, 500)
           })
         }
       }
@@ -1195,15 +1205,12 @@ export class ScheduleComponent {
     this.groupsInDate = this.groups.filter((group)=> {
       return group.date == currentDate
     })
-    if (option !== 'scheduleGen') {
-      setTimeout(() => {
-        this.getSchedule()
-        this.toastr.success('Grupo criado', 'Sucesso',{
-          timeOut: 10000,
-          closeButton: true
-        })
-      },1000)      
-    }
+    // if (option !== 'scheduleGen') {
+      // setTimeout(() => {
+        // this.getSchedule()
+    
+      // },1000)      
+    // }
   }
 
 
@@ -1271,7 +1278,7 @@ export class ScheduleComponent {
               if (this.events[i] == eventsToDelete[ind]) {
                 this.timeslotService.deleteTimeslot(this.events[i].id).subscribe()
                 this.events.splice(i, 1)
-                this.refreshTimeslots(this.groups, this.events)
+                // this.refreshTimeslots(this.groups, this.events)
                 
               }
             }
@@ -1300,10 +1307,9 @@ export class ScheduleComponent {
           if (updateObject.Max < 0) {
             updateObject.Max = 0
           }
-          this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe()
-      
-          this.events = [...this.events]
-          this.groups = [...this.groups]
+          this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe(() => {
+            this.refreshTimeslots(this.groups, this.events)
+          })
         }
   }
 
@@ -1896,7 +1902,7 @@ checkValue(val) {
     this.lockedDates = []
     this.events = []
     this.groups = []
-    this.refreshTimeslots(this.groups, this.events)
+    // this.refreshTimeslots(this.groups, this.events)
     setTimeout(async () => {
       this.timeslots = await this.getWeekTimeslots()
       if (this.timeslots.length !== 0) {
