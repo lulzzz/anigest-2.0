@@ -25,7 +25,12 @@ export class ReservationsService {
     return this.http.get( this.url + 'centro-exames/' + this.ec + '/reservas', {params})
   } 
   
-  getReservationbyParam(param1, param2) {
+  getSchoolReservationsbyParam(permit, param1, param2) {
+    const params = new HttpParams().append('permit', permit).append(param1, param2);
+    return this.http.get(this.url + 'centro-exames/' + this.ec + '/reservas', { params })
+  }
+
+  getAllReservationsbyParam(param1, param2) {
     const params = new HttpParams().append(param1, param2);
     return this.http.get(this.url + 'centro-exames/' + this.ec + '/reservas', { params })
   }
@@ -66,6 +71,10 @@ export class ReservationsService {
       .get(this.url + 'tipo-exames');
   };
 
+  getIdTypes() {
+    return this.http.get<any[]>(`${this.url}tipos-id`)
+  }
+
   patchReservation(values, idRes, idStudent){
     const params = new HttpParams().append('idReservation', idRes).append('idTemp_Student', idStudent);
     return this.http.patch(this.url + 'centro-exames/' + this.ec + '/reservas', values, {params})
@@ -80,6 +89,11 @@ export class ReservationsService {
       Exam_center_idExam_center:1
     }
     return this.http.patch(this.url + 'pautas?start=1', obj)
+  }
+
+  getReservationsbySchool(idSchool){
+    const params = new HttpParams().append('idSchool', idSchool);
+    return this.http.patch(this.url + 'centro-exames/' + this.ec + '/reservas', {params})
   }
 
 }
