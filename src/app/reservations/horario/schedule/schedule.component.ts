@@ -1737,6 +1737,7 @@ checkValue(val) {
   }
   
   openReservation(reservation, modal, option) {
+    this.reservation = reservation
     this.reservationForm.patchValue( {
       Student_name: reservation.Student_name,
       Student_num: reservation.Student_num,
