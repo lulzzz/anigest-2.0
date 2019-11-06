@@ -1520,7 +1520,7 @@ export class ScheduleComponent {
         let chosenEvent = this.events.filter((event) => {
           return event.id == chosenEventId
         })
-        if (typeof(chosenEvent[0].meta.exists !== 'undefined')) {
+        if (typeof(chosenEvent[0]) !== 'undefined') {
           if (chosenEvent[0].meta.exists) {
             this.timeslotExists = true
           }
@@ -2625,23 +2625,6 @@ checkValue(val) {
           timeOut: 10000,
           closeButton: true
         })
-    })
-  }
-  
-  bookReservation(reservation) {
-    this.reservationService.askForBooking(reservation.idReservation).subscribe(() => {},
-    () => {},
-    () => {
-      this.reservationPatchService.validateReservation(reservation.idReservation).subscribe(() => {
-
-      }, () => {
-
-      }, () => {
-        this.toastr.success('Reserva validada.', 'Sucesso', {
-          timeOut: 10000,
-          closeButton: true
-        })
-      })
     })
   }
 
