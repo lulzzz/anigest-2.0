@@ -25,11 +25,15 @@ export class AddOperatorComponent implements OnInit {
     this.registerForm = this.fb.group({
       user: ['', [Validators.required]],
       password: ['', [Validators.required]],
+      confirmPassword: ['', [Validators.required]],
       role:['', [Validators.required]],
-      Email:['', [Validators.required]],
+      Email:['', [Validators.required, Validators.email]],
       Exam_center_idExam_center:['', [Validators.required]],
       School_idSchool:['']
-    });
+    },
+    {
+      validator: this.MustMatch('password', 'confirmPassword')
+  });
   }
 
   ngOnInit() {
@@ -69,5 +73,24 @@ export class AddOperatorComponent implements OnInit {
     console.log(this.selectedRole);
     
     }
+
+  MustMatch(controlName: string, matchingControlName: string) {
+      return (formGroup: FormGroup) => {
+          const control = formGroup.controls[controlName];
+          const matchingControl = formGroup.controls[matchingControlName];
+  
+          if (matchingControl.errors && !matchingControl.errors.mustMatch) {
+              // return if another validator has already found an error on the matchingControl
+              return;
+          }
+  
+          // set error on matchingControl if validation fails
+          if (control.value !== matchingControl.value) {
+              matchingControl.setErrors({ mustMatch: true });
+          } else {
+              matchingControl.setErrors(null);
+          }
+      }
+  }
   
 }
