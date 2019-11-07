@@ -35,11 +35,11 @@
     </div>
     <div class="form-group">
       <label for="email">Email</label>
-      <input formControlName="Email" type="email" class="form-control" [ngClass]="{'is-invalid': registerForm.get('Email').touched && registerForm.get('Email').invalid, 'is-valid':registerForm.get('Email').touched && registerForm.get('Email').valid}">
+      <input formControlName="User_email" type="email" class="form-control" [ngClass]="{'is-invalid': registerForm.get('User_email').touched && registerForm.get('User_email').invalid, 'is-valid':registerForm.get('User_email').touched && registerForm.get('User_email').valid}">
       <div class="invalid-feedback">
-        <div *ngIf="registerForm.get('Email').hasError('required')">
+        <div *ngIf="registerForm.get('User_email').hasError('required')">
           Email e obrigatorio.</div>
-          <div *ngIf="registerForm.get('Email').hasError('email')">
+          <div *ngIf="registerForm.get('User_email').hasError('email')">
           Por favor insira um email válido.</div>
       </div>
     </div>
