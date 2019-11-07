@@ -27,7 +27,7 @@ export class AddOperatorComponent implements OnInit {
       password: ['', [Validators.required]],
       confirmPassword: ['', [Validators.required]],
       role:['', [Validators.required]],
-      Email:['', [Validators.required, Validators.email]],
+      User_email:['', [Validators.required, Validators.email]],
       Exam_center_idExam_center:['', [Validators.required]],
       School_idSchool:['']
     },
