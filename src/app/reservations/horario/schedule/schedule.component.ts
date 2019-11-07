@@ -378,7 +378,7 @@ export class ScheduleComponent {
     this.today = new Date()
     this.todayFormatted = `${this.today.getFullYear()}-${this.today.getMonth()+1}-${this.today.getDate()}`
     this.minimumReservationDate = new Date()
-    let dayAmount = 9
+    let dayAmount = 4
     for (let i = 1; i < 10; i++) {
       let tempDate = new Date()
       tempDate.setUTCDate((tempDate.getUTCDate() + i))
@@ -393,15 +393,21 @@ export class ScheduleComponent {
     if (this.router.url.includes("reservations")) {
       this.route = "reservations"
     }
-    else {
-      if (!this.subject.includes('ALL_School')) {
-        this.router.navigate(["/"])
-      }
+    else if (this.router.url.includes("results")) {
+      // if (!this.subject.includes('ALL_School')) {
+      //   this.router.navigate(["/"])
+      // }
       this.route = "results"
       this.dataFetchService.getExaminers().subscribe(res => this.examiners = res)
       // this.dataFetchService.getExaminerQualifications().subscribe(res => this.examinerQualifications = res)
       this.dataFetchService.getExamResults().subscribe(res => this.examResults = res)
       this.dataFetchService.getExams().subscribe(res => this.exams = res)
+    }
+    else if (this.router.url.includes("bookings")) {
+      // if (!this.subject.includes('ALL_School')){
+      //   this.router.navigate(["/"])
+      // }
+      this.route = "bookings"
     }
 
     this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}})
@@ -2087,6 +2093,10 @@ checkValue(val) {
     this.createdReservations++
     if (this.createdReservations == this.reservationAmount - 1) {
       this.canClose = true
+    }
+    if (this.createdReservations == this.reservationAmount) {
+      this.createdReservations = 0
+      this.reservationAmount = 0
     }
   }
 
