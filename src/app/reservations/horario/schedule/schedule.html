@@ -220,11 +220,12 @@
       </button>
     </div>
     <div class="modal-body">
-      <div *ngIf="route == 'reservations'" class="btn-group">
+      <div *ngIf="route == 'reservations' || route === 'bookings'" class="btn-group">
         <div *ngIf="timeslotExists">
           <div *ngIf="viewDate.getTime() > this.today.getTime() || !scheduleLocked">
             <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || event.meta.currentNumStudents > 0" *ngIf="((this.event.meta.examType == null || this.event.meta.currentNumStudents < 1) && !scheduleLocked) || subject.includes('ALL_School')" (click)="dismiss(); sortExamTypes(); openModal(defineTypeOfExam)"><i class="fas fa-chalkboard"></i> Definir Tipo de Exame</button>&nbsp;
-            <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="(this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')"(click)="dismiss(); openModal(reservationAmountForm);"><i class="fas fa-file-alt"></i> Criar Reserva</button>&nbsp;
+            <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="((this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')) && route ==='reservations'" (click)="dismiss(); openModal(reservationAmountForm);"><i class="fas fa-file-alt"></i> Criar Reserva</button>&nbsp;
+            <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="((this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')) && route ==='bookings'" (click)="dismiss(); openModal(reservationAmountForm);"><i class="fas fa-file-alt"></i> Criar Marcação</button>&nbsp;
           </div>
           <label *ngIf="(((this.event.color.secondary === '#c0ffff' || this.event.meta.currentNumStudents == this.event.meta.maxStudents) || scheduleLocked) && !subject.includes('ALL_School')) || viewDate.getTime() < this.today.getTime()">Sem operações disponíveis</label>
           <br><label *ngIf="scheduleLocked && !subject.includes('ALL_School')">Calendário bloqueado</label>
@@ -323,23 +324,30 @@
   <ng-template #timeslotForm let-dismiss="dismiss">
   <div id="top"></div>
   <div class="modal-header" style="background-color: rgb(52, 58, 64)">
-    <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && !editingReservation">CRIAR RESERVA</h2>
-    <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && editingReservation">EDITAR RESERVA</h2>
-    <h2 class="font-weight-light text-light ml-auto" *ngIf="!formIsEditable">VISUALIZAR RESERVA</h2>
-    <button type="button" class="close" aria-label="Close" *ngIf="formIsEditable && !editingReservation" (click)="dismiss(); cancelLockReservation(); resetReservationForm()">
+    <div *ngIf="route === 'reservations'">
+      <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && !editingReservation">CRIAR RESERVA</h2>
+      <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && editingReservation">EDITAR RESERVA</h2>
+      <h2 class="font-weight-light text-light ml-auto" *ngIf="!formIsEditable">VISUALIZAR RESERVA</h2>
+    </div>
+    <div *ngIf="route === 'bookings'">
+      <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && !editingReservation">CRIAR MARCAÇÃO</h2>
+      <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && editingReservation">EDITAR</h2>
+      <h2 class="font-weight-light text-light ml-auto" *ngIf="!formIsEditable">VISUALIZAR</h2>
+    </div>
+    <button type="button" class="close" aria-label="Close" *ngIf="formIsEditable && !editingReservation" (click)="dismiss(); unsetReservationValues(); cancelLockReservation(); resetReservationForm()">
       <span aria-hidden="true">&times;</span>
     </button>
-    <button type="button" class="close" aria-label="Close" *ngIf="formIsEditable && editingReservation" (click)="dismiss(); resetReservationForm()">
+    <button type="button" class="close" aria-label="Close" *ngIf="formIsEditable && editingReservation" (click)="dismiss(); unsetReservationValues(); resetReservationForm()">
       <span aria-hidden="true">&times;</span>
     </button>
-    <button type="button" class="close" aria-label="Close" *ngIf="!formIsEditable" (click)="dismiss(); resetReservationForm()">
+    <button type="button" class="close" aria-label="Close" *ngIf="!formIsEditable" (click)="dismiss(); unsetReservationValues(); resetReservationForm()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <h4>Tipo de exame: {{this.chosenExamType.Exam_type_name}}</h4><br>
     <div *ngIf="reservationAmount === 2">
-      <h5>Formulário {{createdReservations+1}} de 2</h5>
+      <h5>Reserva {{createdReservations+1}} de 2</h5>
     </div>
     <form #resForm="ngForm" [formGroup]="reservationForm">
 
@@ -554,14 +562,23 @@
         <button class="btn btn-secondary btn-lg mr-auto" (click)="dismiss();resetReservationForm()">Fechar</button>
     </div>
     <div *ngIf="formIsEditable">
-      <button *ngIf="!editingReservation" class="btn btn-secondary btn-lg mr-auto" (click)="dismiss(); cancelLockReservation(); resetReservationForm();editingReservation=false">Cancelar</button>
-      <button *ngIf="editingReservation" class="btn btn-secondary btn-lg mr-auto" (click)="dismiss(); resetReservationForm();editingReservation=false">Cancelar</button>
+      <button *ngIf="!editingReservation" class="btn btn-secondary btn-lg mr-auto" (click)="dismiss(); cancelLockReservation(); unsetReservationValues(); resetReservationForm();editingReservation=false">Cancelar</button>
+      <button *ngIf="editingReservation" class="btn btn-secondary btn-lg mr-auto" (click)="dismiss(); unsetReservationValues(); resetReservationForm();editingReservation=false">Cancelar</button>
       <!-- <button class="btn btn-outline-success btn-lg" (click)="validateForm()">Validar Formulário</button> -->
-      <button *ngIf="!editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Criar Reserva</button>
-      <button *ngIf="editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Atualizar Reserva</button>
-      <button [disabled]="reservationForm.invalid" *ngIf="(!canClose && !editingReservation) && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false; goToTop()">Criar Reserva</button>
-      <button [disabled]="reservationForm.invalid" *ngIf="(canClose && !editingReservation) && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="dismiss();accumulateReservations(); resetReservationForm();editingReservation=false">Criar Reserva</button>
-      <button [disabled]="reservationForm.invalid" *ngIf="editingReservation && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(reservationForm); resetReservationForm();editingReservation=false">Atualizar Reserva</button>
+      <div *ngIf="route === 'reservations'">
+        <button *ngIf="!editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Criar Reserva</button>
+        <button *ngIf="editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Atualizar Reserva</button>
+        <button [disabled]="reservationForm.invalid" *ngIf="(!canClose && !editingReservation) && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false; goToTop()">Criar Reserva</button>
+        <button [disabled]="reservationForm.invalid" *ngIf="(canClose && !editingReservation) && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="dismiss();accumulateReservations(); unsetReservationValues(); resetReservationForm();editingReservation=false">Criar Reserva</button>
+        <button [disabled]="reservationForm.invalid" *ngIf="editingReservation && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(reservationForm); unsetReservationValues(); resetReservationForm();editingReservation=false">Atualizar Reserva</button>
+      </div>
+      <div *ngIf="route === 'bookings'">
+        <button *ngIf="!editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Criar Marcação</button>
+        <button *ngIf="editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Atualizar</button>
+        <button [disabled]="reservationForm.invalid" *ngIf="(!canClose && !editingReservation) && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false; goToTop()">Criar Marcação</button>
+        <button [disabled]="reservationForm.invalid" *ngIf="(canClose && !editingReservation) && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="dismiss();accumulateReservations(); unsetReservationValues(); resetReservationForm();editingReservation=false">Criar Marcação</button>
+        <button [disabled]="reservationForm.invalid" *ngIf="editingReservation && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(reservationForm); unsetReservationValues(); resetReservationForm();editingReservation=false">Atualizar</button>
+      </div>
     </div>
   </div>
 </ng-template>
