@@ -2010,12 +2010,18 @@ checkValue(val) {
     },
     (e) => {
       this.toastr.error('A reserva não foi criada', 'Erro',{
-          timeOut: 10000,
-          closeButton: true
-        })
+        timeOut: 10000,
+        closeButton: true
+      })
       this.cancelLockReservation()
     }, 
-    async () => {
+    () => {
+      this.event.meta.currentNumStudents++
+      this.timeslotReservations.push(reservation)
+      this.reservationService.getReservation().subscribe(res => this.reservations = res, 
+        (e) => {
+        }, 
+        async () => {
           if (this.route === 'bookings') {
             let reservationsInTimeslot = this.reservations.filter((res) => {
               return res.idTimeslot === reservation.idTimeslot
