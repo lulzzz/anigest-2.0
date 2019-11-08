@@ -664,28 +664,9 @@ export class ScheduleComponent {
       }
       else {
         this.viewDate = new Date(date)
-        this.getNewWeekTimeslots()
         this.switchDate('none')
       }
     }
-  }
-
-  async getNewWeekTimeslots() {
-    let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
-    if (newWeekNumber != this.weekNumber) {
-      await this.getSchedule()
-    }
-    this.currentDate = this.viewDate.getFullYear() +'/'+(this.viewDate.getMonth()+1)+'/'+this.viewDate.getDate()
-    let currentDate = this.getCurrentDateFormatted()
-    this.endValue = this.viewDate
-    this.groupsInDate = this.groups.filter((group)=> {
-      return group.date == currentDate
-    })
-    this.setTime('startHour')
-    this.setTime('startMinute')
-    this.setTime('endHour')
-    this.setTime('endMinute')
-    this.refreshTimeslots(this.groups, this.events)
   }
 
   filterWorkDays() {
