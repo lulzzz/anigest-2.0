@@ -511,9 +511,9 @@ export class ScheduleComponent {
           closeButton: true
         })
     },
-    () => {
+    async () => {
       // this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications = 
-      this.getSchedule()
+      await this.getSchedule()
       this.toastr.success('Examinador definido', 'Sucesso',{
           timeOut: 10000,
           closeButton: true
@@ -556,26 +556,25 @@ export class ScheduleComponent {
     this.pautaService.createPauta(date).subscribe(() => {},
     () => {
       this.toastr.error('Ocorreu um erro ao numerar as pautas. Verifique se existem pautas por numerar nesta data.', 'Erro',{
-          timeOut: 10000,
-          closeButton: true
-        })
+        timeOut: 10000,
+        closeButton: true
+      })
     },
-    () => {
+    async () => {
       this.toastr.success('Pautas numeradas', 'Sucesso',{
-          timeOut: 10000,
-          closeButton: true
-        })
-      this.getSchedule().then(() => {
-        this.pautas = []
-        this.pautaService.getPautas().subscribe(res => this.pautas = res,
-        () => {
-          
-        },
-        ()=> {
-          this.pautas = [...this.pautas]
-          this.refreshTimeslots(this.groups, this.events)
-          this.reservations = [...this.reservations]
-        })
+        timeOut: 10000,
+        closeButton: true
+      })
+      await this.getSchedule()
+      this.pautas = []
+      this.pautaService.getPautas().subscribe(res => this.pautas = res,
+      () => {
+        
+      },
+      ()=> {
+        this.pautas = [...this.pautas]
+        this.refreshTimeslots(this.groups, this.events)
+        this.reservations = [...this.reservations]
       })
     })
   }
@@ -674,7 +673,7 @@ export class ScheduleComponent {
   async getNewWeekTimeslots() {
     let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
     if (newWeekNumber != this.weekNumber) {
-      this.getSchedule()
+      await this.getSchedule()
     }
     this.currentDate = this.viewDate.getFullYear() +'/'+(this.viewDate.getMonth()+1)+'/'+this.viewDate.getDate()
     let currentDate = this.getCurrentDateFormatted()
@@ -1186,20 +1185,12 @@ export class ScheduleComponent {
 
           }, () => {
 
-          }, () => {
-            // setTimeout(() => {
-            //   setTimeout(() => {
-                this.getSchedule().then(() => {
-                  this.toastr.success('Grupo criado', 'Sucesso',{
-                    timeOut: 10000,
-                    closeButton: true
-                  })
-                })
-                // setTimeout(() => {
-                //   this.getSchedule()
-                // }, 1000)
-            //   }, 1000)
-            // }, 500)
+          }, async () => {
+            await this.getSchedule()
+            this.toastr.success('Grupo criado', 'Sucesso',{
+              timeOut: 10000,
+              closeButton: true
+            })
           })
         }
       }
@@ -1313,7 +1304,9 @@ export class ScheduleComponent {
           if (updateObject.Max < 0) {
             updateObject.Max = 0
           }
-          this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe(() => {
+          this.dailyGroupService.updateDailyGroup(groupsInDate[0][0].idGroups, updateObject).subscribe(() => {},
+          () => {},
+          () => {
             let i = this.timeslots.indexOf(groupsInDate[0])
             this.timeslots[i][0].Max =( maxGroups-1)
             this.timeslots = [...this.timeslots]
@@ -1388,7 +1381,7 @@ export class ScheduleComponent {
           closeButton: true
         })
       },
-      () => {
+      async () => {
         
         this.events.splice(eventPosition, 1)
         this.events = [...this.events]
@@ -1411,7 +1404,7 @@ export class ScheduleComponent {
             let groupPosition = this.groups.indexOf(eventGroup)
             this.groups.splice(groupPosition, 1)
             this.groupsInDate = null
-            this.getSchedule()
+            await this.getSchedule()
           }
           else {
             let updateObject = {
@@ -1436,7 +1429,7 @@ export class ScheduleComponent {
     }
   }
 
-  checkIfGroupDecrease(deletedEvent) {
+  async checkIfGroupDecrease(deletedEvent) {
     let curDate = new Date(this.currentDate)
     let comparisonDate = new Date(curDate.setDate(curDate.getDate()))
     if (comparisonDate.toISOString().includes('23:00:00')) {
@@ -1475,7 +1468,7 @@ export class ScheduleComponent {
         this.timeslotService.updateTimeslot(changeGroupNumber[i].id, objectToSend).subscribe()
       }
     }
-    this.getSchedule()
+    await this.getSchedule()
   }
 
 
@@ -1896,42 +1889,50 @@ checkValue(val) {
     }
 
     this.timeslotService.updateTimeslot(this.event.id, objectToSend).subscribe(() => {},
-    () => {
+    async () => {
       this.toastr.error('Erro ao definir o tipo de exame', 'Erro',{
           timeOut: 10000,
           closeButton: true
         })
-      this.getSchedule()
+      await this.getSchedule()
     },
-    () => {
-      this.getSchedule()
+    async () => {
+      await this.getSchedule()
     })
     
   }
 
   async getSchedule() {
-    this.lockedDates = []
-    this.events = []
-    this.groups = []
-    // this.refreshTimeslots(this.groups, this.events)
-    setTimeout(async () => {
-      this.timeslots = await this.getWeekTimeslots()
-      if (this.timeslots.length !== 0) {
-        for (let i = 0; i < this.timeslots.length; i++) {
-          this.genGroup(this.timeslots[i])
+    return new Promise(resolve => {
+      this.lockedDates = []
+      this.events = []
+      this.groups = []
+      // this.refreshTimeslots(this.groups, this.events)
+      setTimeout(async () => {
+        this.timeslots = await this.getWeekTimeslots()
+        if (this.timeslots.length !== 0) {
+          for (let i = 0; i < this.timeslots.length; i++) {
+            this.genGroup(this.timeslots[i])
+          }
         }
-      }
-      this.refreshTimeslots(this.groups, this.events)
-    }, 100)
-    this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}},
-    () => {
+        this.refreshTimeslots(this.groups, this.events)
+      }, 100)
+      this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}},
+      () => {
 
-    }, () => {
-      if (this.reservations){
-        this.reservations = [...this.reservations]
-      }
-    })
-    this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
+      }, () => {
+        if (this.reservations){
+          this.reservations = [...this.reservations]
+          console.log('aqui')
+        }
+      })
+      this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}},
+      () => {
+
+      }, () => {
+        return resolve()
+      })
+    }) 
   }
 
   updateTimeslot(objectToSend) {
@@ -2014,15 +2015,41 @@ checkValue(val) {
         })
       this.cancelLockReservation()
     }, 
-    () => {
-      this.event.meta.currentNumStudents++
-      this.timeslotReservations.push(reservation)
-      this.reservationService.getReservation().subscribe(res => this.reservations = res, 
-        (e) => {
-        }, 
-        () => {
-          this.getSchedule()
+    async () => {
+          if (this.route === 'bookings') {
+            let reservationsInTimeslot = this.reservations.filter((res) => {
+              return res.idTimeslot === reservation.idTimeslot
+            })
+            let reservationToBook = reservationsInTimeslot.filter((res) => {
+              if (res.Student_name === reservation.Student_name) {
+                if (res.Student_license === reservation.Student_license) {
+                  if (res.Tax_num.toString() === reservation.tax_num) {
+                    return res
+                  }
+                }
+              }
+            })
+            this.bookReservation(reservationToBook[0])
+          }
+          await this.getSchedule()
         })
+    })
+  }
+
+  bookReservation(reservation) { // Not functional yet
+    this.reservationService.askForBooking(reservation.idReservation).subscribe(() => {},
+    () => {},
+    () => {
+      this.reservationPatchService.validateReservation(reservation.idReservation).subscribe(() => {
+
+      }, () => {
+
+      }, () => {
+        this.toastr.success('Reserva validada.', 'Sucesso', {
+          timeOut: 10000,
+          closeButton: true
+        })
+      })
     })
   }
 
@@ -2033,6 +2060,11 @@ checkValue(val) {
     this.isChecked = false
     this.previousExamExpirationDate = null
     this.submitted = false
+  }
+  
+  unsetReservationValues() {
+    this.reservationAmount = 0
+    this.createdReservations = 0
   }
 
   cancelLockReservation() {
@@ -2205,7 +2237,7 @@ checkValue(val) {
         () => {
           
         }, 
-        () => {
+        async () => {
           let index = this.reservations.indexOf(reservation)
           this.reservations[index] = reservation
           // this.reservationService.getReservationByTimeslot(reservation.idTimeslot).subscribe(res => this.timeslotReservations = res)
@@ -2213,16 +2245,13 @@ checkValue(val) {
             return reservation.idTimeslot == this.event.id
           })
           this.event.meta.currentNumStudents--
-          setTimeout(() => {
-            this.getSchedule().then(() => {
-              this.refreshTimeslots(this.groups, this.events)
-              this.reservations = [...this.reservations]
-              this.toastr.success('Reserva cancelada', 'Sucesso',{
-          timeOut: 10000,
-          closeButton: true
-        })
-            })
-          },250)    
+          await this.getSchedule()
+          this.refreshTimeslots(this.groups, this.events)
+          this.reservations = [...this.reservations]
+          this.toastr.success('Reserva cancelada', 'Sucesso',{
+            timeOut: 10000,
+            closeButton: true
+          })    
         }
       )
     })
@@ -2283,8 +2312,6 @@ checkValue(val) {
       viewDate.setHours(viewDate.getHours() + 1)
     }
     let thisDay = timeslotGroupsFiltered.filter((day) => {
-      console.log(new Date(day.Group_day).toUTCString())
-      console.log(viewDate.toUTCString())
       return new Date(day.Group_day).toUTCString() == viewDate.toUTCString()
     })
     if (thisDay.length) {
@@ -2397,15 +2424,6 @@ checkValue(val) {
     this.setTime('endHour')
     this.setTime('endMinute')
     this.refreshTimeslots(this.groups, this.events)
-    setTimeout(() => {
-      this.refreshTimeslots(this.groups, this.events)
-    },100)
-    setTimeout(() => {
-      this.refreshTimeslots(this.groups, this.events)
-    },250)
-    setTimeout(() => {
-      this.refreshTimeslots(this.groups, this.events)
-    },500)
   }
   
   eventTimesChanged({
@@ -2612,29 +2630,28 @@ checkValue(val) {
     this.reservationService.askForBooking(reservation.idReservation).subscribe(() => {},
     () => {
       this.toastr.error('Ocorreu um erro. Pedido não enviado', 'Erro',{
-          timeOut: 10000,
-          closeButton: true
-        })
-    }, () => {
+        timeOut: 10000,
+        closeButton: true
+      })
+    }, async () => {
       let index = this.reservations.indexOf(reservation)
       this.reservations[index] = reservation
       this.events = []
       this.groups = []
-      this.getSchedule().then(() => {
-        this.reservationService.getReservation().subscribe(res => this.reservations = res, 
-          (e) => {
-            
-          }, 
-          () => {
-            this.refreshTimeslots(this.groups, this.events)
-            this.reservations = [...this.reservations]
-          }
-        )
-      })
+      await this.getSchedule()
+      this.reservationService.getReservation().subscribe(res => this.reservations = res, 
+        (e) => {
+          
+        }, 
+        () => {
+          this.refreshTimeslots(this.groups, this.events)
+          this.reservations = [...this.reservations]
+        }
+      )
       this.toastr.success('Pedido enviado', 'Sucesso',{
-          timeOut: 10000,
-          closeButton: true
-        })
+        timeOut: 10000,
+        closeButton: true
+      })
     })
   }
 
