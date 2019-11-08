@@ -1965,7 +1965,7 @@ checkValue(val) {
       setTimeout( async () => {
         this.events = []
         this.groups = []
-        this.timeslots = await this.getWeekTimeslots()
+        await this.getSchedule()
         setTimeout(() => {
         if (this.timeslots.length !== 0) {
           for (let i = 0; i < this.timeslots.length; i++) {
