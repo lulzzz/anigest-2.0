@@ -57,6 +57,7 @@
             <th scope="col">Número</th>
             <th scope="col">Nome</th>
             <th scope="col">Tipo de exame</th>
+             <th scope="col">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -64,6 +65,7 @@
             <td>{{ exam.idReservation }}</td>
             <td>{{ exam.Student_name }}</td>
             <td>{{ exam.Exam_type_name }}</td>
+            <td>{{ exam.Status }}</td>
           </tr>
         </tbody>
       </table>
@@ -82,6 +84,10 @@
         <div class="card-body">
           <h5 class="card-title font-weight-light">Informaçoes</h5>
           <table class="table">
+            <tr>
+              <th scope="row">Data do exame:</th>
+              <td>{{ selectedReservation[0].Timeslot_date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
              <tr>
               <th scope="row">Candidato:</th>
               <td>{{ selectedReservation[0].Student_name }}</td> 
