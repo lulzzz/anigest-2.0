@@ -70,6 +70,12 @@ export class ReservationsService {
       .http
       .get(this.url + 'tipo-exames');
   };
+  
+   getCategory() {
+    return this
+      .http
+      .get(this.url +'categorias');
+  };
 
   getIdTypes() {
     return this.http.get<any[]>(`${this.url}tipos-id`)
