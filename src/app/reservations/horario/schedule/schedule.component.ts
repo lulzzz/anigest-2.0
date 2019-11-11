@@ -318,6 +318,7 @@ export class ScheduleComponent {
   submitted: boolean = false
   isChecked: boolean = false
   lockTimeslotSelection: boolean = false
+  theoricalExams: any[] = []
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -410,59 +411,63 @@ export class ScheduleComponent {
       this.route = "bookings"
     }
 
-    this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}})
-    registerLocaleData(localePt, 'pt-PT')
-    this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
-    this.dayLockIcon = this.scheduleLocked
-    this.dataFetchService.getExamTypes().subscribe((data) => this.examTypes = data, (e) => {},
-    async () => {
-      this.reservationService.getExamStatus().subscribe(res => this.examStatuses = res)
-      if (this.viewDate < new Date()) {
-        this.scheduleLocked = true
-        this.dayLockIcon = this.scheduleLocked
-      }
-      this.dataFetchService.getIdTypes().subscribe((data) => this.idTypes = data)
-      this.dataFetchService.getCategories().subscribe((data) => this.categories = data)
-      this.dataFetchService.getSchools().subscribe((data) => this.schools = data, () => {
+    this.reservationService.getReservation().subscribe(res => {if (res === null) {this.reservations = []} else { this.reservations = res}},
+    () => {
 
-      }, () => {
-        if (this.userIdSchool !== 'null') {
-          let schoolPermit = this.schools.filter((school) => {
-            return school.idSchool == this.userIdSchool
-          })
-          this.userSchoolPermit = schoolPermit[0].Permit
+    }, () => {
+      registerLocaleData(localePt, 'pt-PT')
+      this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
+      this.dayLockIcon = this.scheduleLocked
+      this.dataFetchService.getExamTypes().subscribe((data) => this.examTypes = data, (e) => {},
+      async () => {
+        this.reservationService.getExamStatus().subscribe(res => this.examStatuses = res)
+        if (this.viewDate < new Date()) {
+          this.scheduleLocked = true
+          this.dayLockIcon = this.scheduleLocked
         }
-      })
-      this.highestGroupId =this.dataShareService.highestGroupId
-      this.definePrimeCalendar()
-      this.workHours = this.dataShareService.workHours
-      this.groupAmount = await this.dataShareService.groupAmount
-      this.timeslots = await this.getWeekTimeslots()
-      this.weekNumber = this.timeslotService.getWeekNumber(this.viewDate)
-      if (typeof(this.highestGroupId) !== 'undefined') {
-        for (let key in this.highestGroupId[0]) {
-        if (this.highestGroupId[0].hasOwnProperty(key)) {
-            this.highestGroupId = this.highestGroupId[0][key]
+        this.dataFetchService.getIdTypes().subscribe((data) => this.idTypes = data)
+        this.dataFetchService.getCategories().subscribe((data) => this.categories = data)
+        this.dataFetchService.getSchools().subscribe((data) => this.schools = data, () => {
+
+        }, () => {
+          if (this.userIdSchool !== 'null') {
+            let schoolPermit = this.schools.filter((school) => {
+              return school.idSchool == this.userIdSchool
+            })
+            this.userSchoolPermit = schoolPermit[0].Permit
+          }
+        })
+        this.highestGroupId =this.dataShareService.highestGroupId
+        this.definePrimeCalendar()
+        this.workHours = this.dataShareService.workHours
+        this.groupAmount = await this.dataShareService.groupAmount
+        this.timeslots = await this.getWeekTimeslots()
+        this.weekNumber = this.timeslotService.getWeekNumber(this.viewDate)
+        if (typeof(this.highestGroupId) !== 'undefined') {
+          for (let key in this.highestGroupId[0]) {
+          if (this.highestGroupId[0].hasOwnProperty(key)) {
+              this.highestGroupId = this.highestGroupId[0][key]
+            }
           }
         }
-      }
-      if (typeof(this.timeslots) !== 'undefined') {
-        for (let i = 0; i < this.timeslots.length; i++) {
-          this.genGroup(this.timeslots[i])
+        if (typeof(this.timeslots) !== 'undefined') {
+          for (let i = 0; i < this.timeslots.length; i++) {
+            this.genGroup(this.timeslots[i])
+          }
         }
-      }
-      if (typeof(this.groupAmount) != 'undefined'){
-        if (this.groupAmount != 0) {
-          this.dataShareService.undefineShareService()
-          this.generateNewSchedule(this.groupAmount)
+        if (typeof(this.groupAmount) != 'undefined'){
+          if (this.groupAmount != 0) {
+            this.dataShareService.undefineShareService()
+            this.generateNewSchedule(this.groupAmount)
+          }
         }
-      }
-      this.checkIfLocked()
-      this.refreshTimeslots(this.groups, this.events)
-    }) 
-    
-    this.setMinMaxBirthDate();
-    this.setMinExpDate();
+        this.checkIfLocked()
+        this.refreshTimeslots(this.groups, this.events)
+        this.sortExamTypes()
+      })
+      this.setMinMaxBirthDate();
+      this.setMinExpDate();
+    })
   }
 
   parseJwt (token) {
@@ -1820,6 +1825,17 @@ checkValue(val) {
       this.timeslotService.addTimeslot(this.timeslots[i]).subscribe(timeslot => this.timeslots.push(timeslot))
     }
   }
+  
+  changeTheoricalText() {
+    setTimeout(() =>  {
+      let types = document.getElementById('examTypeSelect').children
+      for (let i = 0; i < types.length; i++) {
+        if (types[i].innerHTML.includes('Teór')) {
+          types[i].innerHTML = "Teórica"
+        }
+      }
+    }, 250)
+  }
 
   sortExamTypes() {
     let diff = this.event.end.valueOf() - this.event.start.valueOf()
@@ -2082,9 +2098,17 @@ checkValue(val) {
   }
 
   accumulateReservations() {
-    let examType = this.examTypes.filter((type) => {
-      return type == this.event.meta.examType
-    })
+    let examType = []
+    if (this.reservationForm.getRawValue().Exam_type_idExam_type !== "") {
+      examType = this.examTypes.filter((type) => {
+        return type.idExam_type == this.reservationForm.getRawValue().Exam_type_idExam_type
+      })
+    }
+    else { 
+      examType = this.examTypes.filter((type) => {
+        return type == this.event.meta.examType
+      })
+    }
     this.reservationForm.patchValue({idTimeslot: this.event.id, Exam_type_idExam_type: examType[0].Exam_type_idExam_type, Type_category_idType_category: examType[0].Type_category_idType_category})
     if (this.userIdSchool !== 'null') {
       this.reservationForm.patchValue({School_Permit: this.userSchoolPermit})
@@ -2272,21 +2296,29 @@ checkValue(val) {
           }
         }
       });
-
-    this.reservationPatchService.patchReservation(dirtyValues, this.reservation.idReservation, this.reservation.idTemp_Student)
-      .subscribe(res => { this.toastr.success('A reserva foi atualizada com sucesso.', 'Notificação',{
+    if (Object.keys(dirtyValues).length > 0){
+      if (dirtyValues["Exam_type_idExam_type"]) {
+        let examType = this.examTypes.filter((type) => {
+          return type.idExam_type === dirtyValues["Exam_type_idExam_type"]
+        })
+        dirtyValues["Type_category_idType_category"] = examType[0].Type_category_idType_category
+      }
+      this.reservationPatchService.patchReservation(dirtyValues, this.reservation.idReservation, this.reservation.idTemp_Student)
+        .subscribe(res => { this.toastr.success('A reserva foi atualizada com sucesso.', 'Notificação',{
           timeOut: 10000,
           closeButton: true
         }); },
-      error=> this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro',{
+        error=> this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro',{
           timeOut: 10000,
           closeButton: true
         }), 
-      () => {
-        let i = this.reservations.indexOf(this.reservation)
-        this.reservations[i] = this.reservation
-        this.reservations = [...this.reservations]
-      })
+        () => {
+          let i = this.reservations.indexOf(this.reservation)
+          this.reservations[i] = this.reservation
+          this.reservations = [...this.reservations]
+        })
+    }
+    else {}
   }
 
   lockSchedule() {
