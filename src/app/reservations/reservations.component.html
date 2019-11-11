@@ -93,11 +93,11 @@
               <td>{{ selectedReservation[0].Student_name }}</td> 
             </tr> 
             <tr>
-              <th scope="row">Número do BI:</th>
+              <th scope="row">Número de identificação:</th>
               <td>{{ selectedReservation[0].ID_num }} {{ selectedReservation[0].ID_name }}</td>
             </tr>
             <tr>
-              <th scope="row">Validade do BI:</th>
+              <th scope="row">Validade do documento de identificação:</th>
               <td>{{ selectedReservation[0].ID_expire_date | date: 'dd/MM/yyyy' }} </td>
             </tr>
             <tr>
@@ -168,7 +168,7 @@
         </div>
         <div class="col">
           <div class="form-group">
-            <label for="id">Número do BI</label>
+            <label for="id">Número do identificação</label>
             <input type="text" class="form-control" formControlName="ID_num" #id>
           </div>
         </div>
