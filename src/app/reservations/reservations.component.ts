@@ -216,7 +216,8 @@ export class ReservationsComponent implements OnInit {
 
   cancelReservation(id) {
     this.service.cancelReservation(id)
-      .subscribe(res => { this.toastr.success('Reserva foi cancelada.', 'Notificação') }),
+      .subscribe(res => { this.toastr.success('Reserva foi cancelada.', 'Notificação');
+                        this.service.sendEvent()}),
       error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente', 'Notificação') }
   }
 
