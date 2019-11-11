@@ -62,9 +62,9 @@ export class ReservationsComponent implements OnInit {
 
     this.service.invokeEvent.subscribe(value => {
       if (value) {
-
+        this.onGetReservation(this.param1, this.param2);
         setTimeout(() => {
-          this.onGetReservation(this.param1, this.param2);
+         
           this.openCard(this.idReservation);
         }, 300);
 
