@@ -322,7 +322,7 @@ export class EditReservationComponent implements OnInit {
       if ((new Date(dateVal).setHours(0,0,0,0) < new Date(this.Reservation.Timeslot_date).setHours(0,0,0,0))){
         this.editReservation.controls['Expiration_date'].setErrors({ 'invalid_date': true });
       }
-      else if((new Date(dateVal).getFullYear()) > (new Date(this.Reservation.Timeslot_date).getFullYear() + 2)){
+      else if((new Date(dateVal).getFullYear()) > (new Date(this.Reservation.Timeslot_date).getFullYear() + 4)){
         this.editReservation.controls['Expiration_date'].setErrors({ 'invalid_date': true });
       }
       else {return null}
