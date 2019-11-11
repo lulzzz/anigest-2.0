@@ -45,6 +45,7 @@ export class ReservationsComponent implements OnInit {
   resStatus;
   userIdSchool;
   permit;
+  categories;
   //////////////////////////////////////////////
 
   subject;
@@ -95,9 +96,9 @@ export class ReservationsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.service.getExamType().subscribe(res => {
-      this.examTypes = Object.values(res),
-        console.log(this.examTypes)
+    this.service.getCategory().subscribe(res => {
+      this.categories = Object.values(res),
+        console.log(this.categories)
     });
     this.service.getSchools().subscribe(res => {
       this.schools = Object.values(res),
