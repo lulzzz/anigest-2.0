@@ -193,14 +193,16 @@
           <div class="form-group">
             <label for="school">Escola</label>
             <select class="form-control" formControlName="School_idSchool" #school>
-              <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+              <option *ngFor="let school of schools" value={{school.idSchool}}>{{ school.Permit }} - {{school.School_name}}</option>
             </select>
           </div>
         </div>
-        <div class="col">
+         <div class="col">
           <div class="form-group">
-            <label for="category">Alvará</label>
-            <input type="number" class="form-control" formControlName="Permit">
+            <label for="category">Status</label>
+            <select class="form-control" formControlName="T_exam_status_idexam_status" #school>
+              <option *ngFor="let item of status" value={{item.idexam_status}}>{{item.Status}}</option>
+            </select>
           </div>
         </div>
       </div>
@@ -219,14 +221,7 @@
             </div>
           </div>
         </div>
-        <div class="col">
-          <div class="form-group">
-            <label for="category">Status</label>
-            <select class="form-control" formControlName="T_exam_status_idexam_status" #school>
-              <option *ngFor="let item of status" value={{item.idexam_status}}>{{item.Status}}</option>
-            </select>
-          </div>
-        </div>
+
       </div>
 
 
