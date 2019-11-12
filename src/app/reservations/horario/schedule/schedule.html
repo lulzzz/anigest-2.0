@@ -379,25 +379,25 @@
                   <label for="License_num">Tipo de exame*:</label>
                   <select #examTypeIdForm (blur)="chooseMask(examTypeIdForm.value)" id="CategorySelect" class="form-control custom-select input-group-text"
                     formControlName="Exam_type_idExam_type"
-                    [ngClass]="{'is-invalid': (reservationForm.get('Exam_type_idExam_type').touched || submitted) && reservationForm.get('Exam_type_idExam_type').invalid || reservationForm.get('Exam_type_idExam_type').required, 'is-valid':reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').valid}">
+                    [ngClass]="{'is-invalid': ((reservationForm.get('Exam_type_idExam_type').touched || submitted) && reservationForm.get('Exam_type_idExam_type').invalid || reservationForm.get('Exam_type_idExam_type').required) && (chosenExamType.Code === 'TM'), 'is-valid':reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').valid}">
                     <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Tipo de exame</option>
                     <option *ngFor="let examType of theoricalExams" [ngValue]="examType.idExam_type">{{examType.Exam_type_name}}</option>
                   </select>
                   <div class="invalid-feedback">
-                    <div *ngIf="reservationForm.get('Exam_type_idExam_type').hasError('required')">
+                    <div *ngIf="((reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').pristine)) && chosenExamType.Code === 'TM'">
                       Selecione uma opção.</div>
                   </div>
                 </div>
-                <div *ngIf="chosenExamType.Category === 'A' || chosenExamType.Category === 'A1' || chosenExamType.Category === 'A2' ">
+                <div *ngIf="chosenExamType.Category === 'A' || chosenExamType.Category === 'A1' || chosenExamType.Category === 'A2'">
                   <label for="License_num">Tipo de exame*:</label>
                   <select #examTypeIdForm required (blur)="chooseMask(examTypeIdForm.value)" id="CategorySelect" class="form-control custom-select input-group-text"
                     formControlName="Exam_type_idExam_type"
-                    [ngClass]="{'is-invalid': (reservationForm.get('Exam_type_idExam_type').touched || submitted) && reservationForm.get('Exam_type_idExam_type').invalid || reservationForm.get('Exam_type_idExam_type').required || (reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').pristine), 'is-valid':reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').valid}">
+                    [ngClass]="{'is-invalid': ((reservationForm.get('Exam_type_idExam_type').touched || submitted) && reservationForm.get('Exam_type_idExam_type').invalid || reservationForm.get('Exam_type_idExam_type').required || (reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').pristine)) && (chosenExamType.Category === 'A' || chosenExamType.Category === 'A1' || chosenExamType.Category === 'A2') , 'is-valid':reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').valid}">
                     <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Tipo de exame</option>
                     <option *ngFor="let examType of categoryAExams" [ngValue]="examType.idExam_type">{{examType.Exam_type_name}}</option>
                   </select>
                   <div class="invalid-feedback">
-                    <div *ngIf="(reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').pristine)">
+                    <div *ngIf="((reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').pristine)) && (chosenExamType.Category === 'A' || chosenExamType.Category === 'A1' || chosenExamType.Category === 'A2')">
                       Selecione uma opção.</div>
                   </div>
                 </div>
