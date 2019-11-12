@@ -1671,6 +1671,59 @@ export class ScheduleComponent {
       }
     }
   }
+  
+  chooseMask(examTypeId) {
+    let i = examTypeId.toString().search(':')
+    let id = examTypeId.toString().substring(i+1)
+    if (typeof(examTypeId) !== 'undefined') {
+      let examType = this.examTypes.filter((type) => {
+        return parseInt(type.idExam_type) === parseInt(id)
+      })
+      this.chosenExamType = examType[0]
+      if (this.chosenExamType != null) {
+        if (this.chosenExamType.Category.length === 1) {
+          this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+        }
+        else if (this.chosenExamType.Category.length === 2) {
+          this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+        }
+        else if (this.chosenExamType.Category.length >= 3) {
+          if (this.chosenExamType.Category.includes(',')) {
+            let [a, b, c] = this.chosenExamType.Category.split(',')
+            if (a.length >= 3 || b.length >= 3) {
+              this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+            }
+            else {
+              if (typeof(c) !== "undefined") {
+                if (c.length >= 3) {
+                  this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+                }
+                else {
+                  if (a.length === 2 || b.length === 2 || c.length === 2) {
+                    this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+                  }
+                  else {
+                    this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+                  }
+                }
+              }
+              else {
+                if (a.length === 2 || b.length === 2) {
+                  this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+                }
+                else {
+                  this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+                }
+              }
+            }
+          }
+          else {
+            this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+          }
+        }
+      }
+    }
+  }
 
   clearReservations() {
     this.timeslotReservations = []
