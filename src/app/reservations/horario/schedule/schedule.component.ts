@@ -1838,31 +1838,48 @@ checkValue(val) {
   }
 
   sortExamTypes() {
-    let diff = this.event.end.valueOf() - this.event.start.valueOf()
-    let diffInHours = diff/1000/60/60
-    this.examTypesAllowed = this.examTypes.filter((examType) => {
-      let durHours = examType.Duration.substr(0,2)
-      let durMinutes = examType.Duration.substr(3,2)
-      let hours = new Date()
-      let day = new Date()
-      day.setHours(0,0,0,0)
-      hours.setHours(parseInt(durHours), parseInt(durMinutes),0,0)
-      let hourDiff = hours.valueOf() - day.valueOf()
-      let hourDiffInHours = hourDiff/1000/60/60
-      return hourDiffInHours <= diffInHours
-    })
-    if (this.userIdSchool != 'null') {
-      let theoricalExams = this.examTypesAllowed.filter((examType) => {
-        return examType.Description.includes('Teór')
+    if (typeof(this.event) !== 'undefined') {
+      let diff = this.event.end.valueOf() - this.event.start.valueOf()
+      let diffInHours = diff/1000/60/60
+      this.examTypesAllowed = this.examTypes.filter((examType) => {
+        let durHours = examType.Duration.substr(0,2)
+        let durMinutes = examType.Duration.substr(3,2)
+        let hours = new Date()
+        let day = new Date()
+        day.setHours(0,0,0,0)
+        hours.setHours(parseInt(durHours), parseInt(durMinutes),0,0)
+        let hourDiff = hours.valueOf() - day.valueOf()
+        let hourDiffInHours = hourDiff/1000/60/60
+        return hourDiffInHours <= diffInHours
       })
-      for (let i = 0; i < theoricalExams.length; i++) {
-        let index = this.examTypesAllowed.indexOf(theoricalExams[i])
+    }
+    else {
+      this.examTypesAllowed = [...this.examTypes]
+    }
+    this.theoricalExams = this.examTypesAllowed.filter((examType) => {
+      return examType.Code === 'TM'
+    })
+    for (let i = 0; i < this.theoricalExams.length; i++) {
+      if (!this.theoricalExams[i].Exam_type_name.includes("Comuns")) {
+        let index = this.examTypesAllowed.indexOf(this.theoricalExams[i])
         this.examTypesAllowed.splice(index, 1)
       }
+      else {
+        let index = this.examTypesAllowed.indexOf(this.theoricalExams[i])
+      }
     }
+    // let theoricalExam = this.examTypesAllowed.filter((examType) => {
+    //   return examType.Code === 'TM'
+    // })
+    // let i = this.examTypesAllowed.indexOf(theoricalExam[0])
+    // this.examTypesAllowed[i].Exam_type_name = "Teórica"
   }
 
-  async defineExamType(examType) {
+  async defineExamType(examTypeId) {
+    let examTypeFiltered = this.examTypes.filter((type) => {
+      return parseInt(type.idExam_type) === parseInt(examTypeId)
+    })
+    let examType = examTypeFiltered[0]
     this.event.meta.maxStudents = examType.Num_students,
     this.event.meta.examType = examType
     this.event.meta.examTypeShort = examType.Short
