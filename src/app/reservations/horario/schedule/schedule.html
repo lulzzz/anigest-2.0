@@ -388,6 +388,19 @@
                       Selecione uma opção.</div>
                   </div>
                 </div>
+                <div *ngIf="chosenExamType.Category === 'A' || chosenExamType.Category === 'A1' || chosenExamType.Category === 'A2' ">
+                  <label for="License_num">Tipo de exame*:</label>
+                  <select #examTypeIdForm required (blur)="chooseMask(examTypeIdForm.value)" id="CategorySelect" class="form-control custom-select input-group-text"
+                    formControlName="Exam_type_idExam_type"
+                    [ngClass]="{'is-invalid': (reservationForm.get('Exam_type_idExam_type').touched || submitted) && reservationForm.get('Exam_type_idExam_type').invalid || reservationForm.get('Exam_type_idExam_type').required || (reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').pristine), 'is-valid':reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').valid}">
+                    <option *ngIf="formIsEditable" [ngValue]="null" [selected]="true" disabled>Tipo de exame</option>
+                    <option *ngFor="let examType of categoryAExams" [ngValue]="examType.idExam_type">{{examType.Exam_type_name}}</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    <div *ngIf="(reservationForm.get('Exam_type_idExam_type').touched && reservationForm.get('Exam_type_idExam_type').pristine)">
+                      Selecione uma opção.</div>
+                  </div>
+                </div>
                 <div *ngIf="userIdSchool !== 'null'">
                   <select style="display:none" id="CategorySelect" class="form-control custom-select input-group-text"
                     formControlName="School_Permit">
