@@ -2,18 +2,18 @@
 <div class="card-header bg-light shadow-sm">
   <ul class="nav nav-pills card-header-pills justify-content-end">
     <li class="h4 mr-auto font-weight-light">Reservas</li>
-    <form *ngIf="subject.includes('GET_Reservation')" class="form-inline mr-auto" [formGroup]="searchForm"
+       <form *ngIf="subject.includes('GET_Reservation')" class="form-inline mr-auto" [formGroup]="searchForm"
       (ngSubmit)="onGetReservation(param1.value, param2.value)">
       <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
         #param1>
-        <option value="name">Nome do candidato</option>
-        <option value="id_num">Número do BI</option>
+        <option value="Student_name">Nome do candidato</option>
+        <option value="id_num">Número do identificação</option>
         <option value="permit">Alvará</option>
         <option value="getAllReservations">Todas</option>
       </select>
       <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
         aria-label="Search" #param2>
-      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="submit" [disabled]="!searchForm.valid">Pesquisar</button>
       <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa avançada
       </button>
     </form>
