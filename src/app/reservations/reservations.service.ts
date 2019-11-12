@@ -97,9 +97,9 @@ export class ReservationsService {
     return this.http.patch(this.url + 'pautas?start=1', obj)
   }
 
-  getReservationsbySchool(idSchool){
-    const params = new HttpParams().append('idSchool', idSchool);
-    return this.http.patch(this.url + 'centro-exames/' + this.ec + '/reservas', {params})
+ getReservationsbySchool(permit){
+    const params = new HttpParams().append('permit', permit);
+    return this.http.get(this.url + 'centro-exames/' + this.ec + '/reservas', {params})
   }
 
 }
