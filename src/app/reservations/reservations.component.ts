@@ -145,49 +145,71 @@ export class ReservationsComponent implements OnInit {
   }
 
 
-  onGetReservation(param1, param2) {
-  //  this.searchParams = true;
-    console.log(this.userIdSchool)
- /*   this.param1 = param1;
+ onGetReservation(param1, param2) {
+
+    this.param1 = param1;
     this.param2 = param2;
-     if (param1 == 'getAllReservations') {
-      this.service.getAllReservations().subscribe(
-        res => { this.exams = Object.values(res) }
-      )
-    } */
 
-      if (this.userIdSchool == 'null') {
-        console.log(this.userIdSchool)
-        console.log('EBERREREERREE')
-        this.service.getAllReservationsbyParam(this.param1, this.param2)
-        .subscribe(
-          data1 => {
-            if (data1) {
-              this.exams = Object.values(data1),
-                this.count = this.exams.length;
-            }
-            else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
-          },
-          error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') });
-
+    if (this.userIdSchool == 'null') {
+     
+      if (param1 == 'getAllReservations') {
+        this.service.getAllReservations().subscribe(
+          res => {
+          this.exams = Object.values(res)
+            this.count = this.exams.length;
+          }
+        )
       }
-
       else {
-            console.log('Y U ENTER HERE')
-            let chosenAlvara = this.schools.filter(item => item.idSchool === (+this.userIdSchool))
-            this.permit = chosenAlvara[0].Permit
-             this.service.getSchoolReservationsbyParam(this.permit, this.param1, this.param2)
-              .subscribe(
-                data1 => {
-                  if (data1) {
-                    this.exams = Object.values(data1),
-                      this.count = this.exams.length;
-                  }
-                  else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
-                },
-                error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') }); 
+        if (param2.length) {
+          this.service.getAllReservationsbyParam(this.param1, this.param2)
+            .subscribe(
+              data1 => {
+                if (data1) {
+                  this.exams = Object.values(data1),
+                    this.count = this.exams.length;
+                  console.log(data1)
+                }
+                else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
+              },
+              error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') });
+
+        }
+        else { this.toastr.warning('Por favor insira um critério de pesquisa.') }
       }
-    
+    }
+
+    else {
+
+      let chosenAlvara = this.schools.filter(item => item.idSchool === (+this.userIdSchool))
+      this.permit = chosenAlvara[0].Permit
+
+      if (param1 == 'getAllReservations') {
+        this.service.getReservationsbySchool(this.permit).subscribe(
+          res => {
+          this.exams = Object.values(res),
+            this.count = this.exams.length
+          }
+        )
+      }
+      else {
+
+        if (param2.length) {
+          this.service.getSchoolReservationsbyParam(this.permit, this.param1, this.param2)
+            .subscribe(
+              data1 => {
+                if (data1) {
+                  this.exams = Object.values(data1),
+                  this.count = this.exams.length;
+                }
+                else { this.toastr.error('Nenhuma reserva foi encontrada.', 'Notificação') }
+              },
+              error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro') });
+        }
+        else { this.toastr.warning('Por favor insira um critério de pesquisa.') }
+      }
+    }
+
   }
 
   openCard(id) {
@@ -247,17 +269,24 @@ export class ReservationsComponent implements OnInit {
         }
       });
 
-    this.service.submitAS(dirtyValues)
-      .subscribe(res => {
-        if (Object.values(res).length <= 100) {
-          this.exams = Object.values(res),
-            this.count = this.exams.length;
-          this.searchParams = false;
-        }
-        else { this.toastr.info('A pesquisa retornou muitos resultados. Por favor execute uma pesquisa mais especifica.', 'Notificação') }
-        console.log(this.exams)
-      },
-        error => this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Notificação'))
+     if (Object.keys(dirtyValues).length === 0) {
+      this.modalService.dismissAll();
+    }
+
+    else {
+
+      this.service.submitAS(dirtyValues)
+        .subscribe(res => {
+          if (Object.values(res).length <= 100) {
+            this.exams = Object.values(res),
+              this.count = this.exams.length;
+            this.searchParams = false;
+          }
+          else { this.toastr.info('A pesquisa retornou muitos resultados. Por favor execute uma pesquisa mais especifica.', 'Notificação') }
+          console.log(this.exams)
+        },
+          error => this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Notificação'))
+    }
   }
 
   resetSearch() {
