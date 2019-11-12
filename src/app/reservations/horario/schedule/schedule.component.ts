@@ -2181,7 +2181,7 @@ checkValue(val) {
 
   accumulateReservations() {
     let examType = []
-    if (this.reservationForm.getRawValue().Exam_type_idExam_type !== "") {
+    if (this.reservationForm.getRawValue().Exam_type_idExam_type !== "" && this.reservationForm.getRawValue().Exam_type_idExam_type !== null) {
       examType = this.examTypes.filter((type) => {
         return type.idExam_type == this.reservationForm.getRawValue().Exam_type_idExam_type
       })
@@ -2196,7 +2196,6 @@ checkValue(val) {
       this.reservationForm.patchValue({School_Permit: this.userSchoolPermit})
     }
     let formValues = this.reservationForm.getRawValue()
-    console.log(typeof(formValues.exam_expiration_date))
     if (typeof(formValues.exam_expiration_date) == 'string') {
       if (formValues.exam_expiration_date === "" ) {
         this.reservationForm.patchValue({exam_expiration_date: null})
