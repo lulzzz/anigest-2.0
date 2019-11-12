@@ -2873,7 +2873,7 @@ validateDate(dateVal, type) {
     if ((new Date(dateVal).setHours(0,0,0,0) < new Date(this.currentDate).setHours(0,0,0,0))){
       this.reservationForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
     }
-    else if((new Date(dateVal).getFullYear()) > (new Date(this.currentDate).getFullYear() + 2)){
+    else if((new Date(dateVal).getFullYear()) > (new Date(this.currentDate).getFullYear() + 4)){
       this.reservationForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
     }
     else {return null}
