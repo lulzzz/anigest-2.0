@@ -319,6 +319,7 @@ export class ScheduleComponent {
   isChecked: boolean = false
   lockTimeslotSelection: boolean = false
   theoricalExams: any[] = []
+  categoryAExams: any[] = []
 
   public mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
   public taxMask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -1675,7 +1676,7 @@ export class ScheduleComponent {
   chooseMask(examTypeId) {
     let i = examTypeId.toString().search(':')
     let id = examTypeId.toString().substring(i+1)
-    if (typeof(examTypeId) !== 'undefined') {
+    if (id.trim() !== 'null' && examTypeId !== '') {
       let examType = this.examTypes.filter((type) => {
         return parseInt(type.idExam_type) === parseInt(id)
       })
@@ -1912,6 +1913,11 @@ checkValue(val) {
     this.theoricalExams = this.examTypesAllowed.filter((examType) => {
       return examType.Code === 'TM'
     })
+    this.categoryAExams = this.examTypesAllowed.filter((examType) => {
+      if (examType.Category === 'A' || examType.Category === 'A1' || examType.Category === 'A2') {
+        return 1
+      }
+    })
     for (let i = 0; i < this.theoricalExams.length; i++) {
       if (!this.theoricalExams[i].Exam_type_name.includes("Comuns")) {
         let index = this.examTypesAllowed.indexOf(this.theoricalExams[i])
@@ -1919,6 +1925,12 @@ checkValue(val) {
       }
       else {
         let index = this.examTypesAllowed.indexOf(this.theoricalExams[i])
+      }
+    }
+    for (let i = 0; i < this.categoryAExams.length; i++) {
+      if (this.categoryAExams[i].Category !== 'A') {
+        let index = this.examTypesAllowed.indexOf(this.categoryAExams[i])
+        this.examTypesAllowed.splice(index, 1)
       }
     }
     // let theoricalExam = this.examTypesAllowed.filter((examType) => {
