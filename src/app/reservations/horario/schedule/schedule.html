@@ -227,7 +227,7 @@
         <div *ngIf="timeslotExists">
           <div *ngIf="viewDate.getTime() > this.today.getTime() || !scheduleLocked">
             <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || event.meta.currentNumStudents > 0" *ngIf="((this.event.meta.examType == null || this.event.meta.currentNumStudents < 1) && !scheduleLocked) || subject.includes('ALL_School')" (click)="dismiss(); sortExamTypes(); openModal(defineTypeOfExam); changeTheoricalText()"><i class="fas fa-chalkboard"></i> Definir Tipo de Exame</button>&nbsp;
-            <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="((this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')) && route ==='reservations'" (click)="dismiss(); openModal(reservationAmountForm);"><i class="fas fa-file-alt"></i> Criar Reserva</button>&nbsp;
+            <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="(((this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')) && route ==='reservations') && userIdSchool !== 'null'" (click)="dismiss(); openModal(reservationAmountForm);"><i class="fas fa-file-alt"></i> Criar Reserva</button>&nbsp;
             <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="((this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')) && route ==='bookings'" (click)="dismiss(); openModal(reservationAmountForm);"><i class="fas fa-file-alt"></i> Criar Marcação</button>&nbsp;
           </div>
           <label *ngIf="(((this.event.color.secondary === '#c0ffff' || this.event.meta.currentNumStudents == this.event.meta.maxStudents) || scheduleLocked) && !subject.includes('ALL_School')) || viewDate.getTime() < this.today.getTime()">Sem operações disponíveis</label>
@@ -308,13 +308,15 @@
   <!--  CHOOSE AMOUNT OF RESERVATIONS TO MAKE  -->
   <ng-template #reservationAmountForm let-dismiss="dismiss">
     <div class="modal-header">
-      <h4 class="font-weight-light text-light ml-auto">QUANTIDADE DE RESERVAS</h4>
+      <h4 *ngIf="route === 'reservations'" class="font-weight-light text-light ml-auto">QUANTIDADE DE RESERVAS</h4>
+      <h4 *ngIf="route === 'bookings'" class="font-weight-light text-light ml-auto">QUANTIDADE DE MARCAÇÕES</h4>
       <button type="button" class="close" aria-label="Fechar" (click)="dismiss();editingReservation=false">
         <span>&times;</span>
       </button>
     </div>
     <div class="modal-body">
-      <p>Indique a quantidade de reservas que pretende criar:</p>
+      <p *ngIf="route === 'reservations'">Indique a quantidade de reservas que pretende criar:</p>
+      <p *ngIf="route === 'bookings'">Indique a quantidade de marcações que pretende criar:</p>
       <p-spinner [min]="1" [max]="maxReservations()" [(ngModel)]="startValue" #reservationAmount></p-spinner>
     </div>
     <div class="modal-footer">
@@ -355,7 +357,8 @@
         <h4>Tipo de exame: Teórica</h4><br>
     </div>
     <div *ngIf="reservationAmount === 2">
-      <h5>Reserva {{createdReservations+1}} de 2</h5>
+      <h5 *ngIf="route === 'reservations'">Reserva {{createdReservations+1}} de 2</h5>
+      <h5 *ngIf="route === 'bookings'">Marcação {{createdReservations+1}} de 2</h5>
     </div>
     <form #resForm="ngForm" [formGroup]="reservationForm">
 
