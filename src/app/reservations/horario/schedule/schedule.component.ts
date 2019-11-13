@@ -64,27 +64,29 @@ export class ScheduleComponent {
     let eventText = event.target.innerText.trim().toLowerCase()
     if (event.target.offsetParent) {
       if (event.target.offsetParent.id === 'deleteX') {
-        let chosenEventId = this.dataShareService.getChosenTimeslotId()
-        let chosenEvent = this.events.filter((event) => {
-          return event.id == chosenEventId
-        })
-        this.event = chosenEvent[0]
-        if (this.userIdSchool == 'null'){
-          if (this.event.meta.currentNumStudents === 0) {
-            this.deleteEvent()
+        if (this.route === 'reservations') {
+          let chosenEventId = this.dataShareService.getChosenTimeslotId()
+          let chosenEvent = this.events.filter((event) => {
+            return event.id == chosenEventId
+          })
+          this.event = chosenEvent[0]
+          if (this.userIdSchool == 'null'){
+            if (this.event.meta.currentNumStudents === 0) {
+              this.deleteEvent()
+            }
+            else {
+              this.toastr.warning('Não pode eliminar um timeslot com reservas criadas.', 'Aviso',{
+                timeOut: 10000,
+                closeButton: true
+              })
+            }
           }
           else {
-            this.toastr.warning('Não pode eliminar um timeslot com reservas criadas.', 'Aviso',{
-            timeOut: 10000,
-            closeButton: true
+            this.toastr.warning('Não tem permissão para realizar essa operação.', 'Aviso',{
+              timeOut: 10000,
+              closeButton: true
             })
           }
-        }
-        else {
-          this.toastr.warning('Não tem permissão para realizar essa operação.', 'Aviso',{
-            timeOut: 10000,
-            closeButton: true
-          })
         }
         else if (this.route === 'results') {
           this.toastr.warning('Não pode eliminar timeslots no modo de edição de pautas.', 'Aviso', {
