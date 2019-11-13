@@ -67,8 +67,11 @@ export class HorarioComponent implements OnInit {
     if (this.router.url.includes("results")) {
       this.route = "results"
     }
-    else {
+    else if (this.router.url.includes("reservations")) {
       this.route = "reservations"
+    }
+    else if (this.router.url.includes("bookings")) {
+      this.route = "bookings"
     }
     this.workHours = await this.getWorkHours()
     this.highestGroupId = await this.getHighestGroupId()
@@ -95,14 +98,17 @@ export class HorarioComponent implements OnInit {
 //     this.chosen = true
 //   }
 
-//   goBack() {
-//     if (this.route == 'reservations') {
-//       this.router.navigate(['/reservations'])
-//     }
-//     else if (this.route == 'results') {
-//       this.router.navigate(['/results'])
-//     }
-//   }
+  goBack() {
+    if (this.route == 'reservations') {
+      this.router.navigate(['/reservations'])
+    }
+    else if (this.route == 'results') {
+      this.router.navigate(['/results'])
+    }
+    else if (this.route == 'bookings') {
+      this.router.navigate(['/bookings'])
+    }
+  }
 
 //   filterWorkDays() {
 //     // 0 = Domingo/Sunday, 6 = Sábado/Saturday
