@@ -12,6 +12,7 @@ declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router'
 
 
 @Component({
@@ -55,7 +56,7 @@ export class BookingsComponent implements OnInit {
   pepValues;
   
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private service: BookingService, private toastr: ToastrService, private ss: ServerService, private auth: AuthService) {
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private service: BookingService, private toastr: ToastrService, private ss: ServerService, private auth: AuthService,  private router: Router) {
     this.createForm();
    }
   createForm() {
