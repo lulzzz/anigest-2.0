@@ -15,6 +15,13 @@
       <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa avançada
       </button>
     </form>
+    
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" (click)="getHorario()"><i
+          class="fas fa-calendar-alt"></i>
+        Horário</button>
+    </li>
+    
     <li class="nav-item" *ngIf="subject.includes('POST_Booked')">
       <button type="button" class="btn btn-light" (click)="addBooking()"><i class="fas fa-plus"></i>
         Novo</button>
