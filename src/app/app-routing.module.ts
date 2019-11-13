@@ -161,8 +161,9 @@ const routes: Routes = [
       { path: 'edit-reservation', component: EditReservationComponent },
     ]
   },
-  { path: 'reservations/:horario', component: HorarioComponent },
-  { path: 'results/:horario', component: HorarioComponent },
+  { path: 'reservations/schedule', component: HorarioComponent },
+  { path: 'results/schedule', component: HorarioComponent },
+  { path: 'bookings/schedule', component: HorarioComponent },
   {
     path: 'SICC', component: SICCComponent,
   }
