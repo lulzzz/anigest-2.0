@@ -75,16 +75,28 @@ export class ScheduleComponent {
           }
           else {
             this.toastr.warning('Não pode eliminar um timeslot com reservas criadas.', 'Aviso',{
-          timeOut: 10000,
-          closeButton: true
-        })
+            timeOut: 10000,
+            closeButton: true
+            })
           }
         }
         else {
           this.toastr.warning('Não tem permissão para realizar essa operação.', 'Aviso',{
-          timeOut: 10000,
-          closeButton: true
-        })
+            timeOut: 10000,
+            closeButton: true
+          })
+        }
+        else if (this.route === 'results') {
+          this.toastr.warning('Não pode eliminar timeslots no modo de edição de pautas.', 'Aviso', {
+            timeOut: 10000,
+            closeButton: true
+          })
+        }
+        else if (this.route === 'bookings') {
+          this.toastr.warning('Não pode eliminar timeslots no modo de criação de marcações.', 'Aviso', {
+            timeOut: 10000,
+            closeButton: true
+          })
         }
       }
     }
