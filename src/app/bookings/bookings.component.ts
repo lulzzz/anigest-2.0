@@ -159,6 +159,10 @@ export class BookingsComponent implements OnInit {
     },
     )
   }
+  
+  getHorario() {
+    this.router.navigate(['/bookings/schedule'])
+  }
 
   onGetBookings(param1, param2) {
     this.param1 = param1;
