@@ -4,6 +4,11 @@
     <ul class="nav nav-pills card-header-pills justify-content-end">
       <li class="h4 mr-auto font-weight-light">Horário</li>
 
+      <li class="nav-item">
+        <button (click)="goBack()" type="button" class="btn btn-light"><i class="fas fa-arrow-left"></i>
+          Voltar atrás</button>
+      </li>
+
       <li class="nav-item" *ngIf="route == 'results' && subject.includes('ALL_School')">
         <button type="button" class="btn btn-light"><i class="fas fa-th"></i>
           Numerar</button>
