@@ -503,7 +503,17 @@ export class ScheduleComponent {
 
   handleFileInput(files: FileList, resID) {
     this.fileToUpload = files.item(0);
-    this.uploadFileToActivity(resID)
+    if (files[0].name.length) {
+      const format = /^(Modelo2{1}_[0-9]{9})$/gi
+      let fileName = files[0].name.split(".",1)
+      let validated = format.test(fileName[0])
+      if (validated)  {
+        this.uploadFileToActivity(resID)
+      }
+      else {
+        this.toastr.error('Nome de ficheiro com formato errado.', 'Erro')
+      }
+    }
   }
 
   uploadFileToActivity(resID) {
