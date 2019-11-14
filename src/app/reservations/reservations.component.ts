@@ -79,7 +79,7 @@ export class ReservationsComponent implements OnInit {
   createForm() {
     this.searchForm = this.fb.group({
       param1: [null, Validators.required],
-      param2: [null, Validators.required]
+      param2: [null]
     });
     this.advancedSearch = this.fb.group({
       Student_name: [null, Validators.required],
