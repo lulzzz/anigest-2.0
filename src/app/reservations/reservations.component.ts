@@ -292,6 +292,13 @@ export class ReservationsComponent implements OnInit {
   resetSearch() {
     this.advancedSearch.reset();
   }
+  
+    downloadModelo(id) {
+    this.service.downloadModelo2(id).subscribe(res => {
+      this.downLoadFile(res, "application/pdf")
+    }),
+      error => { this.toastr.error('Ocorreu um erro. Por favor, tente novamente', 'Notificação') }
+  }
   /////////////////////////////////////////////////////////////////////////////////////
 
 
