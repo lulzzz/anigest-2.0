@@ -371,6 +371,8 @@ export class ScheduleComponent {
   @ViewChild('examinerTable', {static: false}) examinerTable: TemplateRef<any>;
   @ViewChild('timeslotForm', {static: false}) timeslotForm: TemplateRef<any>;
   @ViewChild('chooseToGenerate', {static: false}) chooseToGenerate: TemplateRef<any>;
+  @ViewChild('notificationModal', {static: false}) notificationModal: TemplateRef<any>;
+  @ViewChild('notificationModal2', {static: false}) notificationModal2: TemplateRef<any>;
   
 
   constructor(
