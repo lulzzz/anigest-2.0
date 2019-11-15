@@ -10,10 +10,10 @@
       <div class="col-sm-4">
         <div class="form-group">
           <label for="number">Número*</label>
-          <input type="number" class="form-control" formControlName="number" #number
-            [ngClass]="{'is-invalid': angForm.get('number').touched && angForm.get('number').invalid || submitted && angForm.get('number').hasError('required'), 'is-valid':angForm.get('number').touched && angForm.get('number').valid}">
+          <input type="number" class="form-control" formControlName="Student_num" #number
+            [ngClass]="{'is-invalid': angForm.get('Student_num').touched && angForm.get('Student_num').invalid || submitted && angForm.get('Student_num').hasError('required'), 'is-valid':angForm.get('Student_num').touched && angForm.get('Student_num').valid}">
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('number').hasError('required') || submitted && angForm.get('number').hasError('required')">
+            <div *ngIf="angForm.get('Student_num').hasError('required') || submitted && angForm.get('Student_num').hasError('required')">
               Número é obrigatório.</div>          
           </div>
         </div>
@@ -21,13 +21,13 @@
       <div class="col-sm-8">
         <div class="form-group">
           <label for="name">Nome*</label>
-          <input type="text" class="form-control" formControlName="name" 
-          [ngClass]="{'is-invalid': angForm.get('name').touched && angForm.get('name').invalid || submitted && angForm.get('name').hasError('required'), 'is-valid':angForm.get('name').touched && angForm.get('name').valid}"
+          <input type="text" class="form-control" formControlName="Student_name" 
+          [ngClass]="{'is-invalid': angForm.get('Student_name').touched && angForm.get('Student_name').invalid || submitted && angForm.get('Student_name').hasError('required'), 'is-valid':angForm.get('Student_name').touched && angForm.get('Student_name').valid}"
           #name>
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('name').hasError('required') || submitted && angForm.get('name').hasError('required')">
+            <div *ngIf="angForm.get('Student_name').hasError('required') || submitted && angForm.get('Student_name').hasError('required')">
               Nome é obrigatório.</div>
-              <div *ngIf="angForm.get('name').hasError('validString')">
+              <div *ngIf="angForm.get('Student_name').hasError('validString')">
               Caracteres não são permitidos.</div>
           </div>
         </div>
@@ -38,13 +38,13 @@
       <div class="col">
         <div class="form-group">
           <label for="id_type">Documento de Identificação*</label>
-          <select class="form-control" formControlName="id_type" 
-          [ngClass]="{'is-invalid': angForm.get('id_type').touched && angForm.get('id_type').invalid || submitted && angForm.get('id_type').hasError('required'), 'is-valid':angForm.get('id_type').touched && angForm.get('id_type').valid}"
+          <select class="form-control" formControlName="T_ID_type_idT_ID_type" 
+          [ngClass]="{'is-invalid': angForm.get('T_ID_type_idT_ID_type').touched && angForm.get('T_ID_type_idT_ID_type').invalid || submitted && angForm.get('T_ID_type_idT_ID_type').hasError('required'), 'is-valid':angForm.get('T_ID_type_idT_ID_type').touched && angForm.get('T_ID_type_idT_ID_type').valid}"
           #id_type>
             <option *ngFor="let idType of idTypes" value={{idType.idT_ID_type}}>{{idType.ID_name}}</option>
           </select>
           <div class="invalid-feedback"> 
-            <div *ngIf="angForm.get('id_type').hasError('required') || submitted && angForm.get('birth_date').hasError('required')">
+            <div *ngIf="angForm.get('T_ID_type_idT_ID_type').hasError('required') || submitted && angForm.get('T_ID_type_idT_ID_type').hasError('required')">
               Documento de Identificação é obrigatório.</div>
           </div>
         </div>
@@ -53,14 +53,14 @@
         <div class="form-group">
           <label for="birth_date">Data de Nascimento*</label>
           <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control"
-            (focusout)="validateDate(birth_date.value, 'birthdate')" formControlName="birth_date" [max]="maxBirthDate"
+            (focusout)="validateDate(birth_date.value, 'birthdate')" formControlName="Birth_date" [max]="maxBirthDate"
             [min]="minBirthDate"
-            [ngClass]="{'is-invalid': angForm.get('birth_date').touched && angForm.get('birth_date').invalid || submitted && angForm.get('birth_date').hasError('required'),  'is-valid':angForm.get('birth_date').touched && angForm.get('birth_date').valid}"
+            [ngClass]="{'is-invalid': angForm.get('Birth_date').touched && angForm.get('Birth_date').invalid || submitted && angForm.get('Birth_date').hasError('required'),  'is-valid':angForm.get('Birth_date').touched && angForm.get('Birth_date').valid}"
             #birth_date>
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('birth_date').hasError('invalid_date')">
+            <div *ngIf="angForm.get('Birth_date').hasError('invalid_date')">
               A data não está correta.</div>
-            <div *ngIf="angForm.get('birth_date').hasError('required') || submitted && angForm.get('birth_date').hasError('required')">
+            <div *ngIf="angForm.get('Birth_date').hasError('required') || submitted && angForm.get('Birth_date').hasError('required')">
               A data é obrigatória.</div>
           </div>
         </div>
@@ -71,10 +71,10 @@
       <div class="col">
         <div class="form-group">
           <label for="id">Número do Identificação*</label>
-          <input type="text" class="form-control" formControlName="id" 
-          [ngClass]="{'is-invalid': angForm.get('id').touched && angForm.get('id').invalid || submitted && angForm.get('id').hasError('required'), 'is-valid':angForm.get('id').touched && angForm.get('id').valid}"
+          <input type="text" class="form-control" formControlName="ID_num" 
+          [ngClass]="{'is-invalid': angForm.get('ID_num').touched && angForm.get('ID_num').invalid || submitted && angForm.get('ID_num').hasError('required'), 'is-valid':angForm.get('ID_num').touched && angForm.get('ID_num').valid}"
           #id>
-          <div *ngIf="angForm.get('id').hasError('required') || submitted && angForm.get('id').hasError('required')" class="invalid-feedback">     
+          <div *ngIf="angForm.get('ID_num').hasError('required') || submitted && angForm.get('ID_num').hasError('required')" class="invalid-feedback">     
             <div>Número do Identificação é obrigatório.</div> 
             
           </div>
@@ -83,14 +83,14 @@
       <div class="col">
         <div class="form-group">
           <label for="id_expiration">Validade do Identificação*</label>
-          <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control" formControlName="id_expiration"
+          <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control" formControlName="ID_expire_date"
             (focusout)="validateDate(id_expiration.value, 'idexp')" [min]="minExpDate" [max]="maxExpDate"
-            [ngClass]="{'is-invalid': angForm.get('id_expiration').touched && angForm.get('id_expiration').invalid || submitted && angForm.get('id_expiration').hasError('required'), 'is-valid':angForm.get('id_expiration').touched && angForm.get('id_expiration').valid}"
+            [ngClass]="{'is-invalid': angForm.get('ID_expire_date').touched && angForm.get('ID_expire_date').invalid || submitted && angForm.get('ID_expire_date').hasError('required'), 'is-valid':angForm.get('ID_expire_date').touched && angForm.get('ID_expire_date').valid}"
             #id_expiration>
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('id_expiration').hasError('invalid_date')">
+            <div *ngIf="angForm.get('ID_expire_date').hasError('invalid_date')">
               A data não está correta.</div>
-            <div *ngIf="angForm.get('id_expiration').hasError('required') || submitted && angForm.get('id_expiration').hasError('required')">
+            <div *ngIf="angForm.get('ID_expire_date').hasError('required') || submitted && angForm.get('ID_expire_date').hasError('required')">
               A data é obrigatória.</div>
           </div>
         </div>
@@ -101,27 +101,27 @@
       <div class="col">
         <div class="form-group">
           <label for="school">Escola*</label>
-          <select class="form-control" formControlName="school" 
-          [ngClass]="{'is-invalid': angForm.get('school').touched && angForm.get('school').invalid || submitted && angForm.get('school').hasError('required'), 'is-valid':angForm.get('school').touched && angForm.get('school').valid}"
+          <select class="form-control" formControlName="School_idSchool" 
+          [ngClass]="{'is-invalid': angForm.get('School_idSchool').touched && angForm.get('School_idSchool').invalid || submitted && angForm.get('School_idSchool').hasError('required'), 'is-valid':angForm.get('School_idSchool').touched && angForm.get('School_idSchool').valid}"
           #school>
             <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.Permit}} - {{school.School_name}}</option>
           </select>
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('school').hasError('required') || submitted && angForm.get('school').hasError('required')">Escola é obrigatória.</div>
+            <div *ngIf="angForm.get('School_idSchool').hasError('required') || submitted && angForm.get('School_idSchool').hasError('required')">Escola é obrigatória.</div>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="category">Categoria*</label>
-          <select class="form-control" formControlName="category" (focusout)="sendValue(category.value)" 
-          [ngClass]="{'is-invalid': angForm.get('category').touched && angForm.get('category').invalid || submitted && angForm.get('category').hasError('required'), 'is-valid':angForm.get('category').touched && angForm.get('category').valid}"
+          <select class="form-control" formControlName="Type_category_idType_category" (focusout)="sendValue(category.value)" 
+          [ngClass]="{'is-invalid': angForm.get('Type_category_idType_category').touched && angForm.get('Type_category_idType_category').invalid || submitted && angForm.get('Type_category_idType_category').hasError('required'), 'is-valid':angForm.get('Type_category_idType_category').touched && angForm.get('Type_category_idType_category').valid}"
           #category>
             <option *ngFor="let category of categories" value={{category.idType_category}}>{{category.Category}}
             </option>
           </select>
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('category').hasError('required') || submitted && angForm.get('category').hasError('required')">Categoria é obrigatória.</div>
+            <div *ngIf="angForm.get('Type_category_idType_category').hasError('required') || submitted && angForm.get('Type_category_idType_category').hasError('required')">Categoria é obrigatória.</div>
           </div>
         </div>
       </div>
@@ -131,12 +131,12 @@
       <div class="col">
         <div class="form-group">
           <label for="license">Número da Licença*</label>
-          <input type="text" [textMask]="{mask:mask}" class="form-control" formControlName="license"
+          <input type="text" [textMask]="{mask:mask}" class="form-control" formControlName="Student_license"
             (focusout)="checkValue(license.value)" #license
-            [ngClass]="{'is-invalid': angForm.get('license').touched && angForm.get('license').invalid || submitted && angForm.get('license').hasError('required'), 'is-valid':angForm.get('license').touched && angForm.get('license').valid}">
+            [ngClass]="{'is-invalid': angForm.get('Student_license').touched && angForm.get('Student_license').invalid || submitted && angForm.get('Student_license').hasError('required'), 'is-valid':angForm.get('Student_license').touched && angForm.get('Student_license').valid}">
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('license').hasError('required') || submitted && angForm.get('license').hasError('required')">Número da licença é obrigatório.</div>
-            <div *ngIf="angForm.get('license').hasError('formatError')">O número da licença deve corresponder à categoria.</div>
+            <div *ngIf="angForm.get('Student_license').hasError('required') || submitted && angForm.get('Student_license').hasError('required')">Número da licença é obrigatório.</div>
+            <div *ngIf="angForm.get('Student_license').hasError('formatError')">O número da licença deve corresponder à categoria.</div>
           </div>
         </div>
       </div>
@@ -144,14 +144,14 @@
         <div class="form-group">
           <label for="license_expiration">Validade da Licença*</label>
           <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control"
-            formControlName="license_expiration" (focusout)="validateDate(license_expiration.value, 'licexp')"
+            formControlName="Expiration_date" (focusout)="validateDate(license_expiration.value, 'licexp')"
             [min]="minExpDate"
-            [ngClass]="{'is-invalid': angForm.get('license_expiration').touched && angForm.get('license_expiration').invalid || submitted && angForm.get('license_expiration').hasError('required'), 'is-valid':angForm.get('license_expiration').touched && angForm.get('license_expiration').valid}"
+            [ngClass]="{'is-invalid': angForm.get('Expiration_date').touched && angForm.get('Expiration_date').invalid || submitted && angForm.get('Expiration_date').hasError('required'), 'is-valid':angForm.get('Expiration_date').touched && angForm.get('Expiration_date').valid}"
             #license_expiration>
             <div class="invalid-feedback">
-              <div *ngIf="angForm.get('license_expiration').hasError('invalid_date')">
+              <div *ngIf="angForm.get('Expiration_date').hasError('invalid_date')">
                 A data não está correta.</div>
-              <div *ngIf="angForm.get('license_expiration').hasError('required') || submitted && angForm.get('license_expiration').hasError('required')">
+              <div *ngIf="angForm.get('Expiration_date').hasError('required') || submitted && angForm.get('Expiration_date').hasError('required')">
                 A data é cobrigatória.</div>
             </div>
         </div>
@@ -162,26 +162,26 @@
       <div class="col">
         <div class="form-group">
           <label for="fiscal_number">Número contribuinte</label>
-          <input type="text" [textMask]="{mask:contribuinte}" class="form-control" formControlName="fiscal_number"
+          <input type="text" [textMask]="{mask:contribuinte}" class="form-control" formControlName="Tax_num"
             #fiscal_number
-            [ngClass]="{'is-invalid': angForm.get('fiscal_number').touched && angForm.get('fiscal_number').invalid || submitted && angForm.get('fiscal_number').hasError('required'), 'is-valid':angForm.get('fiscal_number').touched && angForm.get('fiscal_number').valid}">
+            [ngClass]="{'is-invalid': angForm.get('Tax_num').touched && angForm.get('Tax_num').invalid || submitted && angForm.get('Tax_num').hasError('required'), 'is-valid':angForm.get('Tax_num').touched && angForm.get('Tax_num').valid}">
           <div class="invalid-feedback">
-            <div *ngIf="angForm.get('fiscal_number').hasError('required') || submitted && angForm.get('fiscal_number').hasError('required')">Número contribuinte e obrigatório.</div>
-            <div *ngIf="angForm.get('fiscal_number').hasError('validTax')" >O número contribuinte precisa ter 9 dígitos.</div>
+            <div *ngIf="angForm.get('Tax_num').hasError('required') || submitted && angForm.get('Tax_num').hasError('required')">Número contribuinte e obrigatório.</div>
+            <div *ngIf="angForm.get('Tax_num').hasError('validTax')" >O número contribuinte precisa ter 9 dígitos.</div>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="form-group">
           <label for="existing_license_num">Número da Carta</label>
-          <input type="text" class="form-control" formControlName="existing_license" #existing_license>
+          <input type="text" class="form-control" formControlName="Drive_license_num" #existing_license>
         </div>
       </div>
     </div>
 
     <div class="form-group">
       <label for="observations">Observações</label>
-      <textarea class="form-control" rows="3" formControlName="observations" #observations></textarea>
+      <textarea class="form-control" rows="3" formControlName="Obs" #observations></textarea>
       <small id="helpText" class="form-text text-muted">
         Os campos marcados com * são obrigatórios.
       </small>    
