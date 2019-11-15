@@ -67,7 +67,7 @@
             <td>{{ exam.Student_name }}</td>
             <td>{{ exam.Exam_type_name }}</td>
             <td>{{ exam.Status }}</td>
-            <td><button type="button" class="btn" (click)="downloadModelo(exam.idReservation)"><i class="fas fa-external-link-alt"></i></button></td>
+            <td><button type="button" class="btn" (click)="downloadModelo(exam.idReservation)"><i class="fas fa-download"></i></button></td>
           </tr>
         </tbody>
       </table>
@@ -134,9 +134,9 @@
               <th scope="row">Status:</th>
               <td>{{ resStatus[0].Status}} </td>
             </tr>
-              <tr>
+            <tr>
               <th scope="row">Referência multibanco:</th>
-              <td>{{ selectedReservation[0].Atm_reference}} </td>
+              <td>{{ selectedReservation[0].Atm_reference | slice:0:3}} {{ selectedReservation[0].Atm_reference | slice:3:6}} {{ selectedReservation[0].Atm_reference | slice:6:9}}</td>
             </tr>
           </table>
         </div>
