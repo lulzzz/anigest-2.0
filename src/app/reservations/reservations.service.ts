@@ -101,5 +101,10 @@ export class ReservationsService {
     const params = new HttpParams().append('permit', permit);
     return this.http.get(this.url + 'centro-exames/' + this.ec + '/reservas', {params})
   }
-
+  
+  downloadModelo2(id){
+    const params = new HttpParams().append('idReservation', id).append('file','true')
+    return this.http.get(this.url  + 'centro-exames/' + this.ec + '/reservas', {params, responseType:'arraybuffer'})
+  }
+  
 }
