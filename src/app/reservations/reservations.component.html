@@ -35,7 +35,7 @@
     </li>
     
         <li class="nav-item">
-      <button type="button" class="btn btn-light" [useExistingCss]="true"
+      <button type="button" class="btn btn-light" [disabled]="exams.length === 0" [useExistingCss]="true"
       printSectionId="comp"
       ngxPrint><i class="fas fa-print"></i>
         Imprimir lista</button>
