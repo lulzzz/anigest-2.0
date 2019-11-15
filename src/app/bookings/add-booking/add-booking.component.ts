@@ -160,7 +160,7 @@ export class AddBookingComponent implements OnInit {
       Student_num: data[0].Student_num,
       Student_name: data[0].Student_name,
       T_ID_type_idT_ID_type: data[0].T_ID_type_idT_ID_type,
-      Birth_date: data[0].Birth_date,
+      Birth_date: this.pipe.transform(data[0].Birth_date, 'yyyy-MM-dd'),
       ID_num: data[0].ID_num,
       ID_expire_date: this.pipe.transform(data[0].ID_expire_date, 'yyyy-MM-dd'),
       Student_license: data[0].Student_license,
