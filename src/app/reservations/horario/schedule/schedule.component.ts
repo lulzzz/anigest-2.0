@@ -30,6 +30,10 @@ import { PautaService } from '../services/pauta.service'
 import { ExamService } from '../services/exam.service'
 import { Router } from '@angular/router'
 import { ReservationsService } from '../../reservations.service'
+import { AddStudentComponent } from 'src/app/student/add-student/add-student.component';
+import { EditStudentComponent } from 'src/app/student/edit-student/edit-student.component';
+import { ServerService } from 'src/app/student/add-student/server.service';
+import { BookingService } from 'src/app/bookings/booking.service'
 
 @Component({
   selector: 'schedule-component',
@@ -293,6 +297,7 @@ export class ScheduleComponent {
   examTypesAllowed: any[] = [];
   examTypesAllowedSchool: any[] = []
   locale:any;
+  student: any[] = []
 
   //=======================MISC. VARIABLES=======================\\
 
@@ -385,7 +390,9 @@ export class ScheduleComponent {
     private auth: AuthService,
     private pautaService: PautaService,
     private examService: ExamService,
-    public datepipe: DatePipe
+    public datepipe: DatePipe,
+    private ss: ServerService,
+    private bookingService: BookingService
     ) {}
 
   async ngOnInit() {
@@ -2926,4 +2933,95 @@ validateDate(dateVal, type) {
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                              
+                                              
+  /////////////////////////// STUDENT COMPONENTS \\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  onNav() {
+    const modalRef = this.modalService.open(AddStudentComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.result.then((result) => {
+      console.log(result);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  onPatch() {
+    const modalRef = this.modalService.open(EditStudentComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.idStudent = this.student[0];
+    console.log(modalRef.componentInstance)
+    console.log(modalRef.result)
+    modalRef.result.then((result) => {
+      console.log(result)
+    })
+  }
+
+  /////////////////////////// BOOKINGS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  searchBI(param1) {
+    this.ss.getStudentbyBI(param1)
+      .subscribe(
+        data1 => {
+          if (data1) {
+            this.student = Object.values(data1),
+            // this.passData(data1),
+              console.log('Student FOUND!!!', this.student)
+              // modalRef.
+              this.openModal(this.notificationModal)
+          }
+      else { console.log('DATA NOT FOUND')
+        this.openModal(this.notificationModal2)}
+    
+    })
+  }
+
+  passStudentData(modal){
+    console.log(this.event)
+    this.reservationForm.patchValue({
+      Student_name: this.student[0].Student_name,
+      Student_num: this.student[0].Student_num,
+      Birth_date: this.datePipe.transform(this.student[0].Birth_date, 'yyyy-MM-dd'),
+      ID_num: this.student[0].ID_num,
+      ID_expire_date: this.datePipe.transform(this.student[0].ID_expire_date, 'yyyy-MM-dd') ,
+      tax_num: this.student[0].Tax_num,
+      Drive_license_num: this.student[0].Drive_license_num,
+      Obs: this.student[0].Obs,
+      School_Permit: this.student[0].permit,
+      Student_license: this.student[0].Student_license,
+      Expiration_date: this.datePipe.transform(this.student[0].Expiration_date, 'yyyy-MM-dd'),
+      Type_category_idType_category: this.student[0].Type_category_idType_category,
+      T_ID_type_idT_ID_type: this.student[0].T_ID_type_idT_ID_type,
+      Exam_type_idExam_type: this.student[0].Exam_type_idExam_type,
+      Car_plate: "",
+      idTimeslot: this.event.id,
+      exam_expiration_date: this.datePipe.transform(this.student[0].exam_expiration_date, 'yyyy-MM-dd')
+    })
+    this.reservationForm.disable()
+    this.reservationForm.controls['Exam_type_idExam_type'].enable()
+    // this.formIsEditable = false
+    // this.editingReservation = false
+    // if (this.student[0].exam_expiration_date != null) {
+    //   this.isChecked = true
+    // }
+    this.openModal(modal)
+  }
+
+  createBooking() {
+    let reservation = this.reservationForm.getRawValue()
+    let formData = {
+      Booked_date: this.datePipe.transform(this.event.start, 'yyyy-MM-dd'),
+      Student_license_idStudent_license: this.student[0].idStudent_license,
+      Timeslot_idTimeslot: this.event.id,
+      Exam_center_idExam_center: 0,
+      Exam_type_idExam_type: reservation.Exam_type_idExam_type,
+      Obs: this.student[0].Obs
+    }
+    this.bookingService.addBooking(formData).subscribe(() => {
+
+    }, () => {
+      this.toastr.error('Exame não marcado', 'Erro')
+    }, () => {
+      this.toastr.success('Exame marcado', 'Sucesso')
+    })
+  }
 }
