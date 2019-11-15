@@ -33,6 +33,13 @@
       <button type="button" class="btn btn-light" disabled><i class="far fa-list-alt"></i>
         Listagens</button>
     </li>
+    
+        <li class="nav-item">
+      <button type="button" class="btn btn-light" [useExistingCss]="true"
+      printSectionId="comp"
+      ngxPrint><i class="fas fa-print"></i>
+        Imprimir lista</button>
+    </li>
   </ul>
 </div>
 
@@ -76,13 +83,15 @@
         [boundaryLinks]="true"></ngb-pagination>
     </div>
 
-    <div class="col-md" *ngIf="show  && selectedReservation.length">
+    <div class="col-md" *ngIf="show  && selectedReservation.length" id="infoCard">
       <div class="card">
         <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Reserva<button
             type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
               aria-hidden="true">&times;</span></button>
           <button *ngIf="selectedReservation[0].T_exam_status_idexam_status === 3 && userIdSchool === 'null'" type="button" class="btn btn-success float-right"
-            (click)="validateRes(selectedReservation[0].idReservation)">Validar <i class="fas fa-check"></i></button></h4>
+            (click)="validateRes(selectedReservation[0].idReservation)">Validar <i class="fas fa-check"></i></button>
+            <button type="button" class="btn btn-outline-light float-right mr-3" data-toggle="tooltip" title="Imprimir" [useExistingCss]="true" printSectionId="infoCard" ngxPrint><i class="fas fa-print"></i></button>
+        </h4>
         <div class="card-body">
           <h5 class="card-title font-weight-light">Informaçoes</h5>
           <table class="table">
@@ -261,4 +270,28 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="container" style="display:none" id="comp">
+  <h1>Listagem de reservas</h1>
+  <h3>ANIECA - Centro nº 4 - Barreiro</h3>
+
+  <table class="table table-hover table-sm bg-light">
+    <thead>
+      <tr>
+        <th scope="col">Número</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Tipo de exame</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of exams">
+        <td>{{ item.idReservation }}</td>
+        <td>{{ item.Student_name }}</td>
+        <td>{{ item.Exam_type_name }}</td>
+        <td>{{ item.Status }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
