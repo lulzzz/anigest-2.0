@@ -13,8 +13,9 @@ ec:number = 4;
 
   constructor(private http: HttpClient, private toastr: ToastrService) { }
 
-  addBooking(forms) {      
-  return this.http.post(this.url + 'exames-marcados', forms);
+  addBooking(forms) {
+    forms.Exam_center_idExam_center = this.ec
+    return this.http.post(this.url + 'exames-marcados', forms);
   }
 
   addExam(forms) {
