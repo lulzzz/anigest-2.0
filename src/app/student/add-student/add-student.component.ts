@@ -39,19 +39,19 @@ export class AddStudentComponent implements OnInit {
 
   createForm() {
     this.angForm = this.fb.group({
-      number: [null, Validators.required],
-      name: [null, [Validators.required, this.ValidateString]],
-      id_type: [null, Validators.required],
-      birth_date: [null, [Validators.required]],
-      id: [null, [Validators.required]],
-      id_expiration: [null, [Validators.required]],
-      school: [null, Validators.required],
-      category: [null, Validators.required],
-      license: [null, { validators: [Validators.required], updateOn: 'blur' }],
-      license_expiration: [null, Validators.required],
-      fiscal_number: [null, [Validators.required, this.ValidateTax]],
-      existing_license: [null],
-      observations: [null]
+      Student_num: [null, Validators.required],
+      Student_name: [null, [Validators.required, this.ValidateString]],
+      T_ID_type_idT_ID_type: [null, Validators.required],
+      Birth_date: [null, [Validators.required]],
+      ID_num: [null, [Validators.required]],
+      ID_expire_date: [null, [Validators.required]],
+      School_idSchool: [null, Validators.required],
+      Type_category_idType_category: [null, Validators.required],
+      Student_license: [null, { validators: [Validators.required], updateOn: 'blur' }],
+      Expiration_date: [null, Validators.required],
+      Tax_num: [null, [Validators.required, this.ValidateTax]],
+      Drive_license_num: [null],
+      Obs: [null]
     });
   }
 
@@ -164,7 +164,7 @@ export class AddStudentComponent implements OnInit {
       }
       if (stringy === a || stringy === b || stringy === c) {}
       else {
-        this.angForm.controls['license'].setErrors({'formatError': true})
+        this.angForm.controls['Student_license'].setErrors({'formatError': true})
       }
     }
     else {
@@ -217,25 +217,25 @@ export class AddStudentComponent implements OnInit {
     console.log(dateVal, type, new Date().setHours(0,0,0,0))
     if (type === 'birthdate') {
       if ((new Date(dateVal).getFullYear()) > (new Date().getFullYear() - 14)) {
-        this.angForm.controls['birth_date'].setErrors({ 'invalid_date': true });
+        this.angForm.controls['Birth_date'].setErrors({ 'invalid_date': true });
       }
       else if ((new Date(dateVal).getFullYear()) < (new Date().getFullYear() - 100)){
-        this.angForm.controls['birth_date'].setErrors({ 'invalid_date': true });
+        this.angForm.controls['Birth_date'].setErrors({ 'invalid_date': true });
       }
       else { return null}
     }
     else if (type === 'idexp') {
       if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0)) || (new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 20)){
-        this.angForm.controls['id_expiration'].setErrors({ 'invalid_date': true });
+        this.angForm.controls['ID_expire_date'].setErrors({ 'invalid_date': true });
       }
       else {return null}
     }
     else if (type === 'licexp'){
       if ((new Date(dateVal).setHours(0,0,0,0) < new Date().setHours(0,0,0,0))){
-        this.angForm.controls['license_expiration'].setErrors({ 'invalid_date': true });
+        this.angForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
       }
       else if((new Date(dateVal).getFullYear()) > (new Date().getFullYear() + 2)){
-        this.angForm.controls['license_expiration'].setErrors({ 'invalid_date': true });
+        this.angForm.controls['Expiration_date'].setErrors({ 'invalid_date': true });
       }
       else {return null}
     }
