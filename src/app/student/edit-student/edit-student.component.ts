@@ -131,7 +131,7 @@ getDirtyValues(editForm) {
           }
       });
   
-  this.bs.patchStudent(dirtyValues, this.idStudent.idStudent, this.idStudent.idStudent_license)
+  this.bs.patchStudent(dirtyValues, this.idStudent.idStudent, this.idStudent.Student_license)
   .subscribe(res => {this.toastr.success('O candidato foi atualizado com sucesso.','Notificação'); this.bs.sendSomething()})
   this.activeModal.close();
   
