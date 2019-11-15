@@ -502,6 +502,7 @@ export class ScheduleComponent {
   }
 
   handleFileInput(files: FileList, resID) {
+    resID = this.reservation.idReservation
     this.fileToUpload = files.item(0);
     if (files[0].name.length) {
       const format = /^(Modelo2{1}_[0-9]{9})$/gi
