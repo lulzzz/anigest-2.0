@@ -82,6 +82,7 @@ import { ScheduleModule } from './reservations/horario/schedule/module';
 import {TreeModule} from 'primeng/tree';
 import {TreeNode} from 'primeng/api';
 import { HorarioComponent } from './reservations/horario/horario.component';
+import {NgxPrintModule} from 'ngx-print';
 
 registerLocaleData(localePt, 'pt-PT');
 
@@ -154,7 +155,8 @@ registerLocaleData(localePt, 'pt-PT');
     MenuModule,
     DropdownModule,
     ScheduleModule,
-    TreeModule
+    TreeModule,
+    NgxPrintModule
   ],
   providers: [DatePipe, SharedService, ConfigurationsService, ReservationsService, ParametersService, PaymentsService, ServerService, SchoolService, AuthService, OperatorService, ExaminerServiceService, ExamService, BookingService, ResultsService, NgbActiveModal, AuthGuard, SharedService, { provide: LOCALE_ID, useValue: 'pt-PT' }, { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true} ],
   bootstrap: [AppComponent]
