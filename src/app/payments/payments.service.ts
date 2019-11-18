@@ -39,7 +39,12 @@ export class PaymentsService {
   getAllPayments(){
     return this.http.get(this.url + 'centro-exames/' + this.ec + '/pagamentos')
   }
-
+  
+ getPaymentbyParams(param1,param2){
+    const params = new HttpParams().append(param1, param2);
+    return this.http.get(this.url+'centro-exames/' + this.ec + '/pagamentos', {params})
+  }
+  
   getTaxes(){
      return this.http.get(this.url + 'centro-exames/' + this.ec + '/pagamentos-pendentes?taxnotpaid=true' )
   }
@@ -73,6 +78,11 @@ export class PaymentsService {
 
     getSAFT(year, month){
       return this.http.get( this.url + 'centro-exames/' + this.ec + '/pagamentos?saft=true&year=' + year + '&month=' + month, { responseType: 'text' })
+    }
+  
+   sendInvoicebyEmail(id){
+      const params = new HttpParams().append('idPayment', id).append('send_email', 'true');
+      return this.http.get(this.url + 'centro-exames/' + this.ec + '/pagamentos', {params})
     }
 
 }
