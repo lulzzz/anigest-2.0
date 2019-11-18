@@ -88,11 +88,18 @@ export class ServerService {
   }
 
   getStudentbyBI(param1) {
-      const params = new HttpParams().append('ID_num', param1);
-      return this.http.get(this.url + 'centro-exames/' + this.ec + '/alunos', { params })
-        .pipe(
-          catchError(this.errorHandler));
-    }
+    const params = new HttpParams().append('ID_num', param1);
+    return this.http.get(this.url + 'centro-exames/' + this.ec + '/alunos', { params })
+      .pipe(
+        catchError(this.errorHandler));
+  }
+  
+  getStudentbyTaxNum(param1) {
+    const params = new HttpParams().append('Tax_num', param1);
+    return this.http.get(this.url + 'centro-exames/' + this.ec + '/alunos', { params })
+      .pipe(
+        catchError(this.errorHandler));
+  }
 
   patchStudent(dirtyValues, idStudent, idStudent_license) {
     const params = new HttpParams().append('idStudent', idStudent).append('idStudent_license', idStudent_license);
