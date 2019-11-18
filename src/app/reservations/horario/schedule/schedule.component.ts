@@ -2977,6 +2977,22 @@ validateDate(dateVal, type) {
     })
   }
 
+  searchTaxNum(param1) {
+    this.ss.getStudentbyTaxNum(param1)
+      .subscribe(
+        data1 => {
+          if (data1) {
+            this.student = Object.values(data1),
+            // this.passData(data1),
+              console.log('Student FOUND!!!', this.student)
+              // modalRef.
+              this.openModal(this.notificationModal)
+          }
+      else { console.log('DATA NOT FOUND')
+        this.openModal(this.notificationModal2)}
+    })
+  }
+
   passStudentData(modal){
     console.log(this.event)
     this.reservationForm.patchValue({
@@ -2999,7 +3015,15 @@ validateDate(dateVal, type) {
       exam_expiration_date: this.datePipe.transform(this.student[0].exam_expiration_date, 'yyyy-MM-dd')
     })
     this.reservationForm.disable()
-    this.reservationForm.controls['Exam_type_idExam_type'].enable()
+    if (this.chosenExamType.Code === 'TM' || (this.chosenExamType.Category === 'A' || this.chosenExamType.Category === 'A1' || this.chosenExamType.Category === 'A2')) {
+      this.reservationForm.controls['Exam_type_idExam_type'].enable()
+    }
+    else {
+      this.reservationForm.controls['Exam_type_idExam_type'].disable()
+      this.reservationForm.patchValue({
+        Exam_type_idExam_type: this.chosenExamType.Exam_type_idExam_type
+      })
+    }
     // this.formIsEditable = false
     // this.editingReservation = false
     // if (this.student[0].exam_expiration_date != null) {
