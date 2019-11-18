@@ -74,7 +74,7 @@
             <td>{{ exam.Student_name }}</td>
             <td>{{ exam.Exam_type_name }}</td>
             <td>{{ exam.Status }}</td>
-            <td><button type="button" class="btn" (click)="downloadModelo(exam.idReservation)"><i class="fas fa-download"></i></button></td>
+            <td><button *ngIf="exam.File === 1" type="button" class="btn" (click)="downloadModelo(exam.idReservation)"><i class="fas fa-download"></i></button></td>
           </tr>
         </tbody>
       </table>
