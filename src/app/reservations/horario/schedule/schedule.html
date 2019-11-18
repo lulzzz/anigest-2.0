@@ -391,6 +391,10 @@
                   Selecione uma opção.</div>
               </div>
             </div>
+            <div *ngIf="chosenExamType.Code !== 'TM' && (chosenExamType.Category !== 'A' && chosenExamType.Category !== 'A1' && chosenExamType.Category !== 'A2')">
+              <label>Tipo de exame:</label>
+              <input type="text" formControlName="Exam_type_idExam_type" class="form-control" value="{{chosenExamType.Exam_type_name}}">
+            </div>
           </div>
         </div>
         <div class="col">
@@ -542,7 +546,7 @@
       <div class="row">
         <div class="col">
           <div class="form-group">
-            <label for="License_num">Número da licença do candidato*:</label>
+            <label for="License_num">Número da licença*:</label>
             <div *ngIf="formIsEditable">
               <input oninput="let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);" [textMask]="{mask:mask}" type="text" class="form-control" formControlName="Student_license" #Student_license
                 (focusout)="checkValue(Student_license.value)"
@@ -637,7 +641,7 @@
         <button [disabled]="reservationForm.invalid" *ngIf="editingReservation && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="dismiss();editReservation(reservationForm); unsetReservationValues(); resetReservationForm();editingReservation=false">Atualizar Reserva</button>
       </div>
       <div *ngIf="route === 'bookings'" class="align-self-end ml-auto">
-        <button class="btn btn-outline-success btn-lg" (click)="dismiss(); createBooking()"></button>
+        <button class="btn btn-outline-success btn-lg" (click)="dismiss(); createBooking()">Criar Marcação</button>
         <!-- <button *ngIf="!editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Criar Marcação</button>
         <button *ngIf="editingReservation && reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="warnInvalid(); goToTop()">Atualizar</button>
         <button [disabled]="reservationForm.invalid" *ngIf="(!canClose && !editingReservation) && !reservationForm.invalid" class="btn btn-outline-success btn-lg" (click)="accumulateReservations(); resetReservationForm();editingReservation=false; goToTop()">Criar Marcação</button>
@@ -802,11 +806,11 @@
     </button>
   </div>
   <div class="modal-body">
-    <label>Procurar candidato por ID</label>
-    <input type="text" #searchID>
+    <label>Procurar candidato por NIF:</label><br/>
+    <input type="text" class="form-control" #searchID>
   </div>
   <div class="modal-footer">
-    <button type="button" (click)="searchBI(searchID.value)" class="btn btn-sm btn-dark">Procurar Candidato</button>
+    <button type="button" (click)="searchTaxNum(searchID.value)" class="btn btn-sm btn-dark">Procurar Candidato</button>
     <button type="button" (click)="onNav()" class="btn btn-sm btn-outline-info">Criar Candidato</button>
   </div>
 </ng-template>
