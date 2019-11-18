@@ -236,8 +236,8 @@
     </div>
     <div *ngIf="route == 'results'" class="btn-group">
       <button [disabled]="event.meta.currentNumStudents == 0" class="btn btn-white" (click)="printData()"><i class="fas fa-print"></i> Imprimir</button>&nbsp;
-      <button [disabled]="event.meta.currentNumStudents == 0 || viewDate.getTime() < today.getTime()" class="btn btn-white" (click)="getAllowedExaminers()" ><i class="fas fa-user"></i> Examinador</button>&nbsp;
-      <button [disabled]="!event.meta.pauta || !examsInPauta.length" class="btn btn-white" (click)="openModal(pautaResults)"><i class="fas fa-clipboard-check"></i> Resultados</button>&nbsp;
+      <button [disabled]="event.meta.currentNumStudents == 0 || viewDate.getTime() < today.getTime() || !event.meta.pauta" class="btn btn-white" (click)="getAllowedExaminers()" ><i class="fas fa-user"></i> Examinador</button>&nbsp;
+      <button [disabled]="!event.meta.pauta || viewDate.getTime() >= today.getTime()" class="btn btn-white" (click)="getPautaInfo(event.meta.pauta.Pauta_num)"><i class="fas fa-clipboard-check"></i> Resultados</button>&nbsp;
     </div>
     <div *ngIf="route == 'results'">
       <p>Examinador: {{examiner?.Examiner_name || "Nenhum"}}</p>
@@ -814,6 +814,61 @@
     <button type="button" (click)="onNav()" class="btn btn-sm btn-outline-info">Criar Candidato</button>
   </div>
 </ng-template>
+
+<ng-template #resultados let-modal>
+    <div class="modal-header" style="background-color: rgb(52, 58, 64)">
+      <h4 class="modal-title text-light font-weight-light" id="modal-basic-title">Recolha de resultados</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+  
+      <div  *ngIf="assignResult.length">
+      <div class="p-1 mb-1 bg-dark text-white">Candidatos</div>
+      <form id="myForm" [formGroup]="sendResults">
+        <div [formArrayName]="'results'">
+          <div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Número</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Resultado</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let x of assignResult; let i = index">
+                <tr [formGroupName]="i">
+                  <td>
+                    {{ x.Student_num }}
+                  </td>
+                  <td>
+                    {{ x.Student_name }}
+                  </td>
+                  <td>
+                    <select class="form-control form-control-sm" formControlName="T_exam_results_idT_exam_results">
+                      <option *ngFor="let result of resultsOptions" [ngValue]="result.idT_exam_results">{{ result.Result }}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+    </div>
+  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark"
+          (click)="modal.close('Save click'); resetSearch()">Fechar</button>
+        <button type="button" class="btn btn-outline-success"
+          (click)="onSubmit( assignResult.idPauta); modal.close('Save click'); resetSearch()">Guardar</button>
+      </div>
+  
+    </div>
+  </ng-template>
+
 
 <!---////////////////////////////////////////////////////////////////////--->
 
