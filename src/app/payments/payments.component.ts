@@ -274,6 +274,32 @@ export class PaymentsComponent implements OnInit {
   onHide() {
     this.show = false;
   }
+  
+    sendInvoicebyEmail(id){
+    this.service.sendInvoicebyEmail(id).subscribe(
+      res => {
+        if (res){
+        this.toastr.success('Fatura enviada com sucesso', 'Notificação',  {
+          timeOut: 9000,
+          closeButton: true
+        })
+      }
+
+      else {
+        this.toastr.error('Ocorreu um erro. Por favor, tente novamente.','Erro', {
+          timeOut: 9000,
+          closeButton: true
+        });
+      }
+    },
+    error => {
+      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro'), {
+        timeOut: 9000,
+        closeButton: true
+      }
+      }        
+    )
+  }
 
   }
 
