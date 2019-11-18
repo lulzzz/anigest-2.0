@@ -65,6 +65,7 @@
             <th scope="col">Data</th>
             <th scope="col">Alvará</th>
             <th scope="col">Escola</th>
+            <th scope="col" *ngIf="sendEmail">Email</th>    
           </tr>
         </thead>
         <tbody>
@@ -73,6 +74,7 @@
             <td>{{ result.Payment_date | date:'short' }}</td>
             <td>{{ result.Permit }}</td>
             <td>{{ result.school_name }}</td>
+            <td><button type="button" class="btn" *ngIf="sendEmail" (click)="sendInvoicebyEmail(result.idPayment)"><i class="far fa-paper-plane"></i></button></td>
           </tr>
         </tbody>
       </table>
@@ -102,12 +104,13 @@
             <tr>
               <th scope="col">Data</th>
               <td>{{ item.Payment_date | date:'short'}}</td>
-
             </tr>
-            <!--             <tr>
+            
+            <tr>
               <th scope="col">Valor</th>
-              <td>{{ hello }} €</td>
-            </tr> -->
+              <td>{{ item.Total_value | currency:'EUR':'symbol-narrow'}}</td>
+            </tr>
+       
           </table>
 
           <legend>Entradas</legend>
@@ -121,7 +124,7 @@
             <tr *ngFor="let item of transactionInfo">
               <td>{{ item.Transaction_num}}</td>
               <td>{{ item.Name }}</td>
-              <td>{{ item.Transaction_value }}</td>
+              <td>{{ item.Transaction_value | currency:'EUR':'symbol-narrow' }}</td>
             </tr>
           </table>
           <legend>Exames</legend>
@@ -134,7 +137,7 @@
             <tr *ngFor="let item of examInfo">
               <td>{{ item.Student_name}}</td>
               <td>{{ item.Exam_type_name }}</td>
-              <td>{{ item.Exam_price}}</td>
+              <td>{{ item.Exam_price | currency:'EUR':'symbol-narrow' }}</td>
             </tr>
           </table>
         </div>
