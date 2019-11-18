@@ -419,7 +419,12 @@ export class ScheduleComponent {
     }
     this.minimumReservationDate.setUTCDate(this.minimumReservationDate.getUTCDate() + dayAmount)
     this.minimumReservationDate.setUTCHours(0,0,0,0)
-    
+    this.resultsService.getResults().subscribe(
+      res => {
+        this.resultsOptions = Object.values(res);
+        console.log(this.resultsOptions)
+      }
+    );
     this.auth.currentUserSubject.subscribe(message => this.subject = message)
     if (this.router.url.includes("reservations")) {
       this.route = "reservations"
