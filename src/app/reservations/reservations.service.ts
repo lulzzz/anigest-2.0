@@ -92,7 +92,7 @@ export class ReservationsService {
 
   randomizeExaminers(){
     const obj = { 
-      Exam_center_idExam_center:1
+      Exam_center_idExam_center: this.ec
     }
     return this.http.patch(this.url + 'pautas?start=1', obj)
   }
