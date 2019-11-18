@@ -21,10 +21,11 @@
         Novo</button>
     </li>
 
-    <li class="nav-item">
-      <button type="button" class="btn btn-light" disabled><i class="fas fa-print"></i>
+   <li class="nav-item">
+      <button type="button" class="btn btn-light" [disabled]="results.length === 0" [useExistingCss]="true"
+      printSectionId="comp" ngxPrint><i class="fas fa-print"></i>
         Imprimir</button>
-    </li>
+   </li>
 
     <li class="nav-item">
       <button *ngIf="subject.includes('POST_Tax')" type="button" class="btn btn-light" data-toggle="modal" (click)="openTaxas(taxas)"><i
@@ -581,4 +582,26 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="container" style="display:none" id="comp">
+  <h1>Listagem de pagamentos</h1>
+  <h3>ANIECA - Centro nº 4 - Barreiro</h3>
+
+  <table class="table table-hover table-sm bg-light">
+    <thead>
+      <tr>
+        <th scope="col">Data</th>
+        <th scope="col">Alvará</th>
+        <th scope="col">Escola</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of results">
+        <td>{{ item.Payment_date | date:'short' }}</td>
+        <td>{{ item.Permit }}</td>
+        <td>{{ item.school_name }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
