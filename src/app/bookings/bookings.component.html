@@ -74,16 +74,15 @@
         [boundaryLinks]="true"></ngb-pagination>
     </div>
 
-    <div class="col-md" *ngIf="show">
+    <div id="infoCard" class="col-md" *ngIf="show">
       <div class="card" id="results">
         <h4 class="card-header text-light font-weight-light" style="background-color: rgb(52, 58, 64)">Marcação <button
             type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
               aria-hidden="true">&times;</span></button>
-          <button type="button" class="btn btn-outline-light float-right ml-2" data-toggle="modal"
-            data-target="#viewModal">Imprimir</button>
+          <button type="button" class="btn btn-outline-light float-right mr-3" data-toggle="tooltip" title="Imprimir" [useExistingCss]="true" printSectionId="infoCard" ngxPrint><i class="fas fa-print"></i></button>
         </h4>
         <div class="card-body" *ngFor="let selectedBooking of selectedBookings">
-          <h5 class="card-title font-weight-light">Informaçoes</h5>
+          <h5 class="card-title font-weight-light">Informações</h5>
           <table class="table">
             <tr>
               <th scope="row">Data do exame:</th>
