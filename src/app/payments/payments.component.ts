@@ -34,6 +34,9 @@ export class PaymentsComponent implements OnInit {
   yorders;
   public show: boolean = false;
   subject;
+  param1;
+  param2;
+  public sendEmail: boolean = false;
   @ViewChild('notificationModal', { static: false }) public content: TemplateRef<any>;
 
   constructor(private toastr: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private service: PaymentsService, private auth:AuthService) {
@@ -42,7 +45,7 @@ export class PaymentsComponent implements OnInit {
 
   createForm() {
     this.searchForm = this.fb.group({
-      param1: [null],
+      param1: [null, [Validators.required]],
       param2: [null]
     });
 
@@ -126,20 +129,55 @@ export class PaymentsComponent implements OnInit {
     });
   }
 
-   onGet(){
-    this.service.getAllPayments()
-    .subscribe(res => {
-      if(res) {
-        this.results = Object.values(res);
-        this.count = this.results.length;
-        console.log(this.results);
+  onGet(param1, param2) {
+    this.param1 = param1;
+    this.param2 = param2;
+    console.log(param1)
+    if (param1 === 'get_all') {
+      this.service.getAllPayments()
+        .subscribe(res => {
+          if (res) {
+            this.results = Object.values(res);
+            this.count = this.results.length;
+            console.log(this.results);
+          }
+          else {
+            this.toastr.error('Nenhum resultado foi encontrado.', 'Notificação')
+          }
+        },
+          error => {
+            this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro');
+          })
+    }
+    else {
+      if (!param2.length) {
+        this.toastr.warning('Por favor insira um critério de pesquisa.')
       }
+
       else {
-        this.toastr.error('Nenhum resultado foi encontrado.','Notificação')}
-    },
-    error => { 
-      this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro');
-    })
+        this.service.getPaymentbyParams(param1, param2).subscribe(
+          res => {
+            if (res && param1 === 'permit_invoice') {
+              this.results = Object.values(res);
+              this.count = this.results.length;
+              this.sendEmail = true;
+              console.log(this.results);
+            }
+            else if(res){
+              this.results = Object.values(res);
+              this.count = this.results.length;
+              console.log(this.results);
+              this.sendEmail = false;
+            }
+            else {
+              this.toastr.error('Nenhum resultado foi encontrado.', 'Notificação')
+            }
+          },
+          error => {
+            this.toastr.error('Ocorreu um erro. Por favor, tente novamente.', 'Erro');
+          })
+      }
+    }
   }
  
    openCard(id) {
