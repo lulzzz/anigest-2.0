@@ -17,11 +17,11 @@
         </div>
       </div> -->
 
-      <div class="col-8">
+      <div class="col">
         <div class="form-group">
           <label for="School">Escola*</label>
           <select class="form-control" formControlName="School">
-            <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.School_name}}</option>
+            <option *ngFor="let school of schools" value={{school.idSchool}}>{{school.Permit}} - {{school.School_name}}</option>
           </select>
         </div>
       </div>
@@ -86,7 +86,6 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-outline-info btn-lg mr-auto">Existencias</button>
       <button type="button" class="btn btn-secondary btn-lg" (click)="activeModal.close('Close click')">Fechar</button>
       <button type="submit" class="btn btn-outline-success btn-lg" (click)="activeModal.close('Close click');onSubmit()">Criar pagamento</button>
     </div>
@@ -94,7 +93,7 @@
 </div>
 
 <ng-template #notificationModal let-notificationModal>
-  <div class="modal-header bg-success">
+  <div class="modal-header">
     <h4 class="modal-title font-weight-light text-light">Associar entradas</h4>
     <button type="button" class="close" aria-label="Close" (click)="resetCheques(); notificationModal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
@@ -114,7 +113,7 @@
               <tr formArrayName="orders" *ngFor="let order of form.controls.orders.controls; let i = index">
                 <td><input type="checkbox" [formControlName]="i"> {{ helporders[i].Transaction_num }} </td>
                 <td>{{ helporders[i].Name }}</td>
-                <td>{{ helporders[i].Transaction_value }} €</td>
+                <td>{{ helporders[i].Transaction_value }} </td>
               </tr>
             </tbody>
           </table>
@@ -129,7 +128,7 @@
 </ng-template>
 
 <ng-template #paymentsModal let-paymentsModal>
-  <div class="modal-header bg-success">
+  <div class="modal-header">
     <h4 class="modal-title font-weight-light text-light">Associar exames</h4>
     <button type="button" class="close" aria-label="Close" (click)="resetExams(); paymentsModal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
