@@ -34,6 +34,7 @@ import { AddStudentComponent } from 'src/app/student/add-student/add-student.com
 import { EditStudentComponent } from 'src/app/student/edit-student/edit-student.component';
 import { ServerService } from 'src/app/student/add-student/server.service';
 import { BookingService } from 'src/app/bookings/booking.service'
+import { ResultsService } from '../../../results/results.service';
 
 @Component({
   selector: 'schedule-component',
@@ -107,15 +108,15 @@ export class ScheduleComponent {
       }
     }
     if (eventText == 'numerar') {
-      if (this.viewDate.getTime() < new Date().getTime()) {
-        this.toastr.warning(toastrMessage, 'Aviso',{
-          timeOut: 10000,
-          closeButton: true
-        })
-      }
-      else{
+//       if (this.viewDate.getTime() < new Date().getTime()) {
+//         this.toastr.warning(toastrMessage, 'Aviso',{
+//           timeOut: 10000,
+//           closeButton: true
+//         })
+//       }
+//       else{
         this.createPauta()
-      }
+//       }
     }
     else if (eventText == 'novo timeslot') {
       if (this.viewDate.getTime() < new Date().getTime()) {
@@ -298,6 +299,9 @@ export class ScheduleComponent {
   examTypesAllowedSchool: any[] = []
   locale:any;
   student: any[] = []
+  assignResult: any[] = []
+  sendResults: FormGroup
+  resultsOptions: any[] = []
 
   //=======================MISC. VARIABLES=======================\\
 
@@ -373,6 +377,7 @@ export class ScheduleComponent {
   @ViewChild('chooseToGenerate', {static: false}) chooseToGenerate: TemplateRef<any>;
   @ViewChild('notificationModal', {static: false}) notificationModal: TemplateRef<any>;
   @ViewChild('notificationModal2', {static: false}) notificationModal2: TemplateRef<any>;
+  @ViewChild('resultados', {static: false}) resultados: TemplateRef<any>
   
 
   constructor(
@@ -394,7 +399,8 @@ export class ScheduleComponent {
     private examService: ExamService,
     public datepipe: DatePipe,
     private ss: ServerService,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private resultsService: ResultsService
     ) {}
 
   async ngOnInit() {
@@ -3049,5 +3055,55 @@ validateDate(dateVal, type) {
     }, () => {
       this.toastr.success('Exame marcado', 'Sucesso')
     })
+  }
+                                              
+
+  //////////////////////// PAUTA RESULTS COMPONENT \\\\\\\\\\\\\\\\\\\\\
+
+
+  getPautaInfo(info) {
+
+
+    console.log(info);
+    this.resultsService.getPautabyNum(info)
+      .subscribe(
+        data1 => {
+          if (data1) {
+            this.assignResult = Object.values(data1),
+            this.sendResults = new FormGroup({
+              results: this.fb.array([])
+            })
+        
+            this.buildForm();
+            console.log('RESULTS ASSIGNED', this.assignResult)
+            this.openModal(this.resultados)
+          }
+          else { console.log('DATA NOT FOUND') }
+        },)
+  }
+
+  buildForm() {
+    const controlArray = this.sendResults.get('results') as FormArray;
+
+    Object.keys(this.assignResult).forEach((i) => {
+      controlArray.push(
+        this.fb.group({   
+          idExam: this.assignResult[i].idExam,
+          T_exam_results_idT_exam_results: []
+        })
+      )
+    })
+
+    console.log(controlArray.controls)
+  }
+
+  onSubmit(id) {
+    console.log(this.sendResults.value);
+    let form = this.sendResults.value;
+     this.resultsService.sendResults(form, id).subscribe(
+      res=> {
+        this.toastr.success('Resultados foram atribuidos.')
+      }
+    ) 
   }
 }
