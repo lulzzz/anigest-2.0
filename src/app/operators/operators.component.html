@@ -18,10 +18,13 @@
     <li class="nav-item">
       <button *ngIf="subject.includes('POST_Operator')" type="button" class="btn btn-light" (click)="showAddOperator()"><i class="fas fa-user-plus"></i>
         Novo</button>
-    </li>
+    </li
+      
     <li class="nav-item">
-      <button type="button" class="btn btn-light"><i class="fas fa-print"></i>
-        Imprimir</button>
+      <button type="button" class="btn btn-light" [disabled]="searchedOperators.length === 0" [useExistingCss]="true"
+      printSectionId="comp"
+      ngxPrint><i class="fas fa-print"></i>
+        Imprimir lista</button>
     </li>
 
     <li class="nav-item">
@@ -56,3 +59,31 @@
 
   </tbody>
 </table>
+
+<div class="container" style="display:none" id="comp">
+  <h1>Listagem de operadores</h1>
+  <h3>ANIECA - Centro nº 4 - Barreiro</h3>
+
+  <table class="table table-hover table-sm bg-light">
+    <thead>
+      <tr>
+      <th scope="col">Utilizador</th>
+      <th scope="col">Tipo de perfil</th>
+      <th scope="col">Centro de exame</th>
+      <th scope="col">Email</th>
+      <th scope="col">Nome de escola</th>
+      <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of searchedOperators">
+      <td>{{ item.User }}</td>
+      <td>{{ item.role_name }}</td>
+      <td>{{ item.Exam_center_name }}</td>
+      <td>{{ item.User_email }}</td>
+      <td>{{ item.school_name }}</td>
+      <td>{{ item.status  === 1 ? 'Ativo' : 'Inativo' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
