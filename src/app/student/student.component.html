@@ -43,6 +43,13 @@
       <button type="button" class="btn btn-light" (click)="openModal(listagens)" disabled><i class="far fa-list-alt"></i>
         Listagens</button>
     </li>
+    
+    <li class="nav-item">
+      <button type="button" class="btn btn-light" [disabled]="students.length === 0" [useExistingCss]="true"
+      printSectionId="comp"
+      ngxPrint><i class="fas fa-print"></i>
+        Imprimir lista</button>
+    </li>
 
   </ul>
 </div>
@@ -74,7 +81,7 @@
             (click)="openCard(student.idStudent); onShow()">
             <td>{{ student.Student_num }}</td>
             <td>{{ student.Student_name }}</td>
-            <td>{{ student.Permit }}</td>
+            <td>{{ student.permit }}</td>
             <td>{{ student.School_name }}</td>
           </tr>
         </tbody>
@@ -95,7 +102,7 @@
             <div class="col-5">
               <button type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
                   aria-hidden="true">&times;</span></button>
-              <button type="button" class="btn btn-outline-light float-right ml-2" (click)="savePDF()">Imprimir</button>
+              <button type="button" class="btn btn-outline-light float-right mr-3" data-toggle="tooltip" title="Imprimir" [useExistingCss]="true" printSectionId="current-pane" ngxPrint><i class="fas fa-print"></i></button>
               <button type="button" class="btn btn-outline-light float-right"
                 (click)="onNotes(selectedStudent.idStudent)">Notas</button>
             </div>
@@ -377,4 +384,28 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="container" style="display:none" id="comp">
+  <h1>Listagem de candidatos</h1>
+  <h3>ANIECA - Centro nº 4 - Barreiro</h3>
+
+  <table class="table table-hover table-sm bg-light">
+    <thead>
+      <tr>
+        <th scope="col">Número</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Alvará</th>
+        <th scope="col">Escola</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of students">
+        <td>{{ item.Student_num }}</td>
+        <td>{{ item.Student_name }}</td>
+        <td>{{ item.permit }}</td>
+        <td>{{ item.School_name }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
