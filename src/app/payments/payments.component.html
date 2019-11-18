@@ -83,7 +83,7 @@
         [boundaryLinks]="true"></ngb-pagination>
     </div>
 
-    <div class="col-md" *ngIf="show">
+    <div class="col-md" *ngIf="show" id="infoCard">
       <div class="card pb-3">
         <div class="card-header" style="background-color: rgb(52, 58, 64)">
           <div class="row">
@@ -94,6 +94,7 @@
               <button type="button" class="close float-right" (click)="onHide()" aria-label="Close"><span
                   aria-hidden="true">&times;</span></button>
               <button type="button" class="btn btn-outline-light float-right ml-2" (click)="singleInvoice()">Faturar</button>
+              <button type="button" class="btn btn-outline-light float-right mr-2" data-toggle="tooltip" title="Imprimir" [useExistingCss]="true" printSectionId="infoCard" ngxPrint><i class="fas fa-print"></i></button>
             </div>
           </div>
         </div>
