@@ -2,15 +2,17 @@
 <div class="card-header bg-light shadow-sm">
   <ul class="nav nav-pills card-header-pills justify-content-end">
     <li class="h4 mr-auto font-weight-light">Tesouraria</li>
-    <form class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGet()">
+    <form class="form-inline mr-auto" [formGroup]="searchForm" (ngSubmit)="onGet(param1.value, param2.value)">
       <select class="form-control form-control-sm mr-sm-2" formControlName="param1" aria-describedby="passwordHelpBlock"
         #param1>
         <option value="userId">Com fatura</option>
         <option value="Student_license">Sem fatura</option>
+         <option value="permit_invoice">Enviar faturas por alvara</option>
+        <option value="get_all">Todos os pagamentos</option>
       </select>
       <input class="form-control form-control-sm mr-sm-2" formControlName="param2" type="search" placeholder="Pesquisar"
         aria-label="Search" #param2>
-      <button class="btn btn-outline-secondary btn-sm" type="submit">Pesquisar</button>
+      <button class="btn btn-outline-secondary btn-sm" type="submit" [disabled]="!searchForm.valid">Pesquisar</button>
       <button class="btn btn-outline-secondary btn-sm" type="button" (click)="openModal(content)">Pesquisa
         avançada</button>
     </form>
