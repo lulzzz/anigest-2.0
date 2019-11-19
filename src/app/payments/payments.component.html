@@ -66,6 +66,7 @@
             <th scope="col">Data</th>
             <th scope="col">Alvará</th>
             <th scope="col">Escola</th>
+            <th scope="col">Fatura</th>
             <th scope="col" *ngIf="sendEmail">Email</th>    
           </tr>
         </thead>
@@ -75,6 +76,7 @@
             <td>{{ result.Payment_date | date:'short' }}</td>
             <td>{{ result.Permit }}</td>
             <td>{{ result.school_name }}</td>
+            <td>{{ result.Invoice_num }}</td>
             <td><button type="button" class="btn" *ngIf="sendEmail" (click)="sendInvoicebyEmail(result.idPayment)"><i class="far fa-paper-plane"></i></button></td>
           </tr>
         </tbody>
