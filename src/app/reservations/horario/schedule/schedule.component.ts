@@ -1593,43 +1593,18 @@ export class ScheduleComponent {
                 () => {
 
                 }, () => {
-                  if (typeof(this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications) !== 'undefined') {
+                  if (this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications !== 'undefined' && this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications != null) {
                     let filteredExaminer = this.examiners.filter((examiner) => {
                       for (let i = 0; i < this.examinersExamType.length; i++) {
-                        let examinerIWant
+                        // let examinerIWant
                         if (examiner.Examiner_name === this.examinersExamType[i].Examiner_name && examiner.License_num === this.examinersExamType[i].License_num) {
-
+                          this.examiner = examiner
+                          return 1
                         }
                       }
                     })
                   }
                 })
-              // this.dataFetchService.getExaminerQualifications(this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications)
-              //let filteredExaminers = this
-              console.log(this.examiners)
-              // let filteredExams = this.exams.filter((exam) => {
-              //   return exam.idPauta == this.event.meta.pauta.Pauta_num
-              // })
-              // this.examsInPauta = filteredExams
-              // let filteredExaminerQualifications = this.examinerQualifications.filter((examQual) => {
-              //   return examQual.Exam_type_idExam_type == this.event.meta.pauta.Exam_type_idExam_type
-              // })
-              // this.examinerQualificationsExamType = filteredExaminerQualifications
-              // for (let i = 0; i < this.examinerQualificationsExamType.length; i++) {
-              //   let examinerToAdd = this.examiners.filter((examiner) => {
-              //     return examiner.idExaminer == this.examinerQualificationsExamType[i].Examiner_idExaminer
-              //   })
-              //   this.examinersExamType[i] = examinerToAdd[0]
-              // }
-              // let c = this.examinerQualificationsExamType.filter((qual) => {
-              //   return qual.idExaminer_qualifications === this.event.meta.pauta.Examiner_qualifications_idExaminer_qualifications
-              // })
-              // if (c.length) {
-              //   let examiner = this.examiners.filter((examiner) => {
-              //     return examiner.idExaminer == c[0].Examiner_idExaminer
-              //   })
-              //   this.examiner = examiner[0]
-              // }
             }
           }
           if (this.chosenExamType != null) {
