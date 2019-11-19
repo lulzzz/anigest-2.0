@@ -10,7 +10,7 @@ export const colors: any = {
   yellow: { // Sem exames marcados, agora pauta completa
     primary: '#999',
     // secondary: '#ffe0a0'
-    secondary: '#feffa0'
+    secondary: '#D8BFD8'
   },
   white: { // Interdito a marcações
     // primary: '#777777',
