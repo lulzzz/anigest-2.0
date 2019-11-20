@@ -2,7 +2,9 @@
 <div style="overflow-x: hidden; max-width: 100%">
   <div class="card-header bg-light shadow-sm">
     <ul class="nav nav-pills card-header-pills justify-content-end">
-      <li class="h4 mr-auto font-weight-light">Horário</li>
+      <li *ngIf="route === 'reservations'" class="h4 mr-auto font-weight-light">Reservas</li>
+      <li *ngIf="route === 'results'" class="h4 mr-auto font-weight-light">Pautas</li>
+      <li *ngIf="route === 'bookings'" class="h4 mr-auto font-weight-light">Marcações</li>
 
       <li class="nav-item">
         <button (click)="goBack()" type="button" class="btn btn-light"><i class="fas fa-arrow-left"></i>
