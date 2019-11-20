@@ -666,6 +666,7 @@ export class ScheduleComponent {
   refreshTimeslots(groups, events): void {
     this.groups = [...groups]
     this.events = [...events]
+    this.hideTimeslots()
     this.cRef.detectChanges()
   }
 
@@ -877,6 +878,21 @@ export class ScheduleComponent {
       amount = 2
     }
     return amount
+  }
+  
+  hideTimeslots() {
+    if (this.userIdSchool !== 'null') {
+      let eventsToShow = this.events.filter((event) => {
+        return event.start.getTime() > new Date().getTime() || (event.start.getTime() <= new Date().getTime() && event.end.getTime() > new Date().getTime())
+      })
+      eventsToShow = eventsToShow.filter((event) => {
+        return !this.lockedDates.includes(event.start.getDate())
+      })
+      eventsToShow = eventsToShow.filter((event) => {
+        return event.meta.currentNumStudents !== event.meta.maxStudents
+      })
+      this.events = [...eventsToShow]
+    }
   }
 
   genEvents(group, dayGroup, indexOfGroup) {
@@ -2477,10 +2493,19 @@ checkValue(val) {
       }
     }
     catch {
-      let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
-      if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
-        this.weekNumber = {...newWeekNumber}
-        await this.getSchedule()
+      try {
+        let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
+        if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
+          this.weekNumber = {...newWeekNumber}
+          await this.getSchedule()
+        }
+      }
+      catch {
+        let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
+        if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
+          this.weekNumber = {...newWeekNumber}
+          await this.getSchedule()
+        }
       }
     }
     this.currentDate = this.viewDate.getFullYear() +'/'+(this.viewDate.getMonth()+1)+'/'+this.viewDate.getDate()
