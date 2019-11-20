@@ -12,12 +12,14 @@ export class PaymentsService {
 
   constructor(private http: HttpClient) { }
 
-  getPayments(){
-    return this.http.get(this.url + 'centro-exames/' + this.ec + '/pagamentos-pendentes??idSchool=1&examnotpaid=true')
+ getPayments(idSchool){
+    const params = new HttpParams().append('School_idSchool', idSchool).append('examnotpaid','true')
+    return this.http.get(this.url + 'centro-exames/' + this.ec + '/pagamentos-pendentes', {params})
   }
 
-  getTransactions(){
-    return this.http.get(this.url + 'centro-exames/' + this.ec + '/movimentos?School_idSchool=1&notused=true')
+  getTransactions(idSchool){
+    const params = new HttpParams().append('School_idSchool', idSchool).append('notused','true')
+    return this.http.get(this.url + 'centro-exames/' + this.ec + '/movimentos', {params})
   }
 
   getPaymentTypes(){
