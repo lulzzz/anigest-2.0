@@ -433,6 +433,12 @@ export class ScheduleComponent {
       // if (!this.subject.includes('ALL_School')) {
       //   this.router.navigate(["/"])
       // }
+      this.resultsService.getResults().subscribe(
+        res => {
+          this.resultsOptions = Object.values(res);
+          console.log(this.resultsOptions)
+        }
+      );
       this.route = "results"
       this.dataFetchService.getExaminers().subscribe(res => this.examiners = res)
       // this.dataFetchService.getExaminerQualifications().subscribe(res => this.examinerQualifications = res)
@@ -944,7 +950,7 @@ export class ScheduleComponent {
             color = colors.orange
           }
           else if (filterByStatus.length == eventsToAdd[i].Max_Num_Students) {
-            color = colors.yellow
+            color = colors.red
           }
         }
         else if (startDate.getTime() <= new Date().getTime() && endDate.getTime() > new Date().getTime()) {
@@ -1961,6 +1967,9 @@ checkValue(val) {
       }
       else {
         let index = this.examTypesAllowed.indexOf(this.theoricalExams[i])
+        if (this.userIdSchool !== 'null') {
+          this.examTypesAllowed.splice(index, 1)
+        }
       }
     }
     for (let i = 0; i < this.categoryAExams.length; i++) {
@@ -2444,9 +2453,7 @@ checkValue(val) {
       timeslotGroupsFiltered.push(this.timeslots[i][0])
     }
     let viewDate = this.viewDate
-    if (viewDate.toUTCString().includes('23:00:00')) {
-      viewDate.setHours(viewDate.getHours() + 1)
-    }
+    viewDate.setHours(0, 0, 0, 0)
     let thisDay = timeslotGroupsFiltered.filter((day) => {
       return new Date(day.Group_day).toUTCString() == viewDate.toUTCString()
     })
@@ -3057,8 +3064,10 @@ validateDate(dateVal, type) {
 
     }, () => {
       this.toastr.error('Exame não marcado', 'Erro')
+      this.resetReservationForm()
     }, () => {
       this.toastr.success('Exame marcado', 'Sucesso')
+      this.resetReservationForm()
     })
   }
                                               
