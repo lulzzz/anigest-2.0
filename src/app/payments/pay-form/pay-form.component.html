@@ -34,7 +34,7 @@
         <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="!school.value" (click)="onNav()">Novo</button>
         <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="exams.length === 0 || !school.value">Eliminar</button>
         <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="exams.length === 0 || !school.value">Editar</button>
-        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="!school.value" (click)="chequeAssociate()">Associar</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="!school.value" (click)="chequeAssociate(school.value)">Associar</button>
         <button type="button" class="btn btn-outline-dark btn-block" [disabled]="exams.length === 0 || !school.value">Remover</button>
       </div>
       <div class="col-9">
@@ -64,7 +64,7 @@
         <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="!school.value" (click)='onNav2()'>Novo</button>
         <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="exams.length === 0 || !school.value">Eliminar</button>
         <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="exams.length === 0 || !school.value">Editar</button>
-        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="!school.value" (click)="examsAssociate()">Associar</button>
+        <button type="button" class="btn btn-outline-dark btn-block mb-2" [disabled]="!school.value" (click)="examsAssociate(school.value)">Associar</button>
         <button type="button" class="btn btn-outline-dark btn-block" [disabled]="exams.length === 0 || !school.value">Remover</button>
       </div>
       <div class="col-9">
