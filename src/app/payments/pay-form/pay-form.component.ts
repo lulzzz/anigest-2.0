@@ -98,11 +98,11 @@ export class PayFormComponent implements OnInit {
     )
   }
 
-  chequeAssociate() {
+  chequeAssociate(idSchool) {
     this.form = this.fb.group({
       orders: new FormArray([])
     });
-    this.service.getTransactions().subscribe(
+    this.service.getTransactions(idSchool).subscribe(
       res => {
         if (res) {
           this.helporders = Object.values(res),
@@ -118,11 +118,11 @@ export class PayFormComponent implements OnInit {
   }
 
 
-  examsAssociate() {
+  examsAssociate(idSchool) {
     this.exames = this.fb.group({
       orders2: new FormArray([])
     });
-    this.service.getPayments().subscribe(
+    this.service.getPayments(idSchool).subscribe(
       res => {
         if (res) {
           this.yorders = Object.values(res),
