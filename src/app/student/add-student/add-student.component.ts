@@ -105,40 +105,63 @@ export class AddStudentComponent implements OnInit {
     console.log(category)
     console.log(category[0].Category)
     this.categoryName = category[0].Category;
-    if (this.categoryName != null){
-      if (this.categoryName.length === 1) {
-        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
-      }
-      else if (this.categoryName === 2) {
-        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
-      }
-      else if (this.categoryName.length >= 3) {
-        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
-      }
+    if (this.categoryName != null) {
+      this.chooseMask(this.categoryName)
     }
 
-  if(this.licenseInput != null) {
-    this.checkValue(this.licenseInput)
-  }
+    if(this.licenseInput != null) {
+      this.checkValue(this.licenseInput)
+    }
     
   }
 
-  checkkValue(val) {
-    const stringy = val.substring(15, 16);
-    console.log(stringy)
-    if (stringy === this.categoryName) {
-    }
-    else {
-
-      this.angForm.controls['license'].setErrors({ 'invalid': true });
-      this.errorMessage = 'O número da licença deve corresponder à categoria.'
+  chooseMask(categoryName) {
+    if (categoryName != null) {
+      if (categoryName.length === 1) {
+        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+      }
+      else if (categoryName.length === 2) {
+        this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+      }
+      else if (categoryName.length >= 3) {
+        if (categoryName.includes(',')) {
+          let [a, b, c] = categoryName.split(',')
+          if (a.length >= 3 || b.length >= 3) {
+            this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+          }
+          else {
+            if (typeof(c) !== "undefined") {
+              if (c.length >= 3) {
+                this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+              }
+              else {
+                if (a.length === 2 || b.length === 2 || c.length === 2) {
+                  this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+                }
+                else {
+                  this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+                }
+              }
+            }
+            else {
+              if (a.length === 2 || b.length === 2) {
+                this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/];
+              }
+              else {
+                this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/];
+              }
+            }
+          }
+        }
+        else {
+          this.mask = [/\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, ' ', /[a-zA-Z]/, /[A-Z0-9]/, /[a-zA-Z]/];
+        }
+      }
     }
   }
 
   checkValue(val) {
-    let stringy = val.substring(15);
-    this.licenseInput = val;
-
+    let stringy = val.substring(15)
     if (stringy.substr(2,1) === '_') {
       stringy = stringy.slice(0, stringy.length-1)
     }
@@ -159,8 +182,10 @@ export class AddStudentComponent implements OnInit {
       if (b.includes('E')) {
         b = b + 'E'
       }
-      if (c !== null && c.includes('E')) {
-        c = c + 'E'
+      if(typeof(c) !== 'undefined') {
+        if (c !== null && c.includes('E')) {
+          c = c + 'E'
+        }
       }
       if (stringy === a || stringy === b || stringy === c) {}
       else {
@@ -175,7 +200,7 @@ export class AddStudentComponent implements OnInit {
       }
       if (stringy === cat) {}
       else {
-        this.angForm.controls['license'].setErrors({'formatError': true})
+        this.angForm.controls['Student_license'].setErrors({'formatError': true})
       }
     }
   }
