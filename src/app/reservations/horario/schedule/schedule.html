@@ -226,7 +226,7 @@
     <div *ngIf="route == 'reservations' || route === 'bookings'" class="btn-group">
       <div *ngIf="timeslotExists">
         <div *ngIf="viewDate.getTime() > this.today.getTime() || !scheduleLocked">
-          <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || event.meta.currentNumStudents > 0" *ngIf="((this.event.meta.examType == null || this.event.meta.currentNumStudents < 1) && !scheduleLocked) || subject.includes('ALL_School')" (click)="dismiss(); sortExamTypes(); openModal(defineTypeOfExam); changeTheoricalText()"><i class="fas fa-chalkboard"></i> Definir Tipo de Exame</button>&nbsp;
+          <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || event.meta.currentNumStudents > 0 || ((event.meta.examType && event.meta.examType.Code === 'TM') && userIdSchool !== 'null')" *ngIf="((this.event.meta.examType == null || this.event.meta.currentNumStudents < 1) && !scheduleLocked) || subject.includes('ALL_School')" (click)="dismiss(); sortExamTypes(); openModal(defineTypeOfExam); changeTheoricalText()"><i class="fas fa-chalkboard"></i> Definir Tipo de Exame</button>&nbsp;
           <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="(((this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')) && route ==='reservations') && userIdSchool !== 'null'" (click)="dismiss(); openModal(reservationAmountForm);"><i class="fas fa-file-alt"></i> Criar Reserva</button>&nbsp;
           <button class="btn btn-white" [disabled]="!timeslotExists || ((minimumReservationDate.getTime() > viewDate.getTime()) && !subject.includes('ALL_School')) || this.event.meta.examType == null || event.meta.currentNumStudents == event.meta.maxStudents" *ngIf="((this.event.meta.examType != null && this.event.meta.currentNumStudents !== this.event.meta.maxStudents && !scheduleLocked) || subject.includes('ALL_School')) && route ==='bookings'" (click)="dismiss(); openModal(searchForStudent);"><i class="fas fa-file-alt"></i> Criar Marcação</button>&nbsp;
         </div>
@@ -255,7 +255,7 @@
           <div *ngIf="route == 'reservations'">
             <th style="width:20%; overflow-x:auto" *ngIf="userIdSchool !== 'null'">Enviar para Marcação</th>
             <th style="width:20%; overflow-x:auto" *ngIf="reservation.T_exam_status_idexam_status !== 1">Editar</th>
-            <th style="width:20%; overflow-x:auto" *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School'))">Desmarcar</th>
+            <th style="width:20%; overflow-x:auto" *ngIf="reservation.T_exam_status_idexam_status !== 1">Desmarcar</th>
             <!-- <th *ngIf="reservation.T_exam_status_idexam_status !== 1 && (subject.includes('ALL_School') || subject.includes('DELETE_Reservation'))">Desmarcar</th> -->
             <th style="width:20%; overflow-x:auto" *ngIf="reservation.T_exam_status_idexam_status !== 1">Enviar Mod. 2</th>
           </div>
@@ -393,7 +393,7 @@
             </div>
             <div *ngIf="chosenExamType.Code !== 'TM' && (chosenExamType.Category !== 'A' && chosenExamType.Category !== 'A1' && chosenExamType.Category !== 'A2')">
               <label>Tipo de exame:</label>
-              <input type="text" formControlName="Exam_type_idExam_type" class="form-control" value="{{chosenExamType.Exam_type_name}}">
+              <input disabled type="text" formControlName="Exam_type_idExam_type" class="form-control" value="{{chosenExamType.Exam_type_name}}">
             </div>
           </div>
         </div>
@@ -629,8 +629,8 @@
     </div>
     <div *ngIf="formIsEditable" class="container d-flex">
       <div class="align-self-start mr-auto">
-        <button *ngIf="!editingReservation" class="btn btn-secondary btn-lg" (click)="dismiss(); cancelLockReservation(); unsetReservationValues(); resetReservationForm();editingReservation=false">Cancelar</button>
-        <button *ngIf="editingReservation" class="btn btn-secondary btn-lg" (click)="dismiss(); unsetReservationValues(); resetReservationForm();editingReservation=false">Cancelar</button>
+        <button *ngIf="!editingReservation && route !== 'bookings'" class="btn btn-secondary btn-lg" (click)="dismiss(); cancelLockReservation(); unsetReservationValues(); resetReservationForm();editingReservation=false">Cancelar</button>
+        <button *ngIf="editingReservation || route === 'bookings'" class="btn btn-secondary btn-lg" (click)="dismiss(); unsetReservationValues(); resetReservationForm();editingReservation=false">Cancelar</button>
       </div>
       <!-- <button class="btn btn-outline-success btn-lg" (click)="validateForm()">Validar Formulário</button> -->
       <div *ngIf="route === 'reservations'" class="align-self-end ml-auto">
@@ -788,7 +788,7 @@
     </button>
   </div>
   <div class="modal-body">
-    <h5>O candidato com o BI inserido não existe. Quer criar um novo candidato?</h5>
+    <h5>O candidato com o NIF inserido não existe. Quer criar um novo candidato?</h5>
   </div>
   <div class="modal-footer">
       <button class="btn btn-outline-danger mr-auto" focus="true"
