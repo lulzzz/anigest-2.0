@@ -35,7 +35,7 @@
     </div>
 
     <div class="row">
-      <div class="col">
+      <div class="col-sm-7">
         <div class="form-group">
           <label for="id_type">Documento de Identificação*</label>
           <select class="form-control" formControlName="T_ID_type_idT_ID_type" 
@@ -46,6 +46,35 @@
           <div class="invalid-feedback"> 
             <div *ngIf="angForm.get('T_ID_type_idT_ID_type').hasError('required') || submitted && angForm.get('T_ID_type_idT_ID_type').hasError('required')">
               Documento de Identificação é obrigatório.</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="form-group">
+          <label for="id">Número do Documento de Identificação*</label>
+          <input type="text" class="form-control" formControlName="ID_num" 
+          [ngClass]="{'is-invalid': angForm.get('ID_num').touched && angForm.get('ID_num').invalid || submitted && angForm.get('ID_num').hasError('required'), 'is-valid':angForm.get('ID_num').touched && angForm.get('ID_num').valid}"
+          #id>
+          <div *ngIf="angForm.get('ID_num').hasError('required') || submitted && angForm.get('ID_num').hasError('required')" class="invalid-feedback">     
+            <div>O Número do Documento de Identificação é obrigatório.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="id_expiration">Validade do Documento de Identificação*</label>
+          <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control" formControlName="ID_expire_date"
+            (focusout)="validateDate(id_expiration.value, 'idexp')" [min]="minExpDate" [max]="maxExpDate"
+            [ngClass]="{'is-invalid': angForm.get('ID_expire_date').touched && angForm.get('ID_expire_date').invalid || submitted && angForm.get('ID_expire_date').hasError('required'), 'is-valid':angForm.get('ID_expire_date').touched && angForm.get('ID_expire_date').valid}"
+            #id_expiration>
+          <div class="invalid-feedback">
+            <div *ngIf="angForm.get('ID_expire_date').hasError('invalid_date')">
+              A data não está correta.</div>
+            <div *ngIf="angForm.get('ID_expire_date').hasError('required') || submitted && angForm.get('ID_expire_date').hasError('required')">
+              A data é obrigatória.</div>
           </div>
         </div>
       </div>
@@ -68,37 +97,7 @@
     </div>
 
     <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label for="id">Número do Identificação*</label>
-          <input type="text" class="form-control" formControlName="ID_num" 
-          [ngClass]="{'is-invalid': angForm.get('ID_num').touched && angForm.get('ID_num').invalid || submitted && angForm.get('ID_num').hasError('required'), 'is-valid':angForm.get('ID_num').touched && angForm.get('ID_num').valid}"
-          #id>
-          <div *ngIf="angForm.get('ID_num').hasError('required') || submitted && angForm.get('ID_num').hasError('required')" class="invalid-feedback">     
-            <div>Número do Identificação é obrigatório.</div> 
-            
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="form-group">
-          <label for="id_expiration">Validade do Identificação*</label>
-          <input type="date" name="input" placeholder="dd-mm-yyyy" class="form-control" formControlName="ID_expire_date"
-            (focusout)="validateDate(id_expiration.value, 'idexp')" [min]="minExpDate" [max]="maxExpDate"
-            [ngClass]="{'is-invalid': angForm.get('ID_expire_date').touched && angForm.get('ID_expire_date').invalid || submitted && angForm.get('ID_expire_date').hasError('required'), 'is-valid':angForm.get('ID_expire_date').touched && angForm.get('ID_expire_date').valid}"
-            #id_expiration>
-          <div class="invalid-feedback">
-            <div *ngIf="angForm.get('ID_expire_date').hasError('invalid_date')">
-              A data não está correta.</div>
-            <div *ngIf="angForm.get('ID_expire_date').hasError('required') || submitted && angForm.get('ID_expire_date').hasError('required')">
-              A data é obrigatória.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
+      <div class="col-sm-7">
         <div class="form-group">
           <label for="school">Escola*</label>
           <select class="form-control" formControlName="School_idSchool" 
@@ -111,7 +110,7 @@
           </div>
         </div>
       </div>
-      <div class="col">
+      <div class="col-sm-5">
         <div class="form-group">
           <label for="category">Categoria*</label>
           <select class="form-control" formControlName="Type_category_idType_category" (focusout)="sendValue(category.value)" 
@@ -131,7 +130,7 @@
       <div class="col">
         <div class="form-group">
           <label for="license">Número da Licença*</label>
-          <input type="text" [textMask]="{mask:mask}" class="form-control" formControlName="Student_license"
+          <input oninput="let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);" type="text" [textMask]="{mask:mask}" class="form-control" formControlName="Student_license"
             (focusout)="checkValue(license.value)" #license
             [ngClass]="{'is-invalid': angForm.get('Student_license').touched && angForm.get('Student_license').invalid || submitted && angForm.get('Student_license').hasError('required'), 'is-valid':angForm.get('Student_license').touched && angForm.get('Student_license').valid}">
           <div class="invalid-feedback">
@@ -159,19 +158,19 @@
     </div>
 
     <div class="row">
-      <div class="col">
+      <div class="col-sm-7">
         <div class="form-group">
-          <label for="fiscal_number">Número contribuinte</label>
+          <label for="fiscal_number">Número de contribuinte</label>
           <input type="text" [textMask]="{mask:contribuinte}" class="form-control" formControlName="Tax_num"
             #fiscal_number
             [ngClass]="{'is-invalid': angForm.get('Tax_num').touched && angForm.get('Tax_num').invalid || submitted && angForm.get('Tax_num').hasError('required'), 'is-valid':angForm.get('Tax_num').touched && angForm.get('Tax_num').valid}">
           <div class="invalid-feedback">
             <div *ngIf="angForm.get('Tax_num').hasError('required') || submitted && angForm.get('Tax_num').hasError('required')">Número contribuinte e obrigatório.</div>
-            <div *ngIf="angForm.get('Tax_num').hasError('validTax')" >O número contribuinte precisa ter 9 dígitos.</div>
+            <div *ngIf="angForm.get('Tax_num').hasError('validTax')" >O número de contribuinte tem de conter 9 dígitos.</div>
           </div>
         </div>
       </div>
-      <div class="col">
+      <div class="col-sm-5">
         <div class="form-group">
           <label for="existing_license_num">Número da Carta</label>
           <input type="text" class="form-control" formControlName="Drive_license_num" #existing_license>
