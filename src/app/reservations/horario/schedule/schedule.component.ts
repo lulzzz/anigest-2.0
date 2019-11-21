@@ -2500,20 +2500,9 @@ checkValue(val) {
       }
     }
     catch {
-      try {
-        let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
-        if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
-          this.weekNumber = {...newWeekNumber}
-          await this.getSchedule()
-        }
-      }
-      catch {
-        let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
-        if ((newWeekNumber[0] != this.weekNumber[0]) || (newWeekNumber[1] != this.weekNumber[1])) {
-          this.weekNumber = {...newWeekNumber}
-          await this.getSchedule()
-        }
-      }
+      let newWeekNumber = this.timeslotService.getWeekNumber(this.viewDate)
+      this.weekNumber = {...newWeekNumber}
+      await this.getSchedule()
     }
     this.currentDate = this.viewDate.getFullYear() +'/'+(this.viewDate.getMonth()+1)+'/'+this.viewDate.getDate()
     let currentDate = this.getCurrentDateFormatted()
