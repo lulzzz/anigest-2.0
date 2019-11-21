@@ -155,7 +155,13 @@ export class ReservationsComponent implements OnInit {
       if (param1 == 'getAllReservations') {
         this.service.getAllReservations().subscribe(
           res => {
-          this.exams = Object.values(res)
+            try {
+              this.exams = Object.values(res)
+            }
+            catch {
+              this.exams = []
+              this.toastr.error('Não foram encontradas reservas.', 'Notificação')
+            }
             this.count = this.exams.length;
           }
         )
