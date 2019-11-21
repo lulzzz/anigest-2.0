@@ -2294,71 +2294,78 @@ checkValue(val) {
       this.reservationForm.controls['School_Permit'].setValidators(Validators.required)
       this.reservationForm.controls['School_Permit'].updateValueAndValidity()
     }
-    if (this.timeslotReservations){
-      for (let i = 0; i < this.timeslotReservations.length; i++) {
-        if (this.timeslotReservations[i].Lock_expiration_date !== null) {
-          alreadyLocked = true
-          amountLocked++
-          lockedRes = this.timeslotReservations[i]
+    this.reservationService.getReservationByTimeslot(this.event.id).subscribe(res => this.timeslotReservations = res,
+      () => {},
+      async () => {
+      if (this.timeslotReservations){
+        for (let i = 0; i < this.timeslotReservations.length; i++) {
+          if (this.timeslotReservations[i].Lock_expiration_date !== null) {
+            alreadyLocked = true
+            amountLocked++
+            lockedRes = this.timeslotReservations[i]
+          }
+        }
+        if (alreadyLocked === false) {
+          await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
+            this.lockedReservationId = data.insertId
+          },
+            error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
+              timeOut: 10000,
+              closeButton: true
+            })
+          },
+          () => {
+            this.openModal(this.timeslotForm)
+          })
+        }
+        else {
+          if (lockedRes != null && this.reservationAmount !== 2) {
+            if (amountLocked === 1 && this.reservationAmount === 1 && lockedRes.Account_User !== this.user) {
+              await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
+                error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
+                  timeOut: 10000,
+                  closeButton: true
+                })}
+                , () => {
+                  this.openModal(this.timeslotForm)
+                })
+            }
+            else if (amountLocked === 1 && this.reservationAmount === 1 && lockedRes.Account_User === this.user) {
+              this.openModal(this.timeslotForm)
+            }
+            else if (amountLocked === 2 && this.reservationAmount === 1 && lockedRes.Account_User === this.user) {
+              this.openModal(this.timeslotForm)
+            }
+          }
+          else if (amountLocked === 1 && this.reservationAmount === 2) {
+            await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
+              error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
+                timeOut: 10000,
+                closeButton: true
+              })}
+              , () => {
+                this.openModal(this.timeslotForm)
+              })
+          }
+          else {
+            this.openModal(this.timeslotForm)
+          }
         }
       }
-      if (alreadyLocked === false) {
+      else {
         await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
           this.lockedReservationId = data.insertId
         },
           error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
-          timeOut: 10000,
-          closeButton: true
-        })
+            timeOut: 10000,
+            closeButton: true
+          })
         },
         () => {
           this.openModal(this.timeslotForm)
         })
       }
-      else {
-        if (lockedRes != null && this.reservationAmount !== 2) {
-          if (amountLocked === 1 && this.reservationAmount === 1 && lockedRes.Account_User !== this.user) {
-            await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
-              error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
-          timeOut: 10000,
-          closeButton: true
-        })}
-              , () => {
-                this.openModal(this.timeslotForm)
-              })
-          }
-          else if (amountLocked === 1 && this.reservationAmount === 1 && lockedRes.Account_User === this.user) {
-            this.openModal(this.timeslotForm)
-          }
-        }
-        else if (amountLocked === 1 && this.reservationAmount === 2) {
-          await this.reservationService.lockReservation(this.event, 1).subscribe(res => this.lockedReservationId = res.insertId,
-            error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
-          timeOut: 10000,
-          closeButton: true
-        })}
-            , () => {
-              this.openModal(this.timeslotForm)
-            })
-        }
-        else {
-          this.openModal(this.timeslotForm)
-        }
-      }
-    }
-    else {
-      await this.reservationService.lockReservation(this.event, this.reservationAmount).subscribe((data) => {
-        this.lockedReservationId = data.insertId
-      },
-        error => { this.toastr.error('Ocorreu um erro ao trancar a reserva', 'Erro',{
-          timeOut: 10000,
-          closeButton: true
-        })
-      },
-      () => {
-        this.openModal(this.timeslotForm)
-      })
-    }
+    })
   }
 
   unbookReservation(reservation) {
@@ -2453,7 +2460,9 @@ checkValue(val) {
       timeslotGroupsFiltered.push(this.timeslots[i][0])
     }
     let viewDate = this.viewDate
-    viewDate.setHours(0, 0, 0, 0)
+    if (viewDate.toUTCString().includes('23:00:00')) {
+      viewDate.setHours(viewDate.getHours() + 1)
+    }
     let thisDay = timeslotGroupsFiltered.filter((day) => {
       return new Date(day.Group_day).toUTCString() == viewDate.toUTCString()
     })
@@ -2907,7 +2916,10 @@ setMinExpDate() {
 
 validateDate(dateVal, type) {
   if (type === 'birthdate') {
-    if ((new Date(dateVal).getFullYear()) > (new Date(this.currentDate).getFullYear() - 14)) {
+    let curDate = new Date(this.currentDate)
+    curDate.setFullYear(curDate.getFullYear()-parseInt(this.chosenExamType["Minimun_age"]))
+    curDate.setTime(curDate.getTime() + 86400000)
+    if ((new Date(dateVal).getTime() > curDate.getTime())) {
       this.reservationForm.controls['Birth_date'].setErrors({ 'invalid_date': true });
     }
     else if ((new Date(dateVal).getFullYear()) < (new Date(this.currentDate).getFullYear() - 100)){
