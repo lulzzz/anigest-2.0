@@ -259,7 +259,7 @@ export class ResultsComponent implements OnInit {
             this.buildForm();
               console.log('RESULTS ASSIGNED', this.assignResult)
           }
-          else { console.log('DATA NOT FOUND') }
+          else { this.toastr.error('Pauta não encontrada.', 'Notificação'); console.log('DATA NOT FOUND') }
         })
   }
   resetSearch() {
