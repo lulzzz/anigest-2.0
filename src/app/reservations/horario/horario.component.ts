@@ -223,6 +223,7 @@ export class HorarioComponent implements OnInit {
 
   setConfig() {
     this.date = new Date()
+    this.date.setUTCHours(0, 0, 0, 0)
     this.dataShareService.defineWorkHours(this.workHours)
     this.dataShareService.defineDate(this.date)
     this.dataShareService.defineHighestGroupId(this.highestGroupId)
