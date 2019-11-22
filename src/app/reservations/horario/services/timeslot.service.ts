@@ -26,9 +26,7 @@ export class TimeslotService {
 
   getTimeslots(date: Date): Observable<Timeslot[]> {
     let week = this.getWeekDays(date)
-    // return this.http.get<Timeslot[]>(`${this.url}?week=${(week[1])}&year=${week[0]}`)
-    // return this.http.get<Timeslot[]>(`${this.url}?week=31&year=2019`, httpOptions)
-    return this.http.get<Timeslot[]>(`${this.url}?begin=${(week[1])}&end=${week[2]}&year=${week[0]}`)
+    return this.http.get<Timeslot[]>(`${this.url}?begin=${(week[1])}&end=${week[2]}`)
   }
 
   getWeekNumber(d) {
