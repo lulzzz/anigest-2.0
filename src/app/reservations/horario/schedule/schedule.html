@@ -333,13 +333,12 @@
     <div *ngIf="route === 'reservations'">
       <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && !editingReservation">CRIAR RESERVA</h2>
       <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && editingReservation">EDITAR RESERVA</h2>
-      <h2 class="font-weight-light text-light ml-auto" *ngIf="!formIsEditable">VISUALIZAR RESERVA</h2>
     </div>
     <div *ngIf="route === 'bookings'">
       <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && !editingReservation">CRIAR MARCAÇÃO</h2>
       <h2 class="font-weight-light text-light ml-auto" *ngIf="formIsEditable && editingReservation">EDITAR</h2>
-      <h2 class="font-weight-light text-light ml-auto" *ngIf="!formIsEditable">VISUALIZAR</h2>
     </div>
+    <h2 class="font-weight-light text-light ml-auto" *ngIf="!formIsEditable">VISUALIZAR</h2>
     <button type="button" class="close" aria-label="Close" *ngIf="formIsEditable && !editingReservation" (click)="dismiss(); unsetReservationValues(); cancelLockReservation(); resetReservationForm()">
       <span aria-hidden="true">&times;</span>
     </button>
