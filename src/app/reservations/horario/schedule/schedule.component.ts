@@ -302,6 +302,7 @@ export class ScheduleComponent {
   assignResult: any[] = []
   sendResults: FormGroup
   resultsOptions: any[] = []
+  bookings: any[] = []
 
   //=======================MISC. VARIABLES=======================\\
 
@@ -456,58 +457,70 @@ export class ScheduleComponent {
     () => {
 
     }, () => {
-      registerLocaleData(localePt, 'pt-PT')
-      this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
-      this.dayLockIcon = this.scheduleLocked
-      this.dataFetchService.getExamTypes().subscribe((data) => this.examTypes = data, (e) => {},
-      async () => {
-        this.reservationService.getExamStatus().subscribe(res => this.examStatuses = res)
-        if (this.viewDate < new Date()) {
-          this.scheduleLocked = true
-          this.dayLockIcon = this.scheduleLocked
+      this.bookingService.getAllBookings().subscribe(res => {
+        if (res) {
+          this.bookings = Object.values(res)
+          console.log(this.bookings)
         }
-        this.dataFetchService.getIdTypes().subscribe((data) => this.idTypes = data)
-        this.dataFetchService.getCategories().subscribe((data) => this.categories = data)
-        this.dataFetchService.getSchools().subscribe((data) => this.schools = data, () => {
+        else {
+          this.bookings = []
+        }
+      }, () => {
 
-        }, () => {
-          if (this.userIdSchool !== 'null') {
-            let schoolPermit = this.schools.filter((school) => {
-              return school.idSchool == this.userIdSchool
-            })
-            this.userSchoolPermit = schoolPermit[0].Permit
+      }, () => {
+        registerLocaleData(localePt, 'pt-PT')
+        this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}})
+        this.dayLockIcon = this.scheduleLocked
+        this.dataFetchService.getExamTypes().subscribe((data) => this.examTypes = data, (e) => {},
+        async () => {
+          this.reservationService.getExamStatus().subscribe(res => this.examStatuses = res)
+          if (this.viewDate < new Date()) {
+            this.scheduleLocked = true
+            this.dayLockIcon = this.scheduleLocked
           }
-        })
-        this.highestGroupId =this.dataShareService.highestGroupId
-        this.definePrimeCalendar()
-        this.workHours = this.dataShareService.workHours
-        this.groupAmount = await this.dataShareService.groupAmount
-        this.timeslots = await this.getWeekTimeslots()
-        this.weekNumber = this.timeslotService.getWeekNumber(this.viewDate)
-        if (typeof(this.highestGroupId) !== 'undefined') {
-          for (let key in this.highestGroupId[0]) {
-          if (this.highestGroupId[0].hasOwnProperty(key)) {
-              this.highestGroupId = this.highestGroupId[0][key]
+          this.dataFetchService.getIdTypes().subscribe((data) => this.idTypes = data)
+          this.dataFetchService.getCategories().subscribe((data) => this.categories = data)
+          this.dataFetchService.getSchools().subscribe((data) => this.schools = data, () => {
+
+          }, () => {
+            if (this.userIdSchool !== 'null') {
+              let schoolPermit = this.schools.filter((school) => {
+                return school.idSchool == this.userIdSchool
+              })
+              this.userSchoolPermit = schoolPermit[0].Permit
+            }
+          })
+          this.highestGroupId =this.dataShareService.highestGroupId
+          this.definePrimeCalendar()
+          this.workHours = this.dataShareService.workHours
+          this.groupAmount = await this.dataShareService.groupAmount
+          this.timeslots = await this.getWeekTimeslots()
+          this.weekNumber = this.timeslotService.getWeekNumber(this.viewDate)
+          if (typeof(this.highestGroupId) !== 'undefined') {
+            for (let key in this.highestGroupId[0]) {
+            if (this.highestGroupId[0].hasOwnProperty(key)) {
+                this.highestGroupId = this.highestGroupId[0][key]
+              }
             }
           }
-        }
-        if (typeof(this.timeslots) !== 'undefined') {
-          for (let i = 0; i < this.timeslots.length; i++) {
-            this.genGroup(this.timeslots[i])
+          if (typeof(this.timeslots) !== 'undefined') {
+            for (let i = 0; i < this.timeslots.length; i++) {
+              this.genGroup(this.timeslots[i])
+            }
           }
-        }
-        if (typeof(this.groupAmount) != 'undefined'){
-          if (this.groupAmount != 0) {
-            this.dataShareService.undefineShareService()
-            this.generateNewSchedule(this.groupAmount)
+          if (typeof(this.groupAmount) != 'undefined') {
+            if (this.groupAmount != 0) {
+              this.dataShareService.undefineShareService()
+              this.generateNewSchedule(this.groupAmount)
+            }
           }
-        }
-        this.checkIfLocked()
-        this.refreshTimeslots(this.groups, this.events)
-        this.sortExamTypes()
+          this.checkIfLocked()
+          this.refreshTimeslots(this.groups, this.events)
+          this.sortExamTypes()
+        })
+        this.setMinMaxBirthDate();
+        this.setMinExpDate();
       })
-      this.setMinMaxBirthDate();
-      this.setMinExpDate();
     })
   }
 
@@ -895,7 +908,16 @@ export class ScheduleComponent {
         return !this.lockedDates.includes(event.start.getDate())
       })
       eventsToShow = eventsToShow.filter((event) => {
-        return event.meta.currentNumStudents !== event.meta.maxStudents
+        let i = event.id
+        let hasRes = this.reservations.filter((res) => {
+          return (res.Timeslot_idTimeslot === i && res.School_Permit === this.userSchoolPermit)
+        })
+        if (hasRes.length) {
+          return hasRes
+        }
+        else {
+          return event.meta.currentNumStudents !== event.meta.maxStudents
+        }
       })
       this.events = [...eventsToShow]
     }
@@ -943,15 +965,29 @@ export class ScheduleComponent {
           canDrag = false
         }
         else if (startDate.getTime() > new Date().getTime()) {
-          if (!filterByStatus.length && eventsToAdd[i].Max_Num_Students) {
+          if (!filterByStatus.length && eventsToAdd[i].Max_Num_Students && eventsToAdd[i].occupied_book === 0) {
             color = colors.white
           }
-          else if (filterByStatus.length > 0 && filterByStatus.length < eventsToAdd[i].Max_Num_Students) {
-            color = colors.orange
-          }
-          else if (filterByStatus.length == eventsToAdd[i].Max_Num_Students) {
+          else if (filterByStatus.length > 0 && eventsToAdd[i].occupied_book === 0) {
             color = colors.red
           }
+          else if (eventsToAdd[i].occupied_book > 0 && filterByStatus.length > 0) {
+            color = colors.doublecolor1
+          }
+          else if (eventsToAdd[i].occupied_book > 0 && !filterByStatus.length) {
+            if (eventsToAdd[i].occupied_book < eventsToAdd[i].Max_Num_Students) {
+              color = colors.yellow
+            }
+            else if (eventsToAdd[i].occupied_book === eventsToAdd[i].Max_Num_Students) {
+              color = colors.orange
+            }
+          }
+          // else if (filterByStatus.length > 0 && filterByStatus.length < eventsToAdd[i].Max_Num_Students) {
+          //   color = colors.orange
+          // }
+          // else if (filterByStatus.length == eventsToAdd[i].Max_Num_Students) {
+          //   color = colors.red
+          // }
         }
         else if (startDate.getTime() <= new Date().getTime() && endDate.getTime() > new Date().getTime()) {
           color = colors.green
@@ -997,7 +1033,7 @@ export class ScheduleComponent {
               group: this.groups[indexOfGroup],
               exists: exist,
               maxStudents: eventsToAdd[i].Max_Num_Students,
-              currentNumStudents: filterByStatus.length || 0,
+              currentNumStudents: eventsToAdd[i].number_Reservations,
               examType: eventsToAdd[i].Exam_type_name,
               // examTypeShort: eventsToAdd[i].Exam_type_name.Short,
               pauta: timeslotPauta[0]
@@ -1020,7 +1056,7 @@ export class ScheduleComponent {
               group: this.groups[indexOfGroup],
               exists: exist,
               maxStudents: eventsToAdd[i].Max_Num_Students,
-              currentNumStudents: filterByStatus.length || 0,
+              currentNumStudents: eventsToAdd[i].number_Reservations,
               examType: eventsToAdd[i].Exam_type_name
               // examTypeShort: eventsToAdd[i].Exam_type_name.Short
             },
@@ -1590,6 +1626,20 @@ export class ScheduleComponent {
           
         },
         () => {
+          if (this.timeslotReservations === null) {
+            this.timeslotReservations = []
+          }
+          let timeslotBookings = this.bookings.filter((booking) => {
+            return booking.Timeslot_idTimeslot === this.event.id
+          })
+          let timeslotBookingsUpdated = timeslotBookings.map(({Permit: School_Permit, ...rest}) => ({ School_Permit, ...rest}))
+          if (timeslotBookingsUpdated.length) {
+            for (let i = 0; i < timeslotBookingsUpdated.length; i++) {
+              timeslotBookingsUpdated[i]["Lock_expiration_date"] = null
+              this.timeslotReservations.push(timeslotBookingsUpdated[i])
+              this.timeslotReservations = [...this.timeslotReservations]
+            }
+          }
           if (this.timeslotReservations) {
             this.timeslotReservations = [...this.timeslotReservations]
             let validReservations = this.timeslotReservations.filter((reservation) => {
@@ -1694,11 +1744,12 @@ export class ScheduleComponent {
           }
 
           try {
-            console.log(this.timeslotReservations)
-            if (typeof(this.timeslotReservations) !== 'undefined' && this.timeslotReservations.length) {
-              for (let i = 0; i < this.timeslotReservations.length; i++) {
-                this.hasReservations = true
-                this.reservation = this.timeslotReservations[i]
+            if (this.timeslotReservations !== null) {
+              if (this.timeslotReservations.length) {
+                for (let i = 0; i < this.timeslotReservations.length; i++) {
+                  this.hasReservations = true
+                  this.reservation = this.timeslotReservations[i]
+                }
               }
             }
             else {
@@ -1828,7 +1879,10 @@ checkValue(val) {
     }
   }
   
-  openReservation(reservation, modal, option) {
+  openReservation(reservation, modal, option, booking?) {
+    if (reservation.idBooked && !booking) {
+      return this.openBooking(reservation.idBooked)
+    }
     this.reservation = reservation
     this.reservationForm.patchValue( {
       Student_name: reservation.Student_name,
@@ -1873,6 +1927,20 @@ checkValue(val) {
       this.editingReservation = true
     }
     this.openModal(modal)
+  }
+  
+  openBooking(idBooked) {
+    let booking = null
+    this.bookingService.getBookingID(idBooked).subscribe(res => booking = res[0],
+      () => {
+
+      }, () => {
+        let school = this.schools.filter((school) => {
+          return school.idSchool === booking.School_idSchool
+        })
+        booking["School_Permit"] = school[0].Permit
+        this.openReservation(booking, this.timeslotForm, 'view', true)
+      })
   }
   
   modifyTimeslot(newStart, newEnd, newExamType) {
@@ -2048,6 +2116,14 @@ checkValue(val) {
         if (this.reservations){
           this.reservations = [...this.reservations]
           console.log('aqui')
+        }
+      })
+      this.bookingService.getAllBookings().subscribe(res => {
+        if (res) {
+          this.bookings = Object.values(res)
+        }
+        else {
+          this.bookings = []
         }
       })
       this.pautaService.getPautas().subscribe(res => { if (res === null) { this.pautas = []} else {this.pautas = res}},
@@ -3069,6 +3145,7 @@ validateDate(dateVal, type) {
     }, () => {
       this.toastr.success('Exame marcado', 'Sucesso')
       this.resetReservationForm()
+      this.getSchedule()
     })
   }
                                               
