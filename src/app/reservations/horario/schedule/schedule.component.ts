@@ -979,7 +979,7 @@ export class ScheduleComponent {
               color = colors.yellow
             }
             else if (eventsToAdd[i].occupied_book === eventsToAdd[i].Max_Num_Students) {
-              color = colors.orange
+              color = colors.darkorange
             }
           }
           // else if (filterByStatus.length > 0 && filterByStatus.length < eventsToAdd[i].Max_Num_Students) {
