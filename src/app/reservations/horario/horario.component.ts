@@ -266,7 +266,6 @@ export class HorarioComponent implements OnInit {
 //   }
 
   randomizeExaminers(){
-    console.log('HEYA')
     this.service.randomizeExaminers().subscribe(
       res=> {
         this.examinersMessage = res;
