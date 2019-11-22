@@ -1087,6 +1087,7 @@ export class ScheduleComponent {
     let compareDate = new Date(date)
     if (group[0].Day_lock == 1) {
       this.lockedDates.push((compareDate.getDate()))
+      this.checkIfLocked()
     }
     let currentDate = this.getCurrentDateFormatted(compareDate)
     this.groupsInDate = this.groups.filter((group) => {
@@ -2149,6 +2150,7 @@ checkValue(val) {
     this.dayLockIcon = true
     this.scheduleLocked = true
     this.lockedDates.push(this.viewDate.getDate())
+    this.checkIfLocked()
     let replaced = false
     if (max[0].date.substr(8, 2) == '00') {
       max[0].date = max[0].date.replace('00', '01')
@@ -2554,6 +2556,7 @@ checkValue(val) {
       else {
         thisDay[0].Day_lock = 1
         this.lockedDates.push(viewDate.getDate())
+        this.checkIfLocked()
       }
       this.dailyGroupService.changeLock(thisDay[0]).subscribe()
     }
